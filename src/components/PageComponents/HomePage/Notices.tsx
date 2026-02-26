@@ -1,9 +1,11 @@
 "use client"
 import { motion } from 'motion/react';
-import { Bell, Calendar, AlertCircle, TrendingUp } from 'lucide-react';
+import { Bell, Calendar, AlertCircle, TrendingUp,} from 'lucide-react';
+import Link from 'next/link';
 
 const updates = [
-  {
+ {
+    slug: 'emergency-flood-relief',
     date: 'Feb 20, 2026',
     title: 'Emergency Flood Relief Distribution Completed',
     description: 'Successfully distributed emergency supplies to 5,000 families affected by recent floods in Sylhet district.',
@@ -11,6 +13,7 @@ const updates = [
     latest: true,
   },
   {
+    slug: 'new-school-rajshahi',
     date: 'Feb 15, 2026',
     title: 'New School Building Inaugurated in Rajshahi',
     description: 'Our 15th educational institution opened its doors to 300 students, featuring modern classrooms and a library.',
@@ -18,6 +21,7 @@ const updates = [
     latest: true,
   },
   {
+    slug: 'mobile-health-clinic',
     date: 'Feb 10, 2026',
     title: 'Mobile Health Clinic Reaches Remote Villages',
     description: 'Medical team provided free check-ups and medications to over 800 people in hard-to-reach areas of Bandarban.',
@@ -25,6 +29,7 @@ const updates = [
     latest: false,
   },
   {
+    slug: 'women-empowerment-workshop',
     date: 'Feb 5, 2026',
     title: 'Women Empowerment Workshop Success',
     description: '150 women completed vocational training in tailoring and handicrafts, receiving startup kits for their businesses.',
@@ -32,6 +37,7 @@ const updates = [
     latest: false,
   },
   {
+    slug: 'annual-transparency-report',
     date: 'Jan 28, 2026',
     title: 'Annual Transparency Report Published',
     description: 'Our 2025 financial and impact report is now available, showing 95% of donations directly funding programs.',
@@ -39,6 +45,7 @@ const updates = [
     latest: false,
   },
   {
+    slug: 'global-health-partnership',
     date: 'Jan 20, 2026',
     title: 'Partnership with Global Health Initiative',
     description: 'New collaboration will bring advanced medical equipment and training to our rural health centers.',
@@ -141,13 +148,15 @@ export function Notices() {
                   {update.description}
                 </p>
 
-                <motion.button
-                  className="mt-4 text-[#10B981] hover:text-[#059669] text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300"
-                  whileHover={{ x: 5 }}
-                >
-                  Read More
-                  <span>→</span>
-                </motion.button>
+                 <Link href={`/notices/${update.slug}`}>
+                  <motion.button
+                    className="mt-4 text-[#10B981] hover:text-[#059669] text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300 cursor-pointer"
+                    whileHover={{ x: 5 }}
+                  >
+                    Read More
+                    <span>→</span>
+                  </motion.button>
+                </Link>
               </motion.div>
             </motion.div>
           ))}

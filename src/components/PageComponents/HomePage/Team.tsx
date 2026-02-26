@@ -2,27 +2,32 @@
 import { motion } from 'motion/react';
 import { Linkedin, Mail } from 'lucide-react';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
+import Link from 'next/link';
 
 const teamMembers = [
   {
+    slug: 'dr-nusrat-rahman',
     name: 'Dr. Nusrat Rahman',
     role: 'Founder & Executive Director',
     bio: '15+ years in humanitarian work, medical doctor dedicated to community healthcare.',
     image: 'https://images.unsplash.com/photo-1740153204804-200310378f2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBBc2lhbiUyMHRlYW0lMjBtZW1iZXIlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NzE5NTg2NjJ8MA&ixlib=rb-4.1.0&q=80&w=1080',
   },
   {
+    slug: 'fahim-ahmed',
     name: 'Fahim Ahmed',
     role: 'Director of Operations',
     bio: 'Project management expert with focus on sustainable development and community engagement.',
     image: 'https://images.unsplash.com/photo-1709785980187-5504ce6b7d55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBc2lhbiUyMG1hbGUlMjBidXNpbmVzcyUyMHBvcnRyYWl0JTIwc21pbGV8ZW58MXx8fHwxNzcxOTU4NjYzfDA&ixlib=rb-4.1.0&q=80&w=1080',
   },
   {
+    slug: 'sabrina-chowdhury',
     name: 'Sabrina Chowdhury',
     role: 'Head of Education Programs',
     bio: 'Former educator passionate about making quality education accessible to every child.',
     image: 'https://images.unsplash.com/photo-1697510364485-e900c2fe7524?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxTb3V0aCUyMEFzaWFuJTIwd29tYW4lMjBwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NzE5NTg2NjN8MA&ixlib=rb-4.1.0&q=80&w=1080',
   },
   {
+    slug: 'imran-hossain',
     name: 'Imran Hossain',
     role: 'Finance & Transparency Officer',
     bio: 'Chartered accountant ensuring every donation creates maximum impact with full transparency.',
@@ -108,13 +113,15 @@ export function Team() {
                   <p className="text-gray-600 text-sm leading-relaxed mb-4">
                     {member.bio}
                   </p>
-                  <motion.button
-                    className="text-[#10B981] hover:text-[#059669] text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300"
-                    whileHover={{ x: 5 }}
-                  >
-                    Read Full Bio
-                    <span>→</span>
-                  </motion.button>
+              <Link href={`/team/${member.slug}`}>
+                    <motion.button
+                      className="text-[#10B981] hover:text-[#059669] text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300 cursor-pointer"
+                      whileHover={{ x: 5 }}
+                    >
+                      Read Full Bio
+                      <span>→</span>
+                    </motion.button>
+                  </Link>
                 </div>
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#10B981] to-[#059669] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
               </div>
@@ -122,7 +129,7 @@ export function Team() {
           ))}
         </div>
 
-        {/* Join Our Team CTA */}
+    
         <motion.div
           className="text-center bg-gradient-to-r from-[#10B981] to-[#059669] rounded-2xl p-12 text-white"
           initial={{ opacity: 0, y: 20 }}

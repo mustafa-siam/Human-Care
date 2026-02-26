@@ -114,7 +114,7 @@ export function NavBar() {
             ))}
             <button
               onClick={() => scrollToSection('contact')}
-              className="bg-[#F59E0B] hover:bg-[#D97706] text-white px-6 py-2.5 rounded-full font-semibold transition-all duration-300 text-left"
+              className="bg-[#F59E0B] hover:bg-[#D97706] text-white px-6 py-2.5 rounded-full font-semibold transition-all duration-300 text-center"
             >
               Act Now
             </button>
