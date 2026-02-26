@@ -1,6 +1,7 @@
 "use client"
 import { motion } from 'motion/react';
 import { Heart, Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+import Image from 'next/image';
 
 export function Footer() {
   const scrollToSection = (id: string) => {
@@ -27,8 +28,16 @@ export function Footer() {
               className="flex items-center gap-3 mb-6"
               whileHover={{ scale: 1.05 }}
             >
-              <div className="w-12 h-12 bg-gradient-to-br from-[#10B981] to-[#059669] rounded-lg flex items-center justify-center">
-                <span className="text-white text-xl font-bold">HCG</span>
+              <div className=" flex items-center justify-center">
+                <span>
+                        <Image
+                        src={'/logo.jpeg'}
+                        alt='logo'
+                        width={50}
+                        height={40}
+                        className='rounded-sm'
+                        />
+                </span>
               </div>
               <div>
                 <h3 className="text-white text-lg font-bold leading-tight">Human Care Global</h3>

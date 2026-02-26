@@ -23,7 +23,6 @@ export function Hero() {
 
   return (
     <section id="hero" className="relative min-h-screen bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0F172A] pt-32 pb-20 overflow-hidden">
-      {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
           backgroundImage: 'radial-gradient(circle, #10B981 1px, transparent 1px)',
@@ -33,7 +32,6 @@ export function Hero() {
 
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -94,7 +92,6 @@ export function Hero() {
               </motion.button>
             </motion.div>
 
-            {/* Quick Stats */}
             <motion.div
               className="grid grid-cols-3 gap-6 mt-12 pt-12 border-t border-white/10"
               initial={{ opacity: 0, y: 20 }}
@@ -115,8 +112,6 @@ export function Hero() {
               </div>
             </motion.div>
           </motion.div>
-
-          {/* Right: Bento Grid Collage */}
           <motion.div
             className="relative"
             initial={{ opacity: 0, x: 50 }}
@@ -124,7 +119,7 @@ export function Hero() {
             transition={{ duration: 0.8 }}
           >
             <div className="grid grid-cols-6 grid-rows-6 gap-3 h-[600px]">
-              {/* Large featured image */}
+  
               <motion.div
                 className="col-span-4 row-span-4 rounded-2xl overflow-hidden shadow-2xl border-2 border-[#10B981]/20"
                 whileHover={{ scale: 1.02 }}
@@ -137,7 +132,6 @@ export function Hero() {
                 />
               </motion.div>
 
-              {/* Top right image */}
               <motion.div
                 className="col-span-2 row-span-3 rounded-2xl overflow-hidden shadow-xl border-2 border-[#10B981]/20"
                 whileHover={{ scale: 1.02 }}
@@ -150,7 +144,6 @@ export function Hero() {
                 />
               </motion.div>
 
-              {/* Bottom right small */}
               <motion.div
                 className="col-span-2 row-span-3 rounded-2xl overflow-hidden shadow-xl border-2 border-[#10B981]/20"
                 whileHover={{ scale: 1.02 }}
@@ -163,7 +156,6 @@ export function Hero() {
                 />
               </motion.div>
 
-              {/* Bottom left images */}
               <motion.div
                 className="col-span-2 row-span-2 rounded-2xl overflow-hidden shadow-xl border-2 border-[#10B981]/20"
                 whileHover={{ scale: 1.02 }}
@@ -189,7 +181,6 @@ export function Hero() {
               </motion.div>
             </div>
 
-            {/* Floating badge */}
             <motion.div
               className="absolute -bottom-6 -left-6 bg-[#F59E0B] text-white px-6 py-4 rounded-2xl shadow-2xl"
               initial={{ opacity: 0, scale: 0.8 }}
