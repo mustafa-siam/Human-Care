@@ -154,24 +154,6 @@ export function Footer() {
           <p className="text-white/90 mb-6 max-w-2xl mx-auto">
             Your contribution directly supports our programs and changes lives. Every donation counts.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <motion.button
-              onClick={() => scrollToSection('contact')}
-              className="bg-[#F59E0B] hover:bg-[#D97706] text-white px-8 py-3 rounded-full font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Donate Now
-            </motion.button>
-            <motion.button
-              onClick={() => scrollToSection('contact')}
-              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-8 py-3 rounded-full font-semibold border border-white/30 transition-all duration-300"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Volunteer
-            </motion.button>
-          </div>
         </motion.div>
         <div className="border-t border-white/10 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60">

@@ -3,39 +3,10 @@ import { motion } from 'motion/react';
 import { Linkedin, Mail } from 'lucide-react';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
 import Link from 'next/link';
-
-const teamMembers = [
-  {
-    slug: 'dr-nusrat-rahman',
-    name: 'Dr. Nusrat Rahman',
-    role: 'Founder & Executive Director',
-    bio: '15+ years in humanitarian work, medical doctor dedicated to community healthcare.',
-    image: 'https://images.unsplash.com/photo-1740153204804-200310378f2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBBc2lhbiUyMHRlYW0lMjBtZW1iZXIlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NzE5NTg2NjJ8MA&ixlib=rb-4.1.0&q=80&w=1080',
-  },
-  {
-    slug: 'fahim-ahmed',
-    name: 'Fahim Ahmed',
-    role: 'Director of Operations',
-    bio: 'Project management expert with focus on sustainable development and community engagement.',
-    image: 'https://images.unsplash.com/photo-1709785980187-5504ce6b7d55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxBc2lhbiUyMG1hbGUlMjBidXNpbmVzcyUyMHBvcnRyYWl0JTIwc21pbGV8ZW58MXx8fHwxNzcxOTU4NjYzfDA&ixlib=rb-4.1.0&q=80&w=1080',
-  },
-  {
-    slug: 'sabrina-chowdhury',
-    name: 'Sabrina Chowdhury',
-    role: 'Head of Education Programs',
-    bio: 'Former educator passionate about making quality education accessible to every child.',
-    image: 'https://images.unsplash.com/photo-1697510364485-e900c2fe7524?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxTb3V0aCUyMEFzaWFuJTIwd29tYW4lMjBwcm9mZXNzaW9uYWwlMjBwb3J0cmFpdHxlbnwxfHx8fDE3NzE5NTg2NjN8MA&ixlib=rb-4.1.0&q=80&w=1080',
-  },
-  {
-    slug: 'imran-hossain',
-    name: 'Imran Hossain',
-    role: 'Finance & Transparency Officer',
-    bio: 'Chartered accountant ensuring every donation creates maximum impact with full transparency.',
-    image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxBc2lhbiUyMG1hbGUlMjBidXNpbmVzcyUyMHBvcnRyYWl0fGVufDF8fHx8MTc3MTk1ODY5Nnww&ixlib=rb-4.1.0&q=80&w=1080',
-  },
-];
+import { useTeam } from '@/components/Hooks/useTeam';
 
 export function Team() {
+  const {team}=useTeam()
   return (
     <section id="team" className="py-24 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
       <div className="absolute top-20 left-10 w-72 h-72 bg-[#10B981]/10 rounded-full blur-3xl"></div>
@@ -66,22 +37,22 @@ export function Team() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
-          {teamMembers.map((member, index) => (
+          {team.slice(0,4).map((member, index) => (
             <motion.div
               key={member.name}
-              className="group relative"
+              className="group relative h-full"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 h-full flex flex-col">
 
-                <div className="relative h-80 overflow-hidden">
+                <div className="relative h-80 overflow-hidden shrink-0">
                   <ImagePosition
                     src={member.image}
                     alt={member.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 "
                   />
                   
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -103,32 +74,49 @@ export function Team() {
                     </motion.button>
                   </div>
                 </div>
-                <div className="p-6">
+                <div className="p-6 flex-1 flex flex-col">
                   <h3 className="text-xl text-[#0F172A] mb-1">
                     {member.name}
                   </h3>
                   <p className="text-[#10B981] mb-3">
                     {member.role}
                   </p>
-                  <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                  <p className="text-gray-600 text-sm leading-relaxed mb-4 line-clamp-3">
                     {member.bio}
                   </p>
-              <Link href={`/team/${member.slug}`}>
-                    <motion.button
-                      className="text-[#10B981] hover:text-[#059669] text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300 cursor-pointer"
-                      whileHover={{ x: 5 }}
-                    >
-                      Read Full Bio
-                      <span>→</span>
+                  <div className="mt-auto">
+                  <Link href={`/team/${member.slug}`}>
+                   <motion.button 
+                    className="text-[#10B981] hover:text-[#059669] text-sm flex items-center gap-2 group-hover:gap-3 transition-all duration-300 cursor-pointer"
+                    whileHover={{ x: 5 }}>
+                    Read Full Bio
+                    <span>→</span>
                     </motion.button>
-                  </Link>
+                   </Link>
+                   </div>
                 </div>
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#10B981] to-[#059669] transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
               </div>
             </motion.div>
           ))}
         </div>
-
+        <motion.div
+          className="text-center my-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+        >
+          <Link href="/team">
+            <motion.button
+              className="bg-[#0F172A] cursor-pointer hover:bg-[#1E293B] text-white px-8 py-4 rounded-full font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              View All Team Members
+            </motion.button>
+          </Link>
+        </motion.div>
     
         <motion.div
           className="text-center bg-gradient-to-r from-[#10B981] to-[#059669] rounded-2xl p-12 text-white"
@@ -142,11 +130,15 @@ export function Team() {
             We're always looking for passionate individuals who want to make a real difference. Explore career opportunities and become part of our mission.
           </p>
           <motion.button
-            className="bg-white text-[#10B981] hover:bg-gray-100 px-8 py-4 rounded-full font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
+          onClick={() => {
+              const element = document.getElementById('contact');
+              if (element) element.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="bg-white text-[#10B981] hover:bg-gray-100 px-8 py-4 rounded-full font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            View Open Positions
+            Become a Member
           </motion.button>
         </motion.div>
       </div>

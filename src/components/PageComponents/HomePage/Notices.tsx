@@ -2,59 +2,11 @@
 import { motion } from 'motion/react';
 import { Bell, Calendar, AlertCircle, TrendingUp,} from 'lucide-react';
 import Link from 'next/link';
-
-const updates = [
- {
-    slug: 'emergency-flood-relief',
-    date: 'Feb 20, 2026',
-    title: 'Emergency Flood Relief Distribution Completed',
-    description: 'Successfully distributed emergency supplies to 5,000 families affected by recent floods in Sylhet district.',
-    type: 'urgent',
-    latest: true,
-  },
-  {
-    slug: 'new-school-rajshahi',
-    date: 'Feb 15, 2026',
-    title: 'New School Building Inaugurated in Rajshahi',
-    description: 'Our 15th educational institution opened its doors to 300 students, featuring modern classrooms and a library.',
-    type: 'success',
-    latest: true,
-  },
-  {
-    slug: 'mobile-health-clinic',
-    date: 'Feb 10, 2026',
-    title: 'Mobile Health Clinic Reaches Remote Villages',
-    description: 'Medical team provided free check-ups and medications to over 800 people in hard-to-reach areas of Bandarban.',
-    type: 'notice',
-    latest: false,
-  },
-  {
-    slug: 'women-empowerment-workshop',
-    date: 'Feb 5, 2026',
-    title: 'Women Empowerment Workshop Success',
-    description: '150 women completed vocational training in tailoring and handicrafts, receiving startup kits for their businesses.',
-    type: 'success',
-    latest: false,
-  },
-  {
-    slug: 'annual-transparency-report',
-    date: 'Jan 28, 2026',
-    title: 'Annual Transparency Report Published',
-    description: 'Our 2025 financial and impact report is now available, showing 95% of donations directly funding programs.',
-    type: 'notice',
-    latest: false,
-  },
-  {
-    slug: 'global-health-partnership',
-    date: 'Jan 20, 2026',
-    title: 'Partnership with Global Health Initiative',
-    description: 'New collaboration will bring advanced medical equipment and training to our rural health centers.',
-    type: 'success',
-    latest: false,
-  },
-];
+import { useNotices } from '@/components/Hooks/useNotices';
 
 export function Notices() {
+  const {getLatestNotices}=useNotices();
+  const updates = getLatestNotices();
   return (
     <section id="updates" className="py-24 bg-white relative overflow-hidden">
       <div className="absolute inset-0 opacity-5">
@@ -161,7 +113,23 @@ export function Notices() {
             </motion.div>
           ))}
         </div>
-
+         <motion.div
+          className="text-center mt-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4 }}
+        >
+          <Link href="/notices">
+            <motion.button
+              className="bg-[#0F172A] hover:bg-[#1E293B] text-white px-8 py-4 rounded-full font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 cursor-pointer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              View All Updates
+            </motion.button>
+          </Link>
+        </motion.div>
         <motion.div
           className="mt-16 text-center bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl p-8 text-white"
           initial={{ opacity: 0, y: 20 }}

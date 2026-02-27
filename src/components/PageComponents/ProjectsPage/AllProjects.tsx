@@ -4,69 +4,8 @@ import { ArrowLeft, ArrowRight, MapPin, Users, Calendar } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
+import { useProjects } from '@/components/Hooks/useProjects';
 
-const projects = [
-  {
-    slug: 'clean-water-initiative',
-    title: 'Clean Water Initiative',
-    location: 'Dhaka & Chittagong',
-    description: 'Installing water purification systems and building wells to provide clean drinking water to 10,000 families in rural areas.',
-    image: 'https://images.unsplash.com/photo-1760873059715-7c7cfbe2a2c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjbGVhbiUyMHdhdGVyJTIwcHJvamVjdCUyMGRldmVsb3BpbmclMjBjb3VudHJ5fGVufDF8fHx8MTc3MTk1ODQ4MHww&ixlib=rb-4.1.0&q=80&w=1080',
-    progress: 78,
-    beneficiaries: '8,500+',
-    timeline: '2024-2026',
-  },
-  {
-    slug: 'education-for-all',
-    title: 'Education for All',
-    location: 'Sylhet & Rajshahi',
-    description: 'Building 15 new schools and providing educational materials, teacher training, and scholarships to underprivileged children.',
-    image: 'https://images.unsplash.com/photo-1764645362980-08d8704fd102?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMGVkdWNhdGlvbiUyMGNsYXNzcm9vbSUyMGRldmVsb3BpbmclMjBjb3VudHJ5fGVufDF8fHx8MTc3MTk1ODQ3OHww&ixlib=rb-4.1.0&q=80&w=1080',
-    progress: 65,
-    beneficiaries: '12,000+',
-    timeline: '2023-2025',
-  },
-  {
-    slug: 'emergency-relief-fund',
-    title: 'Emergency Relief Fund',
-    location: 'Nationwide',
-    description: 'Providing immediate assistance including food, shelter, and medical care to families affected by floods and natural disasters.',
-    image: 'https://images.unsplash.com/photo-1764684994219-8347a5ab0e5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXNhc3RlciUyMHJlbGllZiUyMGh1bWFuaXRhcmlhbiUyMGFpZHxlbnwxfHx8fDE3NzE5NTg0Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    progress: 92,
-    beneficiaries: '25,000+',
-    timeline: '2024-2025',
-  },
-  {
-    slug: 'women-empowerment',
-    title: 'Women Empowerment Program',
-    location: 'Khulna & Barisal',
-    description: 'Vocational training, microfinance, and business mentorship to help women achieve economic independence.',
-    image: 'https://images.unsplash.com/photo-1759738099669-d64b0656f6cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3b21lbiUyMGVtcG93ZXJtZW50JTIwY29tbXVuaXR5JTIwZGV2ZWxvcG1lbnR8ZW58MXx8fHwxNzcxOTIwMDE2fDA&ixlib=rb-4.1.0&q=80&w=1080',
-    progress: 55,
-    beneficiaries: '3,500+',
-    timeline: '2024-2027',
-  },
-  {
-    slug: 'mobile-health-clinics',
-    title: 'Mobile Health Clinics',
-    location: 'Rural Bangladesh',
-    description: 'Operating mobile medical units to provide free healthcare services, vaccinations, and health education to remote villages.',
-    image: 'https://images.unsplash.com/photo-1706806595099-f07588729caf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtZWRpY2FsJTIwaGVhbHRoY2FyZSUyMHZvbHVudGVlcnMlMjBjb21tdW5pdHl8ZW58MXx8fHwxNzcxOTU4NDc4fDA&ixlib=rb-4.1.0&q=80&w=1080',
-    progress: 70,
-    beneficiaries: '15,000+',
-    timeline: '2023-2026',
-  },
-  {
-    slug: 'food-security',
-    title: 'Food Security Initiative',
-    location: 'Cox\'s Bazar',
-    description: 'Distributing nutritious meals and establishing community kitchens to combat hunger and malnutrition.',
-    image: 'https://images.unsplash.com/photo-1759411354058-9e429834f92f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmb29kJTIwZGlzdHJpYnV0aW9uJTIwaHVtYW5pdGFyaWFufGVufDF8fHx8MTc3MTg2NTgxM3ww&ixlib=rb-4.1.0&q=80&w=1080',
-    progress: 85,
-    beneficiaries: '7,200+',
-    timeline: '2024-2025',
-  },
-];
 
 function ProgressBar({ progress }: { progress: number }) {
   const [animatedProgress, setAnimatedProgress] = useState(0);
@@ -97,6 +36,7 @@ function ProgressBar({ progress }: { progress: number }) {
 }
 
 export function AllProjects() {
+  const {projects}=useProjects()
   return (
     <div className="min-h-screen bg-white">
       <div className="pt-32 pb-24">

@@ -4,88 +4,23 @@ import { motion } from 'motion/react';
 import { ArrowLeft, MapPin, Users, Calendar, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
+import { useProjects } from '@/components/Hooks/useProjects';
+import { Contact } from '../HomePage/Contact';
 
-const projectsData = {
-  'clean-water-initiative': {
-    title: 'Clean Water Initiative',
-    location: 'Dhaka & Chittagong',
-    description: 'Installing water purification systems and building wells to provide clean drinking water to 10,000 families in rural areas.',
-    image: 'https://images.unsplash.com/photo-1760873059715-7c7cfbe2a2c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjbGVhbiUyMHdhdGVyJTIwcHJvamVjdCUyMGRldmVsb3BpbmclMjBjb3VudHJ5fGVufDF8fHx8MTc3MTk1ODQ4MHww&ixlib=rb-4.1.0&q=80&w=1080',
-    progress: 78,
-    beneficiaries: '8,500+',
-    timeline: '2024-2026',
-    fullDescription: 'Access to clean water is a fundamental human right, yet thousands of families in rural Bangladesh still struggle with waterborne diseases. Our Clean Water Initiative addresses this critical need through a comprehensive approach that combines modern technology with community engagement. We install advanced water purification systems and construct deep tube wells in areas where groundwater contamination is a serious concern.',
-    objectives: [
-      'Install 50 water purification systems across 25 villages',
-      'Build 100 deep tube wells in arsenic-affected areas',
-      'Train 200 local water management committees',
-      'Provide health education on water safety and hygiene'
-    ],
-    impact: [
-      '8,500 families now have access to clean water',
-      '60% reduction in waterborne diseases',
-      '40 women trained as water system technicians',
-      '25 villages became self-sufficient in water management'
-    ]
-  },
-  'education-for-all': {
-    title: 'Education for All',
-    location: 'Sylhet & Rajshahi',
-    description: 'Building 15 new schools and providing educational materials, teacher training, and scholarships to underprivileged children.',
-    image: 'https://images.unsplash.com/photo-1764645362980-08d8704fd102?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMGVkdWNhdGlvbiUyMGNsYXNzcm9vbSUyMGRldmVsb3BpbmclMjBjb3VudHJ5fGVufDF8fHx8MTc3MTk1ODQ3OHww&ixlib=rb-4.1.0&q=80&w=1080',
-    progress: 65,
-    beneficiaries: '12,000+',
-    timeline: '2023-2025',
-    fullDescription: 'Education is the key to breaking the cycle of poverty. Our Education for All program focuses on creating sustainable educational infrastructure in underserved regions. We build modern schools equipped with libraries, computer labs, and safe playgrounds. Beyond infrastructure, we invest heavily in teacher training and provide comprehensive scholarships to ensure no child is left behind due to financial constraints.',
-    objectives: [
-      'Construct 15 fully-equipped school buildings',
-      'Train 250 teachers in modern teaching methods',
-      'Provide scholarships to 2,000 underprivileged students',
-      'Establish 15 digital learning centers'
-    ],
-    impact: [
-      '12,000 students enrolled in our schools',
-      '85% improvement in literacy rates',
-      '250 teachers certified in quality education',
-      '15 communities now have access to quality education'
-    ]
-  },
-  'emergency-relief-fund': {
-    title: 'Emergency Relief Fund',
-    location: 'Nationwide',
-    description: 'Providing immediate assistance including food, shelter, and medical care to families affected by floods and natural disasters.',
-    image: 'https://images.unsplash.com/photo-1764684994219-8347a5ab0e5e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaXNhc3RlciUyMHJlbGllZiUyMGh1bWFuaXRhcmlhbiUyMGFpZHxlbnwxfHx8fDE3NzE5NTg0Nzl8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    progress: 92,
-    beneficiaries: '25,000+',
-    timeline: '2024-2025',
-    fullDescription: 'Bangladesh faces recurring natural disasters including floods, cyclones, and landslides. Our Emergency Relief Fund ensures rapid response to these crises. We maintain stockpiles of essential supplies and have trained emergency response teams ready to deploy within hours. Our relief efforts go beyond immediate aid - we help families rebuild their lives and livelihoods.',
-    objectives: [
-      'Provide emergency food packages to 5,000 families monthly',
-      'Set up temporary shelters for displaced populations',
-      'Deliver medical assistance and medicines',
-      'Support livelihood restoration programs'
-    ],
-    impact: [
-      '25,000 families received emergency assistance',
-      '10,000 temporary shelters provided',
-      '15,000 medical consultations conducted',
-      '3,000 families helped to rebuild their homes'
-    ]
-  }
-};
 
 export function ProjectDetails() {
  const params = useParams();
+ const {getProjectBySlug}=useProjects()
   const slug = params.slug as string;
 
-  const project = projectsData[slug as keyof typeof projectsData];
+  const project = getProjectBySlug(slug)
 
   if (!project) {
      return (
       <div className="min-h-screen bg-white">
         <div className="container mx-auto px-6 py-32 text-center">
           <h1 className="text-4xl text-[#0F172A] mb-4">Project Not Found</h1>
-          <Link href={"/"} className="text-[#10B981] hover:text-[#059669]">
+          <Link href={"/"} className="text-[#10B981] hover:text-[#059669] cursor-pointer">
             Return to Home
           </Link>
         </div>
@@ -100,7 +35,7 @@ export function ProjectDetails() {
         <div className="container mx-auto px-6">
           <Link href={"/"}>
             <motion.button
-              className="flex items-center gap-2 text-gray-600 hover:text-[#10B981] mb-8 transition-colors duration-300"
+              className="flex items-center gap-2 text-gray-600 hover:text-[#10B981] mb-8 transition-colors duration-300 cursor-pointer"
               whileHover={{ x: -5 }}
             >
               <ArrowLeft className="w-5 h-5" />
@@ -131,15 +66,15 @@ export function ProjectDetails() {
                 <div className="flex flex-wrap gap-4 mb-8">
                   <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full">
                     <MapPin className="w-4 h-4 text-[#10B981]" />
-                    <span className="text-sm">{project.location}</span>
+                    <span className="text-sm text-black">{project.location}</span>
                   </div>
                   <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full">
                     <Users className="w-4 h-4 text-[#10B981]" />
-                    <span className="text-sm">{project.beneficiaries} Beneficiaries</span>
+                    <span className="text-sm text-black">{project.beneficiaries} Beneficiaries</span>
                   </div>
                   <div className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-full">
                     <Calendar className="w-4 h-4 text-[#10B981]" />
-                    <span className="text-sm">{project.timeline}</span>
+                    <span className="text-sm text-black">{project.timeline}</span>
                   </div>
                 </div>
 
@@ -208,13 +143,16 @@ export function ProjectDetails() {
                       />
                     </div>
                   </div>
+                  <Link href="/#contact">
                   <motion.button
-                    className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-white py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                    className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-white py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     Support This Project
                   </motion.button>
+                  </Link>
+                  
                 </div>
                 <div className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] rounded-2xl p-8 text-white">
                   <h3 className="text-xl mb-4">Share This Project</h3>

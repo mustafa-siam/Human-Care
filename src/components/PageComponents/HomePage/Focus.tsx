@@ -32,12 +32,10 @@ const pillars = [
 export function Focus() {
   return (
     <section id="focus" className="py-24 bg-white relative overflow-hidden">
-      {/* Background decorative elements */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-[#10B981]/5 rounded-full blur-3xl"></div>
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#F59E0B]/5 rounded-full blur-3xl"></div>
 
       <div className="container mx-auto px-6 relative z-10">
-        {/* Section Header */}
         <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
@@ -61,7 +59,7 @@ export function Focus() {
           </p>
         </motion.div>
 
-        {/* Pillars Grid */}
+        
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
           {pillars.map((pillar, index) => (
             <motion.div
@@ -72,7 +70,7 @@ export function Focus() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
             >
-              {/* Icon container with gradient */}
+        
               <motion.div
                 className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#10B981] to-[#059669] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
                 whileHover={{ rotate: 5 }}
@@ -88,16 +86,13 @@ export function Focus() {
                 {pillar.description}
               </p>
 
-              {/* Animated underline */}
               <div className="h-1 w-0 bg-gradient-to-r from-[#10B981] to-[#059669] group-hover:w-full transition-all duration-500 rounded-full"></div>
 
-              {/* Hover glow effect */}
               <div className="absolute inset-0 bg-gradient-to-br from-[#10B981]/0 to-[#10B981]/0 group-hover:from-[#10B981]/5 group-hover:to-[#059669]/5 rounded-2xl transition-all duration-300 pointer-events-none"></div>
             </motion.div>
           ))}
         </div>
 
-        {/* Bottom CTA */}
         <motion.div
           className="text-center mt-16"
           initial={{ opacity: 0, y: 20 }}
@@ -113,7 +108,7 @@ export function Focus() {
               const element = document.getElementById('contact');
               if (element) element.scrollIntoView({ behavior: 'smooth' });
             }}
-            className="bg-[#F59E0B] hover:bg-[#D97706] text-white px-8 py-4 rounded-full font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="bg-[#F59E0B] cursor-pointer hover:bg-[#D97706] text-white px-8 py-4 rounded-full font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
