@@ -5,15 +5,15 @@ import { ArrowLeft, MapPin, Users, Calendar, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
 import { useProjects } from '@/components/Hooks/useProjects';
-import { Contact } from '../HomePage/Contact';
 
 
 export function ProjectDetails() {
- const params = useParams();
- const {getProjectBySlug}=useProjects()
-  const slug = params.slug as string;
+  const { slug } = useParams();
+  const { project, loading } = useProjects(slug as string);
 
-  const project = getProjectBySlug(slug)
+  if (loading) return <p>Loading...</p>;
+  if (!project) return <p>Not Found</p>;
+
 
   if (!project) {
      return (

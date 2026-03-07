@@ -34,7 +34,8 @@ function ProgressBar({ progress }: { progress: number }) {
 }
 
 export function Projects() {
-  const {projects}=useProjects()
+  const {projects,loading}=useProjects()
+  if (loading) return <p>Loading...</p>;
   return (
     <section id="projects" className="py-24 bg-gray-50 relative">
       <div className="container mx-auto px-6">

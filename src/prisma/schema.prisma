@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+   provider = "prisma-client"
+   output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+model HeroContent{
+  id            String @id @default("singleton")
+  badgeText     String   @default("Since 2010 • Making Impact in Bangladesh")
+  headline      String   @default("Humanity is Better Than Responsibility")
+  description   String   @default("We believe in compassion over obligation...")
+  livesImpacted String   @default("50K+")
+  projectsCount String   @default("120+")
+  yearsActive   String   @default("15+")
+  images        String[] 
+  updatedAt     DateTime @updatedAt
+}
+model Project {
+  id            String   @id @default(uuid())
+  slug          String   @unique
+  title         String
+  location      String
+  description   String
+  image         String
+  progress      Int
+  beneficiaries String
+  timeline      String
+  fullDescription String
+  objectives    String[]  
+  impact        String[]  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+model Notice {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  date        DateTime
+  title       String
+  description String
+  excerpt     String
+  content     String
+  type        String
+  latest      Boolean  
+  image       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+model Team {
+  id           String   @id @default(uuid())
+  slug         String   @unique
+  name         String
+  role         String
+  bio          String   @db.Text
+  expertise    String
+  image        String
+  email        String?
+  linkedin     String?
+
+  education    String[]
+  achievements String[]
+  experience   String[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+model GalleryItem {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  category    String
+  url         String   @unique 
+  date        DateTime
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

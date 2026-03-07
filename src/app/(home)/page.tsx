@@ -5,12 +5,16 @@ import { Hero } from '@/components/PageComponents/HomePage/Hero'
 import { Notices } from '@/components/PageComponents/HomePage/Notices'
 import { Projects } from '@/components/PageComponents/HomePage/Projects'
 import { Team } from '@/components/PageComponents/HomePage/Team'
+import { db } from '@/lib/db'
 import React from 'react'
 
-const page = () => {
+const page = async() => {
+  const heroData = await db.heroContent.findUnique({
+    where: { id: "singleton" }
+  });
   return (
     <div>
-      <Hero></Hero>
+      <Hero HeroDatas={heroData}></Hero>
       <Focus></Focus>
       <Projects></Projects>
       <Notices></Notices>

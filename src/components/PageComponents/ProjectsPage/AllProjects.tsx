@@ -5,8 +5,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
 import { useProjects } from '@/components/Hooks/useProjects';
-
-
 function ProgressBar({ progress }: { progress: number }) {
   const [animatedProgress, setAnimatedProgress] = useState(0);
 
@@ -36,7 +34,8 @@ function ProgressBar({ progress }: { progress: number }) {
 }
 
 export function AllProjects() {
-  const {projects}=useProjects()
+  const {projects,loading}=useProjects()
+  if (loading) return <p>Loading...</p>;
   return (
     <div className="min-h-screen bg-white">
       <div className="pt-32 pb-24">

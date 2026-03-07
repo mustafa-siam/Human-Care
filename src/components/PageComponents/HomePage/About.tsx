@@ -3,30 +3,34 @@ import { motion } from 'motion/react';
 import { Target, Award, Users, TrendingUp, CheckCircle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-function CounterAnimation({ end, suffix = '' }: { end: number; suffix?: string }) {
+const CounterAnimation = ({ end = 100, duration = 2000 }) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
-    let startTime: number;
-    const duration = 2000;
-    
-    const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
-      const progress = (currentTime - startTime) / duration;
-      
+    let startTime: number | null = null;
+    let frameId: number;
+
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const runtime = timestamp - startTime;
+      const progress = Math.min(runtime / duration, 1); // Ensure progress doesn't exceed 1
+
+      // Line 18: Update state based on progress
+      setCount(Math.floor(end * progress));
+
       if (progress < 1) {
-        setCount(Math.floor(end * progress));
-        requestAnimationFrame(animate);
-      } else {
-        setCount(end);
+        frameId = requestAnimationFrame(animate);
       }
     };
-    
-    requestAnimationFrame(animate);
-  }, [end]);
 
-  return <span>{count}{suffix}</span>;
-}
+    frameId = requestAnimationFrame(animate);
+
+    // CRITICAL: Cleanup to stop animation if component unmounts
+    return () => cancelAnimationFrame(frameId);
+  }, [end, duration]); // Only restart if these values change
+
+  return <div>{count}</div>;
+};
 
 const timeline = [
   {

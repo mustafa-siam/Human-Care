@@ -92,29 +92,6 @@ export function Focus() {
             </motion.div>
           ))}
         </div>
-
-        <motion.div
-          className="text-center mt-16"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.4 }}
-        >
-          <p className="text-gray-600 mb-6">
-            Every contribution makes a difference in someone's life
-          </p>
-          <motion.button
-            onClick={() => {
-              const element = document.getElementById('contact');
-              if (element) element.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="bg-[#F59E0B] cursor-pointer hover:bg-[#D97706] text-white px-8 py-4 rounded-full font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Support Our Mission
-          </motion.button>
-        </motion.div>
       </div>
     </section>
   );
