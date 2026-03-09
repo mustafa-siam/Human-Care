@@ -1,11 +1,18 @@
 "use client";
 import { motion } from 'motion/react';
-import { Bell, Calendar, AlertCircle, TrendingUp } from 'lucide-react';
+import { Bell, Calendar, AlertCircle, TrendingUp, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { useNotices } from '@/components/Hooks/useNotices';
 
 export function Notices() {
   const { latestNotices, loading } = useNotices();
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <Loader2 className="animate-spin text-emerald-500" size={50} />
+      </div>
+    );
+  }
 
   return (
     <section id="updates" className="py-24 bg-white relative overflow-hidden">

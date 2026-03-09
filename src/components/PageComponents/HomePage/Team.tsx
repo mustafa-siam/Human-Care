@@ -1,12 +1,19 @@
 "use client"
 import { motion } from 'motion/react';
-import { Linkedin, Mail } from 'lucide-react';
+import { Linkedin, Loader2, Mail } from 'lucide-react';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
 import Link from 'next/link';
 import { useTeam } from '@/components/Hooks/useTeam';
 
 export function Team() {
-  const {team}=useTeam()
+  const {team,loading}=useTeam()
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <Loader2 className="animate-spin text-emerald-500" size={50} />
+      </div>
+    );
+  }
   return (
     <section id="team" className="py-24 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
       <div className="absolute top-20 left-10 w-72 h-72 bg-[#10B981]/10 rounded-full blur-3xl"></div>
