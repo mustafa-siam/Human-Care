@@ -1,7 +1,9 @@
-"use client"
+"use client";
 import { motion } from 'motion/react';
 import { MapPin, Phone, Mail, Send, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { upsertContactMessage } from '@/app/ServerActions/contact'; // <-- server action
 
 export function Contact() {
   const [formData, setFormData] = useState({
@@ -13,11 +15,37 @@ export function Contact() {
   });
 
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission
+    try {
+      setLoading(true);
+
+      // Prepare FormData for server action
+      const form = new FormData();
+      Object.entries(formData).forEach(([key, value]) => form.append(key, value));
+
+      const res = await upsertContactMessage(form);
+
+      if (res.success) {
+        toast.success('Message sent successfully!');
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: '',
+        });
+      } else {
+        toast.error(res.error || 'Failed to send message');
+      }
+    } catch (error) {
+      toast.error('Something went wrong');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -70,130 +98,154 @@ export function Contact() {
               <h3 className="text-2xl text-[#0F172A] mb-6">Send us a Message</h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="relative">
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    onFocus={() => setFocusedField('name')}
-                    onBlur={() => setFocusedField(null)}
-                    className="w-full px-4 py-3 pt-6 border-2 border-gray-200 rounded-xl focus:border-[#10B981] focus:outline-none transition-colors duration-300 peer"
-                    placeholder=" "
-                    required
-                  />
-                  <label
-                    className={`absolute left-4 transition-all duration-300 pointer-events-none ${
-                      focusedField === 'name' || formData.name
-                        ? 'top-2 text-xs text-[#10B981]'
-                        : 'top-4 text-base text-gray-500'
-                    }`}
-                  >
-                    Full Name
-                  </label>
-                </div>
-                <div className="relative">
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    onFocus={() => setFocusedField('email')}
-                    onBlur={() => setFocusedField(null)}
-                    className="w-full px-4 py-3 pt-6 border-2 border-gray-200 rounded-xl focus:border-[#10B981] focus:outline-none transition-colors duration-300"
-                    placeholder=" "
-                    required
-                  />
-                  <label
-                    className={`absolute left-4 transition-all duration-300 pointer-events-none ${
-                      focusedField === 'email' || formData.email
-                        ? 'top-2 text-xs text-[#10B981]'
-                        : 'top-4 text-base text-gray-500'
-                    }`}
-                  >
-                    Email Address
-                  </label>
-                </div>
-                <div className="relative">
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    onFocus={() => setFocusedField('phone')}
-                    onBlur={() => setFocusedField(null)}
-                    className="w-full px-4 py-3 pt-6 border-2 border-gray-200 rounded-xl focus:border-[#10B981] focus:outline-none transition-colors duration-300"
-                    placeholder=" "
-                  />
-                  <label
-                    className={`absolute left-4 transition-all duration-300 pointer-events-none ${
-                      focusedField === 'phone' || formData.phone
-                        ? 'top-2 text-xs text-[#10B981]'
-                        : 'top-4 text-base text-gray-500'
-                    }`}
-                  >
-                    Phone Number (Optional)
-                  </label>
-                </div>
-                <div className="relative">
-                  <select
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleChange}
-                    onFocus={() => setFocusedField('subject')}
-                    onBlur={() => setFocusedField(null)}
-                    className="w-full px-4 py-3 pt-6 border-2 border-gray-200 rounded-xl focus:border-[#10B981] focus:outline-none transition-colors duration-300 appearance-none bg-white"
-                    required
-                  >
-                    <option value="">Select a subject</option>
-                    <option value="donation">Make a Donation</option>
-                    <option value="volunteer">Volunteer with Us</option>
-                    <option value="partnership">Partnership Opportunity</option>
-                    <option value="general">General Inquiry</option>
-                  </select>
-                  <label
-                    className={`absolute left-4 transition-all duration-300 pointer-events-none ${
-                      focusedField === 'subject' || formData.subject
-                        ? 'top-2 text-xs text-[#10B981]'
-                        : 'top-4 text-base text-gray-500'
-                    }`}
-                  >
-                    Subject
-                  </label>
-                </div>
+  {/** Full Name */}
+  <div className="relative">
+    <input
+      type="text"
+      name="name"
+      value={formData.name}
+      onChange={handleChange}
+      onFocus={() => setFocusedField('name')}
+      onBlur={() => setFocusedField(null)}
+      className="w-full px-4 py-3 pt-6 border-2 border-gray-200 rounded-xl focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:outline-none shadow-sm hover:shadow-md transition-all duration-300 peer text-black"
+      placeholder=" "
+      required
+    />
+    <label
+      className={`absolute left-4 px-1 bg-white transition-all duration-300 pointer-events-none ${
+        focusedField === 'name' || formData.name
+          ? '-top-2 text-xs text-[#10B981]'
+          : 'top-4 text-gray-500'
+      }`}
+    >
+      Full Name
+    </label>
+  </div>
 
-                <div className="relative">
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    onFocus={() => setFocusedField('message')}
-                    onBlur={() => setFocusedField(null)}
-                    rows={5}
-                    className="w-full px-4 py-3 pt-6 border-2 border-gray-200 rounded-xl focus:border-[#10B981] focus:outline-none transition-colors duration-300 resize-none"
-                    placeholder=" "
-                    required
-                  />
-                  <label
-                    className={`absolute left-4 transition-all duration-300 pointer-events-none ${
-                      focusedField === 'message' || formData.message
-                        ? 'top-2 text-xs text-[#10B981]'
-                        : 'top-4 text-base text-gray-500'
-                    }`}
-                  >
-                    Your Message
-                  </label>
-                </div>
-                <motion.button
-                  type="submit"
-                  className="w-full bg-[#F59E0B] hover:bg-[#D97706] text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all duration-300"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Send Message
-                  <Send className="w-5 h-5" />
-                </motion.button>
-              </form>
+  {/** Email */}
+  <div className="relative">
+    <input
+      type="email"
+      name="email"
+      value={formData.email}
+      onChange={handleChange}
+      onFocus={() => setFocusedField('email')}
+      onBlur={() => setFocusedField(null)}
+      className="w-full px-4 py-3 pt-6 border-2 border-gray-200 rounded-xl focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:outline-none shadow-sm hover:shadow-md transition-all duration-300 peer text-black"
+      placeholder=" "
+      required
+    />
+    <label
+      className={`absolute left-4 px-1 bg-white transition-all duration-300 pointer-events-none ${
+        focusedField === 'email' || formData.email
+          ? '-top-2 text-xs text-[#10B981]'
+          : 'top-4 text-gray-500'
+      }`}
+    >
+      Email Address
+    </label>
+  </div>
+
+  {/** Phone */}
+  <div className="relative">
+    <input
+      type="tel"
+      name="phone"
+      value={formData.phone}
+      onChange={handleChange}
+      onFocus={() => setFocusedField('phone')}
+      onBlur={() => setFocusedField(null)}
+      className="w-full px-4 py-3 pt-6 border-2 border-gray-200 rounded-xl focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:outline-none shadow-sm hover:shadow-md transition-all duration-300 peer"
+      placeholder=" "
+    />
+    <label
+      className={`absolute left-4 px-1 bg-white transition-all duration-300 pointer-events-none ${
+        focusedField === 'phone' || formData.phone
+          ? '-top-2 text-xs text-[#10B981]'
+          : 'top-4 text-gray-500'
+      }`}
+    >
+      Phone Number (Optional)
+    </label>
+  </div>
+
+  {/** Subject */}
+  <div className="relative">
+    <select
+      name="subject"
+      value={formData.subject}
+      onChange={handleChange}
+      onFocus={() => setFocusedField('subject')}
+      onBlur={() => setFocusedField(null)}
+      className="w-full px-4 py-3 pt-6 border-2 border-gray-200 rounded-xl focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:outline-none shadow-sm hover:shadow-md transition-all duration-300 appearance-none bg-white text-black"
+      required
+    >
+      <option value=""></option>
+      <option value="donation">Make a Donation</option>
+      <option value="volunteer">Volunteer with Us</option>
+      <option value="partnership">Partnership Opportunity</option>
+      <option value="general">General Inquiry</option>
+    </select>
+    <label
+      className={`absolute left-4 px-1 bg-white transition-all duration-300 pointer-events-none ${
+        focusedField === 'subject' || formData.subject
+          ? '-top-2 text-xs text-[#10B981]'
+          : 'top-4 text-gray-500'
+      }`}
+    >
+      Subject
+    </label>
+  </div>
+
+  {/** Message */}
+  <div className="relative">
+    <textarea
+      name="message"
+      value={formData.message}
+      onChange={handleChange}
+      onFocus={() => setFocusedField('message')}
+      onBlur={() => setFocusedField(null)}
+      rows={5}
+      className="w-full px-4 py-3 pt-6 border-2 border-gray-200 rounded-xl focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] focus:outline-none shadow-sm hover:shadow-md transition-all duration-300 resize-none text-black"
+      placeholder=" "
+      required
+    />
+    <label
+      className={`absolute left-4 px-1 bg-white transition-all duration-300 pointer-events-none ${
+        focusedField === 'message' || formData.message
+          ? '-top-2 text-xs text-[#10B981]'
+          : 'top-4 text-gray-500'
+      }`}
+    >
+      Your Message
+    </label>
+  </div>
+
+  {/** Submit Button */}
+ <motion.button
+  type="submit"
+  disabled={loading}
+  className="w-full bg-gradient-to-r from-[#F59E0B] to-[#D97706] text-white py-4 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg hover:shadow-2xl transition-all duration-300 disabled:opacity-80 cursor-pointer"
+  whileHover={!loading ? { scale: 1.03 } : {}}
+  whileTap={!loading ? { scale: 0.97 } : {}}
+>
+  {loading ? (
+    <>
+      <motion.span
+        className="w-5 h-5 border-2 border-white border-t-transparent  rounded-full"
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 0.8, ease: "linear" }}
+      />
+      Sending Message...
+    </>
+  ) : (
+    <>
+      Send Message
+      <Send className="w-5 h-5" />
+    </>
+  )}
+</motion.button>
+</form>
             </div>
           </motion.div>
 

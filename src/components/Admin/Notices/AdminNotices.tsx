@@ -195,7 +195,7 @@ export default function AdminNotices() {
 
                         <button
                           onClick={() => confirmDelete(notice.id)}
-                          className="p-2 text-rose-400 hover:bg-rose-400/10 rounded-lg"
+                          className="p-2 text-rose-400 hover:bg-rose-400/10 rounded-lg cursor-pointer"
                         >
                           <Trash2 size={18} />
                         </button>
