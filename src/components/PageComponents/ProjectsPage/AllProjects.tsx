@@ -1,6 +1,6 @@
 "use client"
 import { motion } from 'motion/react';
-import { ArrowLeft, ArrowRight, MapPin, Users, Calendar } from 'lucide-react';
+import { ArrowLeft, ArrowRight, MapPin, Users, Calendar, Loader2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
@@ -35,7 +35,13 @@ function ProgressBar({ progress }: { progress: number }) {
 
 export function AllProjects() {
   const {projects,loading}=useProjects()
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 gap-4">
+              <Loader2 className="animate-spin text-emerald-500" size={40} />
+            </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-white">
       <div className="pt-32 pb-24">

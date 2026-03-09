@@ -1,29 +1,27 @@
-"use client"
+"use client";
+
 import { motion } from "motion/react";
-import { ArrowRight, Heart } from "lucide-react";
+import { ArrowRight, Heart, Loader2 } from "lucide-react";
 import { ImagePosition } from "@/components/Hooks/ImagePosition";
 import { useHero } from "@/components/Hooks/useHero";
 
 export function Hero() {
   const { hero, loading } = useHero();
 
-if (loading || !hero) return null;
-  const {
-    badgeText,
-    headline,
-    description,
-    livesImpacted,
-    projectsCount,
-    yearsActive,
-    images,
-  } = hero;
-
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
+    if (element) element.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  if (loading || !hero) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#0F172A]">
+        <Loader2 className="animate-spin text-emerald-500" size={50} />
+      </div>
+    );
+  }
+
+  const { badgeText, headline, description, livesImpacted, projectsCount, yearsActive, images } = hero;
 
   return (
     <section
@@ -32,7 +30,6 @@ if (loading || !hero) return null;
     >
       <div className="container mx-auto px-6 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          
           {/* LEFT SIDE */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -73,23 +70,15 @@ if (loading || !hero) return null;
             {/* STATS */}
             <div className="grid grid-cols-3 gap-6 mt-12 pt-12 border-t border-white/10">
               <div>
-                <div className="text-3xl text-[#10B981] mb-1">
-                  {livesImpacted}
-                </div>
+                <div className="text-3xl text-[#10B981] mb-1">{livesImpacted}</div>
                 <div className="text-white/60 text-sm">Lives Impacted</div>
               </div>
-
               <div>
-                <div className="text-3xl text-[#10B981] mb-1">
-                  {projectsCount}
-                </div>
+                <div className="text-3xl text-[#10B981] mb-1">{projectsCount}</div>
                 <div className="text-white/60 text-sm">Projects</div>
               </div>
-
               <div>
-                <div className="text-3xl text-[#10B981] mb-1">
-                  {yearsActive}
-                </div>
+                <div className="text-3xl text-[#10B981] mb-1">{yearsActive}</div>
                 <div className="text-white/60 text-sm">Years Active</div>
               </div>
             </div>
@@ -104,47 +93,22 @@ if (loading || !hero) return null;
           >
             <div className="grid grid-cols-6 grid-rows-6 gap-3 h-[600px]">
               <div className="col-span-4 row-span-4 rounded-2xl overflow-hidden">
-                <ImagePosition
-                  src={images[0]}
-                  alt="Hero Image 1"
-                  className="w-full h-full object-cover"
-                />
+                <ImagePosition src={images[0]} alt="Hero Image 1" className="w-full h-full object-cover" />
               </div>
-
               <div className="col-span-2 row-span-3 rounded-2xl overflow-hidden">
-                <ImagePosition
-                  src={images[1]}
-                  alt="Hero Image 2"
-                  className="w-full h-full object-cover"
-                />
+                <ImagePosition src={images[1]} alt="Hero Image 2" className="w-full h-full object-cover" />
               </div>
-
               <div className="col-span-2 row-span-3 rounded-2xl overflow-hidden">
-                <ImagePosition
-                  src={images[2]}
-                  alt="Hero Image 3"
-                  className="w-full h-full object-cover"
-                />
+                <ImagePosition src={images[2]} alt="Hero Image 3" className="w-full h-full object-cover" />
               </div>
-
               <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden">
-                <ImagePosition
-                  src={images[3]}
-                  alt="Hero Image 4"
-                  className="w-full h-full object-cover"
-                />
+                <ImagePosition src={images[3]} alt="Hero Image 4" className="w-full h-full object-cover" />
               </div>
-
               <div className="col-span-2 row-span-2 rounded-2xl overflow-hidden">
-                <ImagePosition
-                  src={images[4]}
-                  alt="Hero Image 5"
-                  className="w-full h-full object-cover"
-                />
+                <ImagePosition src={images[4]} alt="Hero Image 5" className="w-full h-full object-cover" />
               </div>
             </div>
           </motion.div>
-
         </div>
       </div>
     </section>

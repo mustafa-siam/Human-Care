@@ -7,7 +7,13 @@ import { useNotices } from '@/components/Hooks/useNotices';
 export function AllNotice() {
     // 1. Destructure loading and both notice arrays
     const { notices, latestNotices, loading } = useNotices();
-
+if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 gap-4">
+              <Loader2 className="animate-spin text-emerald-500" size={40} />
+            </div>
+    );
+  }
     // 2. Combine them so "All Notices" actually shows EVERYTHING
     // We put latestNotices first so they appear at the top
     const allUpdates = [...latestNotices, ...notices];

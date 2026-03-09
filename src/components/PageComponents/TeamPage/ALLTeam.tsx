@@ -1,11 +1,18 @@
 "use client"
 import { motion } from 'motion/react';
-import { ArrowLeft, Mail, Linkedin, Users as UsersIcon } from 'lucide-react';
+import { ArrowLeft, Mail, Linkedin, Users as UsersIcon, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
 import { useTeam } from '@/components/Hooks/useTeam';
 export function AllTeam() {
-  const {team}=useTeam()
+  const {team,loading}=useTeam()
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 gap-4">
+              <Loader2 className="animate-spin text-emerald-500" size={40} />
+            </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-white"> 
       <div className="pt-32 pb-24">
