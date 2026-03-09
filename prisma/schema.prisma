@@ -89,4 +89,5 @@ model ContactMessage {
   subject   String
   message   String
   createdAt DateTime @default(now())
+  deletedAt DateTime? 
 }

@@ -169,7 +169,8 @@ export const ContactMessageScalarFieldEnum = {
   phone: 'phone',
   subject: 'subject',
   message: 'message',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  deletedAt: 'deletedAt'
 } as const
 
 export type ContactMessageScalarFieldEnum = (typeof ContactMessageScalarFieldEnum)[keyof typeof ContactMessageScalarFieldEnum]

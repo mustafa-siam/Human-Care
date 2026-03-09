@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { getContacts, getContactById } from "@/app/ServerActions/contact";
 
-export function useContacts(id?: string) {
+export function useContacts(id?: string, trashed: boolean = false) {
   const [contacts, setContacts] = useState<any[]>([]);
   const [contact, setContact] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ export function useContacts(id?: string) {
         const res = await getContactById(id);
         if (res.success) setContact(res.data);
       } else {
-        const res = await getContacts();
+        const res = await getContacts(trashed); // fetch trashed if true
         if (res.success && res.data) {
           setContacts(res.data);
         }
@@ -26,7 +26,7 @@ export function useContacts(id?: string) {
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [id, trashed]);
 
   useEffect(() => {
     fetchData();

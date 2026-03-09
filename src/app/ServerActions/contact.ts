@@ -16,21 +16,17 @@ export const upsertContactMessage = async (formData: FormData) => {
     let contact;
 
     if (id) {
-      // Update existing message
       contact = await db.contactMessage.update({
         where: { id },
         data: { name, email, phone, subject, message },
       });
     } else {
-      // Create new message
       contact = await db.contactMessage.create({
         data: { name, email, phone, subject, message },
       });
     }
 
-    // Revalidate admin contacts page
     revalidatePath("/admin/contacts");
-
     return { success: true, data: contact };
   } catch (error: any) {
     console.error("Contact Upsert Error:", error);
@@ -39,9 +35,10 @@ export const upsertContactMessage = async (formData: FormData) => {
 };
 
 /* ---------------- GET ALL CONTACT MESSAGES ---------------- */
-export const getContacts = async () => {
+export const getContacts = async (trashed: boolean = false) => {
   try {
     const contacts = await db.contactMessage.findMany({
+      where: trashed ? { deletedAt: { not: null } } : { deletedAt: null },
       orderBy: { createdAt: "desc" },
     });
     return { success: true, data: contacts };
@@ -64,17 +61,46 @@ export const getContactById = async (id: string) => {
   }
 };
 
-/* ---------------- DELETE CONTACT MESSAGE ---------------- */
-export const deleteContact = async (id: string) => {
+/* ---------------- SOFT DELETE (MOVE TO TRASH) ---------------- */
+export const moveToTrash = async (id: string) => {
+  try {
+    await db.contactMessage.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
+    revalidatePath("/admin/contacts");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Move to Trash Error:", error);
+    return { success: false, error: error.message || "Failed to move to trash" };
+  }
+};
+
+/* ---------------- RESTORE FROM TRASH ---------------- */
+export const restoreContact = async (id: string) => {
+  try {
+    await db.contactMessage.update({
+      where: { id },
+      data: { deletedAt: null },
+    });
+    revalidatePath("/admin/contacts");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Restore Contact Error:", error);
+    return { success: false, error: error.message || "Failed to restore contact" };
+  }
+};
+
+/* ---------------- PERMANENT DELETE ---------------- */
+export const deleteContactPermanent = async (id: string) => {
   try {
     await db.contactMessage.delete({
       where: { id },
     });
-    // Revalidate admin contacts page
     revalidatePath("/admin/contacts");
     return { success: true };
   } catch (error: any) {
-    console.error("Delete Contact Error:", error);
+    console.error("Permanent Delete Error:", error);
     return { success: false, error: error.message || "Delete failed" };
   }
 };
