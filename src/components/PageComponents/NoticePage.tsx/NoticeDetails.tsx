@@ -13,10 +13,9 @@ export function NoticeDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4">
-        <Loader2 className="w-10 h-10 animate-spin text-[#10B981]" />
-        <p className="text-gray-500 font-medium tracking-wide">Fetching article...</p>
-      </div>
+      <div className="flex flex-col items-center justify-center h-96 gap-4">
+              <Loader2 className="animate-spin text-emerald-500" size={40} />
+            </div>
     );
   }
 

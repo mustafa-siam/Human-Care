@@ -1,7 +1,7 @@
 "use client"
 import { useParams } from 'next/navigation';
 import { motion } from 'motion/react';
-import { ArrowLeft, MapPin, Users, Calendar, CheckCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, Users, Calendar, CheckCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
 import { useProjects } from '@/components/Hooks/useProjects';
@@ -11,7 +11,13 @@ export function ProjectDetails() {
   const { slug } = useParams();
   const { project, loading } = useProjects(slug as string);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-96 gap-4">
+              <Loader2 className="animate-spin text-emerald-500" size={40} />
+            </div>
+    );
+  }
   if (!project) return <p>Not Found</p>;
 
 

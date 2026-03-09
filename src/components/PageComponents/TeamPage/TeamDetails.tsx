@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from 'motion/react';
-import { ArrowLeft, Mail, Linkedin, Award, GraduationCap, Briefcase } from 'lucide-react';
+import { ArrowLeft, Mail, Linkedin, Award, GraduationCap, Briefcase, Loader2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTeam } from '@/components/Hooks/useTeam';
@@ -14,9 +14,9 @@ export function TeamDetails() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
-      </div>
+      <div className="flex flex-col items-center justify-center h-96 gap-4">
+              <Loader2 className="animate-spin text-emerald-500" size={40} />
+            </div>
     );
   }
 

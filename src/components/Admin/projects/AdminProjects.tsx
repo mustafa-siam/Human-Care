@@ -21,7 +21,6 @@ export default function AdminProjectsPage() {
     setShowForm(true);
   };
 
-  // SONNER DELETE CONFIRMATION
   const confirmDelete = (id: string) => {
     toast("Are you sure you want to delete this project?", {
       action: {
@@ -38,7 +37,6 @@ export default function AdminProjectsPage() {
 
   const executeDelete = async (id: string) => {
     const res = await deleteProject(id);
-
     if (res.success) {
       toast.success("Project deleted successfully");
       refresh();
@@ -49,24 +47,17 @@ export default function AdminProjectsPage() {
 
   const handleFormSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
-
     try {
-      if (editingProject?.id) {
-        formData.append("id", editingProject.id);
-      }
+      if (editingProject?.id) formData.append("id", editingProject.id);
 
       const res = await upsertProject(formData);
-
       if (res.success) {
         toast.success(editingProject ? "Project updated" : "Project created");
         setShowForm(false);
         setEditingProject(null);
         refresh();
-      } else {
-        toast.error(res.error || "Error saving project");
-      }
-    } catch (err) {
-      console.error(err);
+      } else toast.error(res.error || "Error saving project");
+    } catch {
       toast.error("Something went wrong");
     } finally {
       setIsSubmitting(false);
@@ -77,14 +68,13 @@ export default function AdminProjectsPage() {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
         <Loader2 className="animate-spin text-emerald-500" size={40} />
-        <p className="text-slate-400 font-medium">Fetching database...</p>
       </div>
     );
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white tracking-tight">
             Project Management
@@ -93,21 +83,20 @@ export default function AdminProjectsPage() {
             Create, update, or remove initiatives.
           </p>
         </div>
-
         {!showForm && (
           <button
             onClick={() => {
               setEditingProject(null);
               setShowForm(true);
             }}
-            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
+            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20"
           >
             <Plus size={20} /> New Project
           </button>
         )}
       </div>
 
-      {/* FORM */}
+      {/* Form */}
       {showForm ? (
         <ProjectForm
           initialData={editingProject}
@@ -121,24 +110,24 @@ export default function AdminProjectsPage() {
           animate={{ opacity: 1 }}
           className="bg-[#1e293b] rounded-2xl border border-slate-800 overflow-hidden shadow-xl"
         >
-          <table className="w-full text-left border-separate border-spacing-0">
-            <thead className="bg-slate-800/50 text-slate-400 text-[10px] uppercase font-bold tracking-[0.15em] border-b border-slate-800">
-              <tr>
-                <th className="px-8 py-5">Initiative</th>
-                <th className="px-8 py-5">Location</th>
-                <th className="px-8 py-5">Completion</th>
-                <th className="px-8 py-5 text-right">Manage</th>
-              </tr>
-            </thead>
-
-            <tbody className="divide-y divide-slate-800">
-              {projects.map((project) => (
-                <tr
-                  key={project.id}
-                  className="group hover:bg-slate-800/30 transition-all"
-                >
-                  <td className="px-8 py-5">
-                    <div className="flex items-center gap-4">
+          {/* Desktop Table */}
+          <div className="hidden md:block">
+            <table className="w-full text-left border-separate border-spacing-0">
+              <thead className="bg-slate-800/50 text-slate-400 text-[10px] uppercase font-bold tracking-[0.15em] border-b border-slate-800">
+                <tr>
+                  <th className="px-8 py-5">Initiative</th>
+                  <th className="px-8 py-5">Location</th>
+                  <th className="px-8 py-5">Completion</th>
+                  <th className="px-8 py-5 text-right">Manage</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800">
+                {projects.map((project) => (
+                  <tr
+                    key={project.id}
+                    className="group hover:bg-slate-800/30 transition-all"
+                  >
+                    <td className="px-8 py-5 flex items-center gap-4">
                       <div className="h-10 w-16 rounded-lg bg-slate-900 overflow-hidden relative border border-slate-700 shadow-inner">
                         <img
                           src={project.image}
@@ -149,45 +138,79 @@ export default function AdminProjectsPage() {
                       <span className="font-bold text-slate-200">
                         {project.title}
                       </span>
-                    </div>
-                  </td>
+                    </td>
+                    <td className="px-8 py-5 text-slate-400 text-sm  gap-2">
+                      
+                      {project.location}
+                    </td>
+                    <td className="px-8 py-5">
+                      <ProgressBar progress={project.progress} showText className="w-32" />
+                    </td>
+                    <td className="px-8 py-5 text-right space-x-2">
+                      <button
+                        onClick={() => handleEdit(project)}
+                        className="p-2.5 text-cyan-400 hover:bg-cyan-400/10 rounded-xl transition-all"
+                        title="Edit Project"
+                      >
+                        <Pencil size={18} />
+                      </button>
+                      <button
+                        onClick={() => confirmDelete(project.id)}
+                        className="p-2.5 text-rose-400 hover:bg-rose-400/10 rounded-xl transition-all"
+                        title="Delete Project"
+                      >
+                        <Trash2 size={18} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-                  <td className="px-8 py-5 text-slate-400 text-sm">
-                    <div className="flex items-center gap-2">
+          {/* Mobile Cards */}
+          <div className="md:hidden flex flex-col gap-4 p-4">
+            {projects.map((project) => (
+              <div
+                key={project.id}
+                className="bg-slate-800 rounded-xl p-4 flex flex-col gap-3 shadow-lg"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="h-16 w-20 rounded-lg bg-slate-900 overflow-hidden border border-slate-700">
+                    <img
+                      src={project.image}
+                      alt=""
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="font-bold text-slate-200">{project.title}</h2>
+                    <div className="flex items-center gap-1 text-slate-400 text-sm mt-1">
                       <MapPin size={14} className="text-emerald-500" />
                       {project.location}
                     </div>
-                  </td>
-
-                  <td className="px-8 py-5">
-                    <ProgressBar
-                      progress={project.progress}
-                      showText={true}
-                      className="w-32"
-                    />
-                  </td>
-
-                  <td className="px-8 py-5 text-right space-x-2">
-                    <button
-                      onClick={() => handleEdit(project)}
-                      className="p-2.5 text-cyan-400 hover:bg-cyan-400/10 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center border border-transparent hover:border-cyan-400/20"
-                      title="Edit Project"
-                    >
-                      <Pencil size={18} />
-                    </button>
-
-                    <button
-                      onClick={() => confirmDelete(project.id)}
-                      className="p-2.5 text-rose-400 hover:bg-rose-400/10 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center border border-transparent hover:border-rose-400/20"
-                      title="Delete Project"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <div className="mt-2">
+                      <ProgressBar progress={project.progress} showText className="w-full" />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => handleEdit(project)}
+                    className="p-2 text-cyan-400 hover:bg-cyan-400/10 rounded-lg transition-all"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                  <button
+                    onClick={() => confirmDelete(project.id)}
+                    className="p-2 text-rose-400 hover:bg-rose-400/10 rounded-lg transition-all"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
 
           {projects.length === 0 && !loading && (
             <div className="p-24 text-center">
