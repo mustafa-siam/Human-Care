@@ -85,14 +85,14 @@ export function AllTeam() {
                   </p>
   
                   <div className="flex flex-col gap-2 mb-4">
-                    {member.expertise.split(', ').slice(0, 2).map((skill, idx) => (
-                      <span
-                        key={idx}
-                        className="bg-gray-100  text-gray-600 px-2 py-1 rounded text-xs"
-                      >
-                        {skill}
-                      </span>
-                    ))}
+                   {member.expertise.split(', ').slice(0, 2).map((skill: string, idx: number) => (
+  <span
+    key={idx}
+    className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs"
+  >
+    {skill}
+  </span>
+))}
                   </div>
                   <div className="mt-auto">
                   <Link href={`/team/${member.slug}`}>

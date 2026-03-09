@@ -9,12 +9,9 @@ import { db } from '@/lib/db'
 import React from 'react'
 
 const page = async() => {
-  const heroData = await db.heroContent.findUnique({
-    where: { id: "singleton" }
-  });
   return (
     <div>
-      <Hero HeroDatas={heroData}></Hero>
+      <Hero></Hero>
       <Focus></Focus>
       <Projects></Projects>
       <Notices></Notices>

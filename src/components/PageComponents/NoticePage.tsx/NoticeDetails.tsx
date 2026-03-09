@@ -9,10 +9,8 @@ export function NoticeDetails() {
   const params = useParams();
   const slug = params.slug as string;
   
-  // 1. Pass the slug directly into the hook
   const { notice: update, loading } = useNotices(slug);
 
-  // 2. Handle the Loading State
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center gap-4">
@@ -22,7 +20,6 @@ export function NoticeDetails() {
     );
   }
 
-  // 3. Handle the "Not Found" State (Only after loading is finished)
   if (!update) {
     return (
       <div className="min-h-screen bg-white">
@@ -108,12 +105,15 @@ export function NoticeDetails() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            {/* Split content by new lines and render paragraphs */}
-            {update.content?.split('\n').filter(p => p.trim() !== '').map((paragraph, index) => (
-              <p key={index} className="text-gray-700 leading-relaxed mb-6 text-lg">
-                {paragraph}
-              </p>
-            ))}
+            {update.content
+  ?.split('\n')
+  .filter((p: string) => p.trim() !== '')
+  .map((paragraph: string, index: number) => (
+    <p key={index} className="text-gray-700 leading-relaxed mb-6 text-lg">
+      {paragraph}
+    </p>
+  ))
+}
           </motion.div>
 
           <motion.div
@@ -122,7 +122,6 @@ export function NoticeDetails() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            {/* Background Decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[#10B981] opacity-10 blur-[80px] -mr-32 -mt-32"></div>
 
             <h3 className="text-3xl font-bold mb-4 relative z-10">Support Our Initiatives</h3>

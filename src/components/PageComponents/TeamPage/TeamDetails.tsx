@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import { motion } from 'motion/react';
 import { ArrowLeft, Mail, Linkedin, Award, GraduationCap, Briefcase } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -6,15 +7,22 @@ import Link from 'next/link';
 import { useTeam } from '@/components/Hooks/useTeam';
 
 export function TeamDetails() {
-  const params=useParams();
-  const slug=params.slug as string
-  const {getTeamMemberBySlug}=useTeam()
-  const member = getTeamMemberBySlug(slug);
+  const params = useParams();
+  const slug = params.slug as string;
+
+  const { member, loading } = useTeam(slug);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   if (!member) {
     return (
       <div className="min-h-screen bg-white">
-    
         <div className="container mx-auto px-6 py-32 text-center">
           <h1 className="text-4xl text-[#0F172A] mb-4">Team Member Not Found</h1>
           <Link href="/" className="text-[#10B981] hover:text-[#059669] cursor-pointer">
@@ -27,7 +35,6 @@ export function TeamDetails() {
 
   return (
     <div className="min-h-screen bg-white">
-      
       <div className="pt-32 pb-24">
         <div className="container mx-auto px-6">
           <Link href="/">
@@ -56,7 +63,7 @@ export function TeamDetails() {
                   <div className="p-6">
                     <h1 className="text-2xl text-[#0F172A] mb-2">{member.name}</h1>
                     <p className="text-[#10B981] mb-6">{member.role}</p>
-                    
+
                     <div className="space-y-3">
                       <motion.button
                         className="w-full flex items-center justify-center gap-2 bg-[#10B981] hover:bg-[#059669] text-white py-3 rounded-xl transition-colors duration-300"
@@ -79,12 +86,11 @@ export function TeamDetails() {
                 </div>
               </motion.div>
             </div>
+
             <div className="lg:col-span-2">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+                
+                {/* Biography */}
                 <div className="mb-12">
                   <h2 className="text-3xl text-[#0F172A] mb-6 flex items-center gap-3">
                     <div className="w-12 h-12 bg-gradient-to-br from-[#10B981] to-[#059669] rounded-lg flex items-center justify-center">
@@ -92,20 +98,19 @@ export function TeamDetails() {
                     </div>
                     Biography
                   </h2>
-                  {member.bio.split('\n\n').map((paragraph, index) => (
-                    <p key={index} className="text-gray-700 leading-relaxed mb-4">
-                      {paragraph}
-                    </p>
+                  {member.bio.split('\n\n').map((paragraph: string, index: number) => (
+                    <p key={index} className="text-gray-700 leading-relaxed mb-4">{paragraph}</p>
                   ))}
                 </div>
 
+                {/* Education */}
                 <div className="mb-12">
                   <h3 className="text-2xl text-[#0F172A] mb-6 flex items-center gap-3">
                     <GraduationCap className="w-6 h-6 text-[#10B981]" />
                     Education
                   </h3>
                   <div className="space-y-3">
-                    {member.education.map((edu, index) => (
+                    {member.education.map((edu: string, index: number) => (
                       <motion.div
                         key={index}
                         className="flex items-start gap-3 bg-gray-50 p-4 rounded-xl"
@@ -119,17 +124,19 @@ export function TeamDetails() {
                     ))}
                   </div>
                 </div>
+
+                {/* Achievements */}
                 <div className="mb-12">
                   <h3 className="text-2xl text-[#0F172A] mb-6 flex items-center gap-3">
                     <Award className="w-6 h-6 text-[#10B981]" />
                     Key Achievements
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
-                    {member.achievements.map((achievement, index) => (
+                    {member.achievements.map((achievement: string, index: number) => (
                       <motion.div
                         key={index}
                         className="flex items-start gap-3 bg-gradient-to-br from-[#10B981]/10 to-[#059669]/10 p-4 rounded-xl border border-[#10B981]/20"
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 0 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 + index * 0.1 }}
                       >
@@ -141,13 +148,15 @@ export function TeamDetails() {
                     ))}
                   </div>
                 </div>
+
+                {/* Professional Experience */}
                 <div className="mb-12">
                   <h3 className="text-2xl text-[#0F172A] mb-6 flex items-center gap-3">
                     <Briefcase className="w-6 h-6 text-[#10B981]" />
                     Professional Experience
                   </h3>
                   <div className="space-y-4">
-                    {member.experience.map((exp, index) => (
+                    {member.experience.map((exp: string, index: number) => (
                       <motion.div
                         key={index}
                         className="border-l-4 border-[#10B981] pl-6 py-2"
@@ -160,6 +169,7 @@ export function TeamDetails() {
                     ))}
                   </div>
                 </div>
+
               </motion.div>
             </div>
           </div>

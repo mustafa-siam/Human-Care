@@ -4,10 +4,30 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { imagekit } from "@/lib/imagekit";
 
+/**
+ * GET HERO CONTENT
+ * Used in homepage
+ */
+export const getHeroContent = async () => {
+  try {
+    const hero = await db.heroContent.findUnique({
+      where: { id: "singleton" },
+    });
+
+    return hero;
+  } catch (error) {
+    console.error("Hero fetch error:", error);
+    return null;
+  }
+};
+
+/**
+ * UPDATE HERO CONTENT
+ * Handles image uploads + upsert
+ */
 export const updateHeroContent = async (formData: FormData) => {
   const id = (formData.get("id") as string) || "singleton";
 
-  // Extract form values
   const badgeText = (formData.get("badgeText") as string) || "";
   const headline = (formData.get("headline") as string) || "";
   const description = (formData.get("description") as string) || "";
@@ -16,9 +36,14 @@ export const updateHeroContent = async (formData: FormData) => {
   const yearsActive = (formData.get("yearsActive") as string) || "";
 
   try {
-    // --- Parse existing images safely ---
-    const existingImagesRaw = (formData.get("existingImages") as string) || "[]";
+    /**
+     * Parse existing images
+     */
+    const existingImagesRaw =
+      (formData.get("existingImages") as string) || "[]";
+
     let existingImages: string[] = [];
+
     try {
       existingImages = JSON.parse(existingImagesRaw);
       if (!Array.isArray(existingImages)) existingImages = [];
@@ -27,30 +52,17 @@ export const updateHeroContent = async (formData: FormData) => {
       existingImages = [];
     }
 
-    // --- Get new files ---
+    /**
+     * Upload new images
+     */
     const files = formData.getAll("images") as File[];
-    let uploadedUrls: string[] = [];
+
+    const uploadedUrls: string[] = [];
 
     for (const file of files) {
-      if (!file) continue;
+      if (!file || file.size === 0) continue;
 
-      // --- Convert file to Buffer safely in Node.js ---
-      let buffer: Buffer;
-      if (typeof file.arrayBuffer === "function") {
-        // Browser-like File
-        buffer = Buffer.from(await file.arrayBuffer());
-      } else if (typeof file.stream === "function") {
-        // Node.js File (server action)
-        const chunks: Buffer[] = [];
-        const reader = file.stream();
-        for await (const chunk of reader) {
-          chunks.push(Buffer.from(chunk));
-        }
-        buffer = Buffer.concat(chunks);
-      } else {
-        console.warn("Unknown file type, skipping:", file);
-        continue;
-      }
+      const buffer = Buffer.from(await file.arrayBuffer());
 
       const result = await imagekit.upload({
         file: buffer,
@@ -61,26 +73,17 @@ export const updateHeroContent = async (formData: FormData) => {
       uploadedUrls.push(result.url);
     }
 
-    // --- Combine existing and new images ---
+    /**
+     * Combine images
+     */
     const finalImages = [...existingImages, ...uploadedUrls];
 
-    // --- Debug log before upsert ---
-    console.log({
-      id,
-      badgeText,
-      headline,
-      description,
-      livesImpacted,
-      projectsCount,
-      yearsActive,
-      existingImages,
-      uploadedUrls,
-      finalImages,
-    });
-
-    // --- Prisma upsert ---
+    /**
+     * Upsert hero content
+     */
     await db.heroContent.upsert({
       where: { id },
+
       update: {
         badgeText,
         headline,
@@ -90,6 +93,7 @@ export const updateHeroContent = async (formData: FormData) => {
         yearsActive,
         images: finalImages,
       },
+
       create: {
         id,
         badgeText,
@@ -102,13 +106,15 @@ export const updateHeroContent = async (formData: FormData) => {
       },
     });
 
-    // --- Revalidate pages ---
+    /**
+     * Revalidate pages
+     */
     revalidatePath("/");
     revalidatePath("/admin");
 
     return { success: true };
   } catch (error: any) {
-    console.error("Detailed Hero update error:", error);
+    console.error("Hero update error:", error);
     throw new Error(error.message || "Hero update failed");
   }
 };

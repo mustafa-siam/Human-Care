@@ -85,38 +85,38 @@ export function ProjectDetails() {
                 <div className="mb-12">
                   <h2 className="text-3xl text-[#0F172A] mb-6">Project Objectives</h2>
                   <div className="space-y-3">
-                    {project.objectives.map((objective, index) => (
-                      <motion.div
-                        key={index}
-                        className="flex items-start gap-3"
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.3 + index * 0.1 }}
-                      >
-                        <CheckCircle className="w-6 h-6 text-[#10B981] flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700">{objective}</span>
-                      </motion.div>
-                    ))}
+                   {project.objectives.map((objective: string, index: number) => (
+  <motion.div
+    key={index}
+    className="flex items-start gap-3"
+    initial={{ opacity: 0, x: -20 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay: 0.3 + index * 0.1 }}
+  >
+    <CheckCircle className="w-6 h-6 text-[#10B981] flex-shrink-0 mt-0.5" />
+    <span className="text-gray-700">{objective}</span>
+  </motion.div>
+))}
                   </div>
                 </div>
 
                 <div className="bg-gradient-to-br from-[#10B981]/10 to-[#059669]/10 rounded-2xl p-8">
                   <h2 className="text-3xl text-[#0F172A] mb-6">Impact Achieved</h2>
                   <div className="grid md:grid-cols-2 gap-4">
-                    {project.impact.map((item, index) => (
-                      <motion.div
-                        key={index}
-                        className="flex items-start gap-3"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5 + index * 0.1 }}
-                      >
-                        <div className="w-8 h-8 bg-[#10B981] rounded-full flex items-center justify-center flex-shrink-0">
-                          <span className="text-white text-sm">✓</span>
-                        </div>
-                        <span className="text-gray-700">{item}</span>
-                      </motion.div>
-                    ))}
+                   {project.impact.map((item: string, index: number) => (
+  <motion.div
+    key={index}
+    className="flex items-start gap-3"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.5 + index * 0.1 }}
+  >
+    <div className="w-8 h-8 bg-[#10B981] rounded-full flex items-center justify-center flex-shrink-0">
+      <span className="text-white text-sm">✓</span>
+    </div>
+    <span className="text-gray-700">{item}</span>
+  </motion.div>
+))}
                   </div>
                 </div>
               </motion.div>

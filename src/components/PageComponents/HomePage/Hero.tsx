@@ -2,20 +2,12 @@
 import { motion } from "motion/react";
 import { ArrowRight, Heart } from "lucide-react";
 import { ImagePosition } from "@/components/Hooks/ImagePosition";
+import { useHero } from "@/components/Hooks/useHero";
 
-interface HeroProps {
-  HeroDatas: {
-    badgeText: string;
-    headline: string;
-    description: string;
-    livesImpacted: string;
-    projectsCount: string;
-    yearsActive: string;
-    images: string[];
-  };
-}
+export function Hero() {
+  const { hero, loading } = useHero();
 
-export function Hero({ HeroDatas }: HeroProps) {
+if (loading || !hero) return null;
   const {
     badgeText,
     headline,
@@ -24,7 +16,7 @@ export function Hero({ HeroDatas }: HeroProps) {
     projectsCount,
     yearsActive,
     images,
-  } = HeroDatas;
+  } = hero;
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
