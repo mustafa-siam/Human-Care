@@ -104,48 +104,78 @@ export const upsertProject = async (formData: FormData) => {
   }
 };
 
-/**
- * DELETE PROJECT
- */
-export const deleteProject = async (id: string) => {
+// SOFT DELETE PROJECT (move to trash)
+export const softDeleteProject = async (id: string) => {
   try {
-    // id is a string, no parseInt needed
-    await db.project.delete({ where: { id } });
-    
+    await db.project.update({
+      where: { id },
+      data: { deleted: true },
+    });
+
     revalidatePath("/admin/projects");
     revalidatePath("/projects");
-    
+
     return { success: true };
   } catch (error: any) {
-    console.error("Delete Error:", error);
+    console.error("Soft Delete Error:", error);
+    return { success: false, error: "Failed to move project to trash" };
+  }
+};
+
+// RESTORE PROJECT FROM TRASH
+export const restoreProject = async (id: string) => {
+  try {
+    await db.project.update({
+      where: { id },
+      data: { deleted: false },
+    });
+
+    revalidatePath("/admin/projects");
+    revalidatePath("/projects");
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Restore Error:", error);
+    return { success: false, error: "Failed to restore project" };
+  }
+};
+
+// PERMANENT DELETE
+export const deleteProjectPermanent = async (id: string) => {
+  try {
+    await db.project.delete({ where: { id } });
+
+    revalidatePath("/admin/projects");
+    revalidatePath("/projects");
+
+    return { success: true };
+  } catch (error: any) {
+    console.error("Permanent Delete Error:", error);
     return { success: false, error: "Delete failed" };
   }
 };
 
-/**
- * GET ALL PROJECTS
- */
-export const getProjects = async () => {
+// GET ALL PROJECTS (optionally trashed)
+export const getProjects = async (trashed: boolean = false) => {
   try {
     const projects = await db.project.findMany({
+      where: trashed ? { deleted: true } : { deleted: false },
       orderBy: { createdAt: "desc" },
     });
     return { success: true, data: projects };
-  } catch (error) {
+  } catch (error: any) {
     return { success: false, error: "Failed to fetch projects" };
   }
 };
 
-/**
- * GET SINGLE PROJECT BY SLUG
- */
+// GET SINGLE PROJECT BY SLUG
 export const getProjectBySlug = async (slug: string) => {
   try {
     const project = await db.project.findUnique({ 
       where: { slug } 
     });
     return { success: true, data: project };
-  } catch (error) {
+  } catch (error: any) {
     return { success: false, error: "Project not found" };
   }
 };

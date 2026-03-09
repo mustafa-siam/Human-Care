@@ -45,6 +45,7 @@ export type ProjectMinAggregateOutputType = {
   beneficiaries: string | null
   timeline: string | null
   fullDescription: string | null
+  deleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -60,6 +61,7 @@ export type ProjectMaxAggregateOutputType = {
   beneficiaries: string | null
   timeline: string | null
   fullDescription: string | null
+  deleted: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -77,6 +79,7 @@ export type ProjectCountAggregateOutputType = {
   fullDescription: number
   objectives: number
   impact: number
+  deleted: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -102,6 +105,7 @@ export type ProjectMinAggregateInputType = {
   beneficiaries?: true
   timeline?: true
   fullDescription?: true
+  deleted?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -117,6 +121,7 @@ export type ProjectMaxAggregateInputType = {
   beneficiaries?: true
   timeline?: true
   fullDescription?: true
+  deleted?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -134,6 +139,7 @@ export type ProjectCountAggregateInputType = {
   fullDescription?: true
   objectives?: true
   impact?: true
+  deleted?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -238,6 +244,7 @@ export type ProjectGroupByOutputType = {
   fullDescription: string
   objectives: string[]
   impact: string[]
+  deleted: boolean
   createdAt: Date
   updatedAt: Date
   _count: ProjectCountAggregateOutputType | null
@@ -278,6 +285,7 @@ export type ProjectWhereInput = {
   fullDescription?: Prisma.StringFilter<"Project"> | string
   objectives?: Prisma.StringNullableListFilter<"Project">
   impact?: Prisma.StringNullableListFilter<"Project">
+  deleted?: Prisma.BoolFilter<"Project"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
 }
@@ -295,6 +303,7 @@ export type ProjectOrderByWithRelationInput = {
   fullDescription?: Prisma.SortOrder
   objectives?: Prisma.SortOrder
   impact?: Prisma.SortOrder
+  deleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -315,6 +324,7 @@ export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   fullDescription?: Prisma.StringFilter<"Project"> | string
   objectives?: Prisma.StringNullableListFilter<"Project">
   impact?: Prisma.StringNullableListFilter<"Project">
+  deleted?: Prisma.BoolFilter<"Project"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Project"> | Date | string
 }, "id" | "slug">
@@ -332,6 +342,7 @@ export type ProjectOrderByWithAggregationInput = {
   fullDescription?: Prisma.SortOrder
   objectives?: Prisma.SortOrder
   impact?: Prisma.SortOrder
+  deleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProjectCountOrderByAggregateInput
@@ -357,6 +368,7 @@ export type ProjectScalarWhereWithAggregatesInput = {
   fullDescription?: Prisma.StringWithAggregatesFilter<"Project"> | string
   objectives?: Prisma.StringNullableListFilter<"Project">
   impact?: Prisma.StringNullableListFilter<"Project">
+  deleted?: Prisma.BoolWithAggregatesFilter<"Project"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Project"> | Date | string
 }
@@ -374,6 +386,7 @@ export type ProjectCreateInput = {
   fullDescription: string
   objectives?: Prisma.ProjectCreateobjectivesInput | string[]
   impact?: Prisma.ProjectCreateimpactInput | string[]
+  deleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -391,6 +404,7 @@ export type ProjectUncheckedCreateInput = {
   fullDescription: string
   objectives?: Prisma.ProjectCreateobjectivesInput | string[]
   impact?: Prisma.ProjectCreateimpactInput | string[]
+  deleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -408,6 +422,7 @@ export type ProjectUpdateInput = {
   fullDescription?: Prisma.StringFieldUpdateOperationsInput | string
   objectives?: Prisma.ProjectUpdateobjectivesInput | string[]
   impact?: Prisma.ProjectUpdateimpactInput | string[]
+  deleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -425,6 +440,7 @@ export type ProjectUncheckedUpdateInput = {
   fullDescription?: Prisma.StringFieldUpdateOperationsInput | string
   objectives?: Prisma.ProjectUpdateobjectivesInput | string[]
   impact?: Prisma.ProjectUpdateimpactInput | string[]
+  deleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -442,6 +458,7 @@ export type ProjectCreateManyInput = {
   fullDescription: string
   objectives?: Prisma.ProjectCreateobjectivesInput | string[]
   impact?: Prisma.ProjectCreateimpactInput | string[]
+  deleted?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -459,6 +476,7 @@ export type ProjectUpdateManyMutationInput = {
   fullDescription?: Prisma.StringFieldUpdateOperationsInput | string
   objectives?: Prisma.ProjectUpdateobjectivesInput | string[]
   impact?: Prisma.ProjectUpdateimpactInput | string[]
+  deleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -476,6 +494,7 @@ export type ProjectUncheckedUpdateManyInput = {
   fullDescription?: Prisma.StringFieldUpdateOperationsInput | string
   objectives?: Prisma.ProjectUpdateobjectivesInput | string[]
   impact?: Prisma.ProjectUpdateimpactInput | string[]
+  deleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -493,6 +512,7 @@ export type ProjectCountOrderByAggregateInput = {
   fullDescription?: Prisma.SortOrder
   objectives?: Prisma.SortOrder
   impact?: Prisma.SortOrder
+  deleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -512,6 +532,7 @@ export type ProjectMaxOrderByAggregateInput = {
   beneficiaries?: Prisma.SortOrder
   timeline?: Prisma.SortOrder
   fullDescription?: Prisma.SortOrder
+  deleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -527,6 +548,7 @@ export type ProjectMinOrderByAggregateInput = {
   beneficiaries?: Prisma.SortOrder
   timeline?: Prisma.SortOrder
   fullDescription?: Prisma.SortOrder
+  deleted?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -561,6 +583,10 @@ export type ProjectUpdateimpactInput = {
   push?: string | string[]
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 
 
 export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -576,6 +602,7 @@ export type ProjectSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   fullDescription?: boolean
   objectives?: boolean
   impact?: boolean
+  deleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["project"]>
@@ -593,6 +620,7 @@ export type ProjectSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   fullDescription?: boolean
   objectives?: boolean
   impact?: boolean
+  deleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["project"]>
@@ -610,6 +638,7 @@ export type ProjectSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   fullDescription?: boolean
   objectives?: boolean
   impact?: boolean
+  deleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["project"]>
@@ -627,11 +656,12 @@ export type ProjectSelectScalar = {
   fullDescription?: boolean
   objectives?: boolean
   impact?: boolean
+  deleted?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "location" | "description" | "image" | "progress" | "beneficiaries" | "timeline" | "fullDescription" | "objectives" | "impact" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
+export type ProjectOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "title" | "location" | "description" | "image" | "progress" | "beneficiaries" | "timeline" | "fullDescription" | "objectives" | "impact" | "deleted" | "createdAt" | "updatedAt", ExtArgs["result"]["project"]>
 
 export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Project"
@@ -649,6 +679,7 @@ export type $ProjectPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     fullDescription: string
     objectives: string[]
     impact: string[]
+    deleted: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["project"]>
@@ -1086,6 +1117,7 @@ export interface ProjectFieldRefs {
   readonly fullDescription: Prisma.FieldRef<"Project", 'String'>
   readonly objectives: Prisma.FieldRef<"Project", 'String[]'>
   readonly impact: Prisma.FieldRef<"Project", 'String[]'>
+  readonly deleted: Prisma.FieldRef<"Project", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Project", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Project", 'DateTime'>
 }

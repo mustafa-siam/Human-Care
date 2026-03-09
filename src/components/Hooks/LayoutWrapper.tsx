@@ -15,7 +15,7 @@ export default function LayoutWrapper({children,}: {children: React.ReactNode;})
 
       {children}
 
-      <Toaster position="top-right" richColors />
+      <Toaster position="top-center" richColors />
 
       {!isAdminPage && <Footer />}
     </>

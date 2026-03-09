@@ -1,15 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Pencil, Trash2, Loader2, MapPin } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, MapPin} from "lucide-react";
 import { motion } from "motion/react";
 import { useProjects } from "@/components/Hooks/useProjects";
-import { deleteProject, upsertProject } from "@/app/ServerActions/project";
+import { softDeleteProject, upsertProject } from "@/app/ServerActions/project";
 import { ProjectForm } from "./ProjectForm";
 import { ProgressBar } from "@/components/Hooks/ProgressBar";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 export default function AdminProjectsPage() {
+  const router = useRouter();
   const { projects, loading, refresh } = useProjects();
 
   const [showForm, setShowForm] = useState(false);
@@ -21,29 +24,30 @@ export default function AdminProjectsPage() {
     setShowForm(true);
   };
 
-  const confirmDelete = (id: string) => {
-    toast("Are you sure you want to delete this project?", {
-      action: {
-        label: "Delete",
-        onClick: () => executeDelete(id),
-      },
-      cancel: {
-        label: "Cancel",
-        onClick: () => toast.dismiss(),
-      },
-      duration: 5000,
-    });
-  };
+  const confirmDelete = async (id: string) => {
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "This project will be moved to trash!",
+    showCancelButton: true,
+    confirmButtonColor: "#e11d48",
+    cancelButtonColor: "#64748b",
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (result.isConfirmed) {
+    executeDelete(id); // call softDeleteProject
+  }
+};
 
   const executeDelete = async (id: string) => {
-    const res = await deleteProject(id);
-    if (res.success) {
-      toast.success("Project deleted successfully");
-      refresh();
-    } else {
-      toast.error("Failed to delete project");
-    }
-  };
+  const res = await softDeleteProject(id);
+  if (res.success) {
+    toast.success("Project moved to trash");
+    refresh(); // refresh list
+  } else {
+    toast.error("Failed to delete project");
+  }
+};
 
   const handleFormSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
@@ -83,17 +87,29 @@ export default function AdminProjectsPage() {
             Create, update, or remove initiatives.
           </p>
         </div>
-        {!showForm && (
+
+        <div className="flex gap-2">
+          {/* Trash Bin Button */}
           <button
-            onClick={() => {
-              setEditingProject(null);
-              setShowForm(true);
-            }}
-            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20"
+            onClick={() => router.push("/admin/projects/trash")}
+            className="flex items-center gap-2 cursor-pointer bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-lg shadow-rose-500/20"
           >
-            <Plus size={20} /> New Project
+            <Trash2 size={18} /> Trash Bin
           </button>
-        )}
+
+          {/* New Project Button */}
+          {!showForm && (
+            <button
+              onClick={() => {
+                setEditingProject(null);
+                setShowForm(true);
+              }}
+              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20"
+            >
+              <Plus size={20} /> New Project
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Form */}
@@ -139,8 +155,7 @@ export default function AdminProjectsPage() {
                         {project.title}
                       </span>
                     </td>
-                    <td className="px-8 py-5 text-slate-400 text-sm  gap-2">
-                      
+                    <td className="px-8 py-5 text-slate-400 text-sm gap-2">
                       {project.location}
                     </td>
                     <td className="px-8 py-5">
@@ -149,15 +164,15 @@ export default function AdminProjectsPage() {
                     <td className="px-8 py-5 text-right space-x-2">
                       <button
                         onClick={() => handleEdit(project)}
-                        className="p-2.5 text-cyan-400 hover:bg-cyan-400/10 rounded-xl transition-all"
+                        className="p-2.5 text-cyan-400 cursor-pointer hover:bg-cyan-400/10 rounded-xl transition-all"
                         title="Edit Project"
                       >
                         <Pencil size={18} />
                       </button>
                       <button
                         onClick={() => confirmDelete(project.id)}
-                        className="p-2.5 text-rose-400 hover:bg-rose-400/10 rounded-xl transition-all"
-                        title="Delete Project"
+                        className="p-2.5 text-rose-400 cursor-pointer hover:bg-rose-400/10 rounded-xl transition-all"
+                        title="Move to Trash"
                       >
                         <Trash2 size={18} />
                       </button>

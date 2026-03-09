@@ -7,6 +7,7 @@ import { useGallery } from "@/components/Hooks/useGallery";
 import { toast } from "sonner";
 import { deleteGalleryItem, upsertGalleryItem } from "@/app/ServerActions/galleryItem";
 import GalleryForm from "./GalleryForm";
+import Swal from "sweetalert2";
 
 export default function AdminGalleryPage() {
   const { items, loading, refresh } = useGallery();
@@ -20,13 +21,20 @@ export default function AdminGalleryPage() {
     setShowForm(true);
   };
 
-  const handleDeleteRequest = (id: number, title: string) => {
-    toast(`Delete "${title}"?`, {
-      description: "Are you sure you want to delete this ?",
-      action: { label: "Delete", onClick: () => executeDelete(id) },
-      cancel: { label: "Cancel", onClick: () => toast.dismiss() },
-    });
-  };
+  const handleDeleteRequest = async (id: number, title: string) => {
+  const result = await Swal.fire({
+    title: "Delete gallery item?",
+    text: `"${title}" will be permanently deleted.`,
+    showCancelButton: true,
+    confirmButtonColor: "#e11d48",
+    cancelButtonColor: "#64748b",
+    confirmButtonText: "Yes, delete it",
+  });
+
+  if (result.isConfirmed) {
+    executeDelete(id);
+  }
+};
 
   const executeDelete = async (id: number) => {
     const res = await deleteGalleryItem(id);

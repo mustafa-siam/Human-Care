@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, X, Calendar, User } from "lucide-react";
+import { Trash2, X, Calendar, User, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { restoreContact, deleteContactPermanent } from "@/app/ServerActions/contact";
 import { useContacts } from "@/components/Hooks/useContact";
+import Swal from "sweetalert2";
 
 export default function AdminContactTrash() {
   const { contacts: trashedContacts, loading, refresh } = useContacts(undefined, true); // fetch trashed
@@ -20,47 +21,59 @@ export default function AdminContactTrash() {
     }
   };
 
-  const handlePermanentDelete = async (id: string) => {
+ const handlePermanentDelete = async (id: string) => {
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "This message will be permanently deleted!",
+    showCancelButton: true,
+    confirmButtonColor: "#e11d48",
+    cancelButtonColor: "#64748b",
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (result.isConfirmed) {
     const res = await deleteContactPermanent(id);
+
     if (res.success) {
       toast.success("Message permanently deleted");
       refresh();
     }
-  };
+  }
+};
 
   const handleDeleteAll = async () => {
   if (!trashedContacts.length) return toast("Trash is already empty");
 
-  // Show Sonner toast confirmation
-  toast(`Delete all messages permanently?`, {
-    action: {
-      label: "Delete All",
-      onClick: async () => {
-        try {
-          setDeletingAll(true);
-          for (const msg of trashedContacts) {
-            await deleteContactPermanent(msg.id);
-          }
-          toast.success("All trashed messages deleted");
-          refresh();
-        } catch (error) {
-          console.error(error);
-          toast.error("Failed to delete all messages");
-        } finally {
-          setDeletingAll(false);
-        }
-      },
-    },
-    cancel: {
-      label: "Cancel",
-      onClick: () => toast.dismiss(),
-    },
+  const result = await Swal.fire({
+    title: "Delete all messages?",
+    text: "This will permanently delete all trashed messages!",
+    showCancelButton: true,
+    confirmButtonColor: "#e11d48",
+    cancelButtonColor: "#64748b",
+    confirmButtonText: "Yes, delete all!",
   });
+
+  if (result.isConfirmed) {
+    try {
+      setDeletingAll(true);
+
+      for (const msg of trashedContacts) {
+        await deleteContactPermanent(msg.id);
+      }
+
+      toast.success("All trashed messages deleted");
+      refresh();
+    } catch (error) {
+      toast.error("Failed to delete all messages");
+    } finally {
+      setDeletingAll(false);
+    }
+  }
 };
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-96 gap-4">
-      <Trash2 className="animate-spin text-rose-500" size={40} />
+      <Loader2 className="animate-spin text-emerald-500" size={40} />
     </div>
   );
 
@@ -185,7 +198,7 @@ export default function AdminContactTrash() {
               <div className="p-6 bg-slate-800/20 border-t border-slate-800 flex justify-end gap-2">
                 <button
                   onClick={() => handleRestore(selectedMessage.id)}
-                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition-all cursor-pointer"
+                  className="px-6 py-2.5 cup bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition-all cursor-pointer"
                 >
                   Restore
                 </button>

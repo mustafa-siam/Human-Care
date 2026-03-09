@@ -34,6 +34,8 @@ export type TeamMinAggregateOutputType = {
   image: string | null
   email: string | null
   linkedin: string | null
+  isDeleted: boolean | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -48,6 +50,8 @@ export type TeamMaxAggregateOutputType = {
   image: string | null
   email: string | null
   linkedin: string | null
+  isDeleted: boolean | null
+  deletedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -65,6 +69,8 @@ export type TeamCountAggregateOutputType = {
   education: number
   achievements: number
   experience: number
+  isDeleted: number
+  deletedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -81,6 +87,8 @@ export type TeamMinAggregateInputType = {
   image?: true
   email?: true
   linkedin?: true
+  isDeleted?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -95,6 +103,8 @@ export type TeamMaxAggregateInputType = {
   image?: true
   email?: true
   linkedin?: true
+  isDeleted?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -112,6 +122,8 @@ export type TeamCountAggregateInputType = {
   education?: true
   achievements?: true
   experience?: true
+  isDeleted?: true
+  deletedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -202,6 +214,8 @@ export type TeamGroupByOutputType = {
   education: string[]
   achievements: string[]
   experience: string[]
+  isDeleted: boolean
+  deletedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: TeamCountAggregateOutputType | null
@@ -240,6 +254,8 @@ export type TeamWhereInput = {
   education?: Prisma.StringNullableListFilter<"Team">
   achievements?: Prisma.StringNullableListFilter<"Team">
   experience?: Prisma.StringNullableListFilter<"Team">
+  isDeleted?: Prisma.BoolFilter<"Team"> | boolean
+  deletedAt?: Prisma.DateTimeNullableFilter<"Team"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Team"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Team"> | Date | string
 }
@@ -257,6 +273,8 @@ export type TeamOrderByWithRelationInput = {
   education?: Prisma.SortOrder
   achievements?: Prisma.SortOrder
   experience?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -277,6 +295,8 @@ export type TeamWhereUniqueInput = Prisma.AtLeast<{
   education?: Prisma.StringNullableListFilter<"Team">
   achievements?: Prisma.StringNullableListFilter<"Team">
   experience?: Prisma.StringNullableListFilter<"Team">
+  isDeleted?: Prisma.BoolFilter<"Team"> | boolean
+  deletedAt?: Prisma.DateTimeNullableFilter<"Team"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Team"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Team"> | Date | string
 }, "id" | "slug">
@@ -294,6 +314,8 @@ export type TeamOrderByWithAggregationInput = {
   education?: Prisma.SortOrder
   achievements?: Prisma.SortOrder
   experience?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.TeamCountOrderByAggregateInput
@@ -317,6 +339,8 @@ export type TeamScalarWhereWithAggregatesInput = {
   education?: Prisma.StringNullableListFilter<"Team">
   achievements?: Prisma.StringNullableListFilter<"Team">
   experience?: Prisma.StringNullableListFilter<"Team">
+  isDeleted?: Prisma.BoolWithAggregatesFilter<"Team"> | boolean
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Team"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Team"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Team"> | Date | string
 }
@@ -334,6 +358,8 @@ export type TeamCreateInput = {
   education?: Prisma.TeamCreateeducationInput | string[]
   achievements?: Prisma.TeamCreateachievementsInput | string[]
   experience?: Prisma.TeamCreateexperienceInput | string[]
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -351,6 +377,8 @@ export type TeamUncheckedCreateInput = {
   education?: Prisma.TeamCreateeducationInput | string[]
   achievements?: Prisma.TeamCreateachievementsInput | string[]
   experience?: Prisma.TeamCreateexperienceInput | string[]
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -368,6 +396,8 @@ export type TeamUpdateInput = {
   education?: Prisma.TeamUpdateeducationInput | string[]
   achievements?: Prisma.TeamUpdateachievementsInput | string[]
   experience?: Prisma.TeamUpdateexperienceInput | string[]
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -385,6 +415,8 @@ export type TeamUncheckedUpdateInput = {
   education?: Prisma.TeamUpdateeducationInput | string[]
   achievements?: Prisma.TeamUpdateachievementsInput | string[]
   experience?: Prisma.TeamUpdateexperienceInput | string[]
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -402,6 +434,8 @@ export type TeamCreateManyInput = {
   education?: Prisma.TeamCreateeducationInput | string[]
   achievements?: Prisma.TeamCreateachievementsInput | string[]
   experience?: Prisma.TeamCreateexperienceInput | string[]
+  isDeleted?: boolean
+  deletedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -419,6 +453,8 @@ export type TeamUpdateManyMutationInput = {
   education?: Prisma.TeamUpdateeducationInput | string[]
   achievements?: Prisma.TeamUpdateachievementsInput | string[]
   experience?: Prisma.TeamUpdateexperienceInput | string[]
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -436,6 +472,8 @@ export type TeamUncheckedUpdateManyInput = {
   education?: Prisma.TeamUpdateeducationInput | string[]
   achievements?: Prisma.TeamUpdateachievementsInput | string[]
   experience?: Prisma.TeamUpdateexperienceInput | string[]
+  isDeleted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -453,6 +491,8 @@ export type TeamCountOrderByAggregateInput = {
   education?: Prisma.SortOrder
   achievements?: Prisma.SortOrder
   experience?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -467,6 +507,8 @@ export type TeamMaxOrderByAggregateInput = {
   image?: Prisma.SortOrder
   email?: Prisma.SortOrder
   linkedin?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -481,6 +523,8 @@ export type TeamMinOrderByAggregateInput = {
   image?: Prisma.SortOrder
   email?: Prisma.SortOrder
   linkedin?: Prisma.SortOrder
+  isDeleted?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -531,6 +575,8 @@ export type TeamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   education?: boolean
   achievements?: boolean
   experience?: boolean
+  isDeleted?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["team"]>
@@ -548,6 +594,8 @@ export type TeamSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   education?: boolean
   achievements?: boolean
   experience?: boolean
+  isDeleted?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["team"]>
@@ -565,6 +613,8 @@ export type TeamSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   education?: boolean
   achievements?: boolean
   experience?: boolean
+  isDeleted?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["team"]>
@@ -582,11 +632,13 @@ export type TeamSelectScalar = {
   education?: boolean
   achievements?: boolean
   experience?: boolean
+  isDeleted?: boolean
+  deletedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type TeamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "role" | "bio" | "expertise" | "image" | "email" | "linkedin" | "education" | "achievements" | "experience" | "createdAt" | "updatedAt", ExtArgs["result"]["team"]>
+export type TeamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "role" | "bio" | "expertise" | "image" | "email" | "linkedin" | "education" | "achievements" | "experience" | "isDeleted" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["team"]>
 
 export type $TeamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Team"
@@ -604,6 +656,8 @@ export type $TeamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     education: string[]
     achievements: string[]
     experience: string[]
+    isDeleted: boolean
+    deletedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["team"]>
@@ -1041,6 +1095,8 @@ export interface TeamFieldRefs {
   readonly education: Prisma.FieldRef<"Team", 'String[]'>
   readonly achievements: Prisma.FieldRef<"Team", 'String[]'>
   readonly experience: Prisma.FieldRef<"Team", 'String[]'>
+  readonly isDeleted: Prisma.FieldRef<"Team", 'Boolean'>
+  readonly deletedAt: Prisma.FieldRef<"Team", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Team", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Team", 'DateTime'>
 }

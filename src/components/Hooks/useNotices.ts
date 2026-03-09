@@ -1,9 +1,10 @@
+// hooks/useNotices.ts
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
 import { getNotices, getNoticeBySlug } from "@/app/ServerActions/notice";
 
-export function useNotices(slug?: string) {
+export function useNotices(slug?: string, trashed: boolean = false) {
   const [notices, setNotices] = useState<any[]>([]);
   const [latestNotices, setLatestNotices] = useState<any[]>([]);
   const [notice, setNotice] = useState<any>(null);
@@ -16,11 +17,19 @@ export function useNotices(slug?: string) {
         const res = await getNoticeBySlug(slug);
         if (res.success) setNotice(res.data);
       } else {
-        const res = await getNotices();
+        const res = await getNotices(trashed); // pass trashed flag
         if (res.success && res.data) {
           const all = res.data;
-          setLatestNotices(all.filter((n: any) => n.latest === true));
-          setNotices(all.filter((n: any) => n.latest !== true));
+
+          if (!trashed) {
+            // Normal view: split latest and others
+            setLatestNotices(all.filter((n: any) => n.latest === true));
+            setNotices(all.filter((n: any) => n.latest !== true));
+          } else {
+            // Trash view: show everything together
+            setNotices(all);
+            setLatestNotices([]);
+          }
         }
       }
     } catch (error) {
@@ -28,7 +37,7 @@ export function useNotices(slug?: string) {
     } finally {
       setLoading(false);
     }
-  }, [slug]);
+  }, [slug, trashed]);
 
   useEffect(() => {
     fetchData();

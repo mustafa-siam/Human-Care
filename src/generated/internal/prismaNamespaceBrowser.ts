@@ -103,6 +103,7 @@ export const ProjectScalarFieldEnum = {
   fullDescription: 'fullDescription',
   objectives: 'objectives',
   impact: 'impact',
+  deleted: 'deleted',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -121,6 +122,7 @@ export const NoticeScalarFieldEnum = {
   type: 'type',
   latest: 'latest',
   image: 'image',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -141,6 +143,8 @@ export const TeamScalarFieldEnum = {
   education: 'education',
   achievements: 'achievements',
   experience: 'experience',
+  isDeleted: 'isDeleted',
+  deletedAt: 'deletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -4,13 +4,9 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { imagekit } from "@/lib/imagekit";
 
+/* ---------------- UPSERT NOTICE (existing) ---------------- */
 const generateSlug = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/[\s_-]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+  value.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_-]+/g, "-").replace(/^-+|-+$/g, "");
 
 export const upsertNotice = async (formData: FormData) => {
   try {
@@ -26,8 +22,6 @@ export const upsertNotice = async (formData: FormData) => {
 
     const formSlug = (formData.get("slug") as string) || "";
     const slug = formSlug ? generateSlug(formSlug) : generateSlug(title);
-
-    /* ---------- IMAGE HANDLING (same as project) ---------- */
 
     const existingImage = (formData.get("existingImage") as string) || "";
     const newFile = formData.get("image") as File | null;
@@ -46,31 +40,14 @@ export const upsertNotice = async (formData: FormData) => {
       imageUrl = result.url;
     }
 
-    /* ---------- DATA ---------- */
-
-    const noticeData = {
-      title,
-      slug,
-      description,
-      excerpt,
-      content,
-      type,
-      date: new Date(date),
-      latest,
-      image: imageUrl,
-    };
+    const noticeData = { title, slug, description, excerpt, content, type, date: new Date(date), latest, image: imageUrl };
 
     let notice;
 
     if (id && id !== "undefined") {
-      notice = await db.notice.update({
-        where: { id },
-        data: noticeData,
-      });
+      notice = await db.notice.update({ where: { id }, data: noticeData });
     } else {
-      notice = await db.notice.create({
-        data: noticeData,
-      });
+      notice = await db.notice.create({ data: noticeData });
     }
 
     revalidatePath("/admin/notices");
@@ -84,35 +61,62 @@ export const upsertNotice = async (formData: FormData) => {
   }
 };
 
-
-export const getNotices = async () => {
+/* ---------------- GET NOTICES (optional trashed) ---------------- */
+export const getNotices = async (trashed: boolean = false) => {
   try {
     const notices = await db.notice.findMany({
+      where: trashed ? { deletedAt: { not: null } } : { deletedAt: null },
       orderBy: { date: "desc" },
     });
-    // JSON.parse(JSON.stringify()) solves the Date object serialization issue
     return { success: true, data: JSON.parse(JSON.stringify(notices)) };
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Get Notices Error:", error);
     return { success: false, error: "Failed to fetch notices" };
   }
 };
 
+/* ---------------- GET NOTICE BY SLUG ---------------- */
 export const getNoticeBySlug = async (slug: string) => {
   try {
     const notice = await db.notice.findUnique({ where: { slug } });
     return { success: true, data: JSON.parse(JSON.stringify(notice)) };
-  } catch (error) {
+  } catch (error: any) {
     return { success: false, error: "Notice not found" };
   }
 };
 
-export const deleteNotice = async (id: string) => {
+/* ---------------- SOFT DELETE ---------------- */
+export const moveNoticeToTrash = async (id: string) => {
+  try {
+    await db.notice.update({ where: { id }, data: { deletedAt: new Date() } });
+    revalidatePath("/admin/notices");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Move Notice to Trash Error:", error);
+    return { success: false, error: error.message || "Failed to move notice to trash" };
+  }
+};
+
+/* ---------------- RESTORE ---------------- */
+export const restoreNotice = async (id: string) => {
+  try {
+    await db.notice.update({ where: { id }, data: { deletedAt: null } });
+    revalidatePath("/admin/notices");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Restore Notice Error:", error);
+    return { success: false, error: error.message || "Failed to restore notice" };
+  }
+};
+
+/* ---------------- PERMANENT DELETE ---------------- */
+export const deleteNoticePermanent = async (id: string) => {
   try {
     await db.notice.delete({ where: { id } });
     revalidatePath("/admin/notices");
-    revalidatePath("/notices");
     return { success: true };
   } catch (error: any) {
-    return { success: false, error: "Delete failed" };
+    console.error("Permanent Delete Notice Error:", error);
+    return { success: false, error: error.message || "Delete failed" };
   }
 };

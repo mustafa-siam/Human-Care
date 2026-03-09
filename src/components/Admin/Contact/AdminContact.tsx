@@ -1,24 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, Mail, Calendar, X, User, MessageSquare } from "lucide-react";
+import { Trash2, Mail, Calendar, X, User, MessageSquare, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { moveToTrash } from "@/app/ServerActions/contact";
 import { useContacts } from "@/components/Hooks/useContact";
 import Link from "next/link";
+import Swal from "sweetalert2";
 
 export default function AdminContacts() {
   const { contacts, loading, refresh } = useContacts(undefined, false); // fetch active contacts
   const [selectedMessage, setSelectedMessage] = useState<any>(null);
 
-  const confirmMoveToTrash = (e: React.MouseEvent, id: string, name: string) => {
-    e.stopPropagation();
-    toast(`Move message from ${name} to Trash?`, {
-      action: { label: "Move", onClick: () => executeMoveToTrash(id) },
-      cancel: { label: "Cancel", onClick: () => toast.dismiss() },
-    });
-  };
+  const confirmMoveToTrash = async (
+  e: React.MouseEvent,
+  id: string,
+  name: string
+) => {
+  e.stopPropagation();
+
+  const result = await Swal.fire({
+    title: "Move to Trash?",
+    text: `${name} Message will be moved to trash.`,
+    showCancelButton: true,
+    confirmButtonColor: "#e11d48",
+    cancelButtonColor: "#64748b",
+    confirmButtonText: "Yes, move it",
+  });
+
+  if (result.isConfirmed) {
+    executeMoveToTrash(id);
+  }
+};
 
   const executeMoveToTrash = async (id: string) => {
     const res = await moveToTrash(id);
@@ -32,8 +46,8 @@ export default function AdminContacts() {
   if (loading)
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
-        <Trash2 className="animate-spin text-emerald-500" size={40} />
-      </div>
+      <Loader2 className="animate-spin text-emerald-500" size={40} />
+    </div>
     );
 
   return (

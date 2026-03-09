@@ -4,26 +4,19 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { imagekit } from "@/lib/imagekit";
 
-/**
- * UPSERT TEAM MEMBER
- * Handles ImageKit uploads, slug generation, and UUID-based Prisma sync.
- */
+/* ---------------- UPSERT TEAM MEMBER ---------------- */
 export const upsertTeam = async (formData: FormData) => {
   try {
-    // 1. Extract ID (UUID String)
-    const id = (formData.get("id") as string) || "";
-
-    // 2. Extract basic fields matching your model
-    const name = (formData.get("name") as string) || "";
+  const id = (formData.get("id") as string) || "";
+  const name = (formData.get("name") as string) || "";
     const role = (formData.get("role") as string) || "";
     const bio = (formData.get("bio") as string) || "";
     const expertise = (formData.get("expertise") as string) || "";
     const email = (formData.get("email") as string) || "";
     const linkedin = (formData.get("linkedin") as string) || "";
 
-    // 3. Parse Array fields safely (String[])
-    const parseArray = (key: string) => {
-      try {
+  const parseArray = (key: string) => {
+     try {
         const raw = formData.get(key) as string;
         const parsed = JSON.parse(raw || "[]");
         return Array.isArray(parsed) ? parsed : [];
@@ -35,9 +28,7 @@ export const upsertTeam = async (formData: FormData) => {
     const education = parseArray("education");
     const achievements = parseArray("achievements");
     const experience = parseArray("experience");
-
-    // 4. Handle Image upload via ImageKit
-    const existingImage = (formData.get("existingImage") as string) || "";
+   const existingImage = (formData.get("existingImage") as string) || "";
     const newFile = formData.get("image") as File | null;
     let imageUrl = existingImage;
 
@@ -50,36 +41,19 @@ export const upsertTeam = async (formData: FormData) => {
       });
       imageUrl = result.url;
     }
-
-    // 5. Generate Slug from name
-    const slug = name
+  const slug = name
       .toLowerCase()
       .trim()
-      .replace(/[^\w\s-]/g, "") 
-      .replace(/[\s_-]+/g, "-") 
+      .replace(/[^\w\s-]/g, "")
+      .replace(/[\s_-]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-    // 6. Data Object for Prisma
-    const teamData = {
-      name,
-      slug,
-      role,
-      bio,
-      expertise,
-      email,
-      linkedin,
-      image: imageUrl,
-      education,
-      achievements,
-      experience,
-    };
+    const teamData = { name, slug, role, bio, expertise, email, linkedin, image: imageUrl, education, achievements, experience };
 
-    let member;
-
-    // 7. DB Operation: Check if updating (valid UUID) or creating
+   let member;
     if (id && id.trim() !== "" && id !== "undefined") {
       member = await db.team.update({
-        where: { id: id },
+        where: { id },
         data: teamData,
       });
     } else {
@@ -87,9 +61,7 @@ export const upsertTeam = async (formData: FormData) => {
         data: teamData,
       });
     }
-
-    // 8. Revalidate paths
-    revalidatePath("/admin/team");
+  revalidatePath("/admin/team");
     revalidatePath("/team");
     revalidatePath(`/team/${slug}`);
 
@@ -100,48 +72,73 @@ export const upsertTeam = async (formData: FormData) => {
   }
 };
 
-/**
- * GET ALL TEAM MEMBERS
- */
-export const getTeamMembers = async () => {
+/* ---------------- GET TEAM MEMBERS ---------------- */
+export const getTeamMembers = async (trashed: boolean = false) => {
   try {
     const members = await db.team.findMany({
+      where: trashed ? { isDeleted: true } : { isDeleted: false },
       orderBy: { createdAt: "asc" },
     });
     return { success: true, data: members };
-  } catch (error) {
+  } catch (error: any) {
     console.error("Fetch Team Error:", error);
-    return { success: false, error: "Failed to fetch team members" };
+    return { success: false, error: error.message || "Failed to fetch team members" };
   }
 };
 
-/**
- * GET SINGLE MEMBER BY SLUG
- */
+/* ---------------- GET SINGLE MEMBER BY SLUG ---------------- */
 export const getTeamMemberBySlug = async (slug: string) => {
   try {
     const member = await db.team.findUnique({
       where: { slug },
     });
     return { success: true, data: member };
-  } catch (error) {
-    return { success: false, error: "Member not found" };
+  } catch (error: any) {
+    console.error("Get Team Member Error:", error);
+    return { success: false, error: error.message || "Member not found" };
   }
 };
 
-/**
- * DELETE TEAM MEMBER
- */
-export const deleteTeam = async (id: string) => {
+/* ---------------- SOFT DELETE (MOVE TO TRASH) ---------------- */
+export const moveTeamToTrash = async (id: string) => {
+  try {
+    await db.team.update({
+      where: { id },
+      data: { isDeleted: true, deletedAt: new Date() },
+    });
+    revalidatePath("/admin/team");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Move to Trash Error:", error);
+    return { success: false, error: error.message || "Failed to move team member to trash" };
+  }
+};
+
+/* ---------------- RESTORE FROM TRASH ---------------- */
+export const restoreTeamMember = async (id: string) => {
+  try {
+    await db.team.update({
+      where: { id },
+      data: { isDeleted: false, deletedAt: null },
+    });
+    revalidatePath("/admin/team");
+    return { success: true };
+  } catch (error: any) {
+    console.error("Restore Team Member Error:", error);
+    return { success: false, error: error.message || "Failed to restore team member" };
+  }
+};
+
+/* ---------------- PERMANENT DELETE ---------------- */
+export const deleteTeamPermanent = async (id: string) => {
   try {
     await db.team.delete({
       where: { id },
     });
-    revalidatePath("/admin/team");
-    revalidatePath("/team");
+        revalidatePath("/admin/team");
     return { success: true };
   } catch (error: any) {
-    console.error("Delete Error:", error);
-    return { success: false, error: "Delete failed" };
+    console.error("Permanent Delete Team Member Error:", error);
+    return { success: false, error: error.message || "Failed to permanently delete team member" };
   }
 };
