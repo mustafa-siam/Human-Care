@@ -51,8 +51,10 @@ export function NavBar() {
   return (
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-[#0F172A]/80 backdrop-blur-xl shadow-lg" : "bg-transparent"
-      }`}
+  isScrolled || !isHomePage
+    ? "bg-[#0F172A]/80 backdrop-blur-xl shadow-lg"
+    : "bg-transparent"
+}`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
