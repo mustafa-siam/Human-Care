@@ -18,8 +18,14 @@
         "name": "next"
       }
     ],
+
+    // ✅ This fixes the non-relative path error
+    "baseUrl": "./src",
+
+    // ✅ Correct paths relative to baseUrl
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["*"],
+      "@generated": ["generated/client"]
     }
   },
   "include": [
@@ -28,7 +34,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "src/components/PageComponents/GallaryPage/GallaryAlbum.jsx"
   ],
   "exclude": ["node_modules"]
 }
