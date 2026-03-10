@@ -1,208 +1,200 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { updateHeroContent } from "@/app/ServerActions/Hero";
-import { toast } from "sonner";
-import { X, Loader2, Target } from "lucide-react";
+import React, { useState } from "react";
+import { X, Loader2, Plus, Trash2, Target, Upload } from "lucide-react";
+import { motion } from "motion/react";
 
-type HeroFormProps = {
-  initialData: any;
-};
+// Matches your full data structure
+interface ProjectFormData {
+  title: string;
+  location: string;
+  description: string;
+  fullDescription: string;
+  image: string;
+  progress: number;
+  beneficiaries: string;
+  timeline: string;
+  objectives: string[];
+  impact: string[];
+}
 
-export default function HeroForm({ initialData }: HeroFormProps) {
-  const { 
-    register, 
-    handleSubmit, 
-    reset, 
-    formState: { isDirty, isSubmitting } 
-  } = useForm();
+interface ProjectFormProps {
+  initialData?: any;
+  onSubmit: (data: FormData) => Promise<void>; // Sending FormData for Image Upload
+  onClose: () => void;
+  isSubmitting: boolean;
+}
 
-  const [existingImages, setExistingImages] = useState<string[]>([]);
-  const [previewImages, setPreviewImages] = useState<string[]>([]);
-  const [newFiles, setNewFiles] = useState<File[]>([]);
-  const [hasImageChanges, setHasImageChanges] = useState(false);
+export const ProjectForm = ({ initialData, onSubmit, onClose, isSubmitting }: ProjectFormProps) => {
+  // 1. Initialize all properties including timeline, impact, and fullDescription
+  const [formData, setFormData] = useState<ProjectFormData>({
+    title: initialData?.title || "",
+    location: initialData?.location || "",
+    description: initialData?.description || "",
+    fullDescription: initialData?.fullDescription || "",
+    image: initialData?.image || "",
+    progress: initialData?.progress || 0,
+    beneficiaries: initialData?.beneficiaries || "",
+    timeline: initialData?.timeline || "",
+    objectives: initialData?.objectives?.length > 0 ? [...initialData.objectives] : [""],
+    impact: initialData?.impact?.length > 0 ? [...initialData.impact] : [""]
+  });
 
-  // --- Sync initial data ---
-  useEffect(() => {
-    if (initialData) {
-      const normalizedData = { ...initialData, id: "singleton" };
-      reset(normalizedData);
-      setExistingImages(normalizedData.images || []);
-      setPreviewImages(normalizedData.images || []);
-      setNewFiles([]);
-      setHasImageChanges(false);
+  // 2. Image Upload States
+  const [previewImage, setPreviewImage] = useState<string>(initialData?.image || "");
+  const [newFile, setNewFile] = useState<File | null>(null);
+
+  // 3. Helper Functions
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setNewFile(file);
+      setPreviewImage(URL.createObjectURL(file));
     }
-  }, [initialData, reset]);
+  };
 
-  // --- Handle file select ---
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files || []);
-    if (files.length === 0) return;
+  const handleRemoveImage = () => {
+    setNewFile(null);
+    setPreviewImage("");
+    setFormData({ ...formData, image: "" });
+  };
 
-    setNewFiles((prev) => [...prev, ...files]);
-    const blobPreviews = files.map((file) => URL.createObjectURL(file));
-    setPreviewImages((prev) => [...prev, ...blobPreviews]);
-    setHasImageChanges(true);
-  }
+  const handleArrayChange = (index: number, value: string, type: 'objectives' | 'impact') => {
+    const newArr = [...formData[type]];
+    newArr[index] = value;
+    setFormData({ ...formData, [type]: newArr });
+  };
 
-  // --- Remove image ---
-  function handleRemoveImage(index: number) {
-    const imageToRemove = previewImages[index];
+  const addArrayField = (type: 'objectives' | 'impact') => {
+    setFormData({ ...formData, [type]: [...formData[type], ""] });
+  };
+
+  const removeArrayField = (index: number, type: 'objectives' | 'impact') => {
+    if (formData[type].length <= 1) return;
+    setFormData({ 
+      ...formData, 
+      [type]: formData[type].filter((_: string, i: number) => i !== index) 
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     
-    if (imageToRemove.startsWith("blob:")) {
-      URL.revokeObjectURL(imageToRemove);
-    }
+    // Convert to FormData to handle the physical image file
+    const data = new FormData();
+    data.append("title", formData.title);
+    data.append("location", formData.location);
+    data.append("description", formData.description);
+    data.append("fullDescription", formData.fullDescription);
+    data.append("progress", formData.progress.toString());
+    data.append("beneficiaries", formData.beneficiaries);
+    data.append("timeline", formData.timeline);
+    
+    // Send arrays as JSON strings
+    data.append("objectives", JSON.stringify(formData.objectives.filter(s => s.trim() !== "")));
+    data.append("impact", JSON.stringify(formData.impact.filter(s => s.trim() !== "")));
 
-    setPreviewImages((prev) => prev.filter((_, i) => i !== index));
-
-    if (existingImages.includes(imageToRemove)) {
-      setExistingImages((prev) => prev.filter((img) => img !== imageToRemove));
+    if (newFile) {
+      data.append("image", newFile);
     } else {
-      const blobIndex = previewImages.length - newFiles.length;
-      const newIndex = index - blobIndex;
-      if (newIndex >= 0) {
-        setNewFiles((prev) => prev.filter((_, i) => i !== newIndex));
-      }
+      data.append("existingImage", formData.image);
     }
-    setHasImageChanges(true);
-  }
 
-  // --- Submit ---
-  async function onSubmit(data: any) {
-    const toastId = toast.loading("Syncing hero content...");
-
-    try {
-      const formData = new FormData();
-      
-      // Ensure "singleton" ID is sent
-      formData.append("id", "singleton");
-      formData.append("badgeText", data.badgeText || "");
-      formData.append("headline", data.headline || "");
-      formData.append("description", data.description || "");
-      formData.append("livesImpacted", data.livesImpacted || "");
-      formData.append("projectsCount", data.projectsCount || "");
-      formData.append("yearsActive", data.yearsActive || "");
-      formData.append("donateLink", data.donateLink || "https://qrinux.com/");
-
-      formData.append("existingImages", JSON.stringify(existingImages));
-      newFiles.forEach((file) => formData.append("images", file));
-
-      const response = await updateHeroContent(formData);
-
-      if (response.success) {
-        toast.success("Changes saved successfully!", { 
-          id: toastId,
-          description: "The homepage hero section is now updated.",
-          icon: <Target size={18} className="text-emerald-500" />
-        });
-
-        setNewFiles([]);
-        setHasImageChanges(false);
-        reset({ ...data, images: existingImages, id: "singleton" });
-      } else {
-        toast.error("Update failed", { 
-          id: toastId, 
-          description: response.error || "Please try again." 
-        });
-      }
-    } catch (error) {
-      console.error("Submission Error:", error);
-      toast.error("Network error", { id: toastId });
-    }
-  }
-
-  const inputStyle =
-    "w-full bg-[#0F172A] border border-white/10 rounded-lg p-3 text-white focus:border-[#10B981] outline-none transition-all placeholder:text-white/20";
-  const labelStyle =
-    "block text-xs font-bold uppercase text-slate-500 mb-2 tracking-wider";
+    onSubmit(data);
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 max-w-4xl mx-auto">
-      <div className="grid md:grid-cols-2 gap-6">
-        <div>
-          <label className={labelStyle}>Badge Text</label>
-          <input {...register("badgeText")} className={inputStyle} placeholder="e.g. Since 2010 • Impact" />
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-[#1e293b] p-6 md:p-8 rounded-2xl border border-slate-800 shadow-2xl max-w-4xl mx-auto"
+    >
+      <div className="flex justify-between items-center mb-8 border-b border-slate-700/50 pb-5">
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500"><Target size={24} /></div>
+          <h2 className="text-xl font-bold text-white">{initialData ? "Update Project" : "New Initiative"}</h2>
         </div>
-        <div>
-          <label className={labelStyle}>Headline</label>
-          <input {...register("headline")} className={inputStyle} placeholder="Main hero title" />
-        </div>
+        <button onClick={onClose} className="text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-full transition-all"><X size={24} /></button>
       </div>
 
-      <div>
-        <label className={labelStyle}>Description</label>
-        <textarea {...register("description")} rows={4} className={inputStyle} placeholder="Short bio or mission statement..." />
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-6">
-        <div>
-          <label className={labelStyle}>Donate Link</label>
-          <input 
-            {...register("donateLink")} 
-            type="url"
-            placeholder="https://qrinux.com/" 
-            className={inputStyle} 
-          />
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Title & Location */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Project Title</label>
+          <input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none" />
         </div>
-        <div>
-          <label className={labelStyle}>Lives Impacted</label>
-          <input {...register("livesImpacted")} className={inputStyle} placeholder="e.g. 50K+" />
-        </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-6">
-        <div>
-          <label className={labelStyle}>Projects Count</label>
-          <input {...register("projectsCount")} className={inputStyle} placeholder="e.g. 120+" />
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Location</label>
+          <input required value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none" />
         </div>
-        <div>
-          <label className={labelStyle}>Years Active</label>
-          <input {...register("yearsActive")} className={inputStyle} placeholder="e.g. 15+" />
+
+        {/* Image Upload Area */}
+        <div className="md:col-span-2 space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Cover Image</label>
+          {previewImage ? (
+            <div className="relative h-56 w-full rounded-xl overflow-hidden border border-slate-700 group">
+              <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <button type="button" onClick={handleRemoveImage} className="bg-rose-500 text-white p-3 rounded-full hover:scale-110 transition-transform"><Trash2 size={20} /></button>
+              </div>
+            </div>
+          ) : (
+            <label className="flex flex-col items-center justify-center h-56 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500/50 bg-[#0f172a] transition-all">
+              <Upload size={28} className="text-slate-500 mb-2" />
+              <span className="text-slate-400 font-medium">Select project image</span>
+              <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
+            </label>
+          )}
         </div>
-      </div>
 
-      <div>
-        <label className={labelStyle}>Hero Gallery Images</label>
-        <label className="relative flex flex-col items-center justify-center h-32 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-[#10B981] transition-colors group bg-[#0F172A]">
-          <span className="text-white/40 group-hover:text-[#10B981] text-sm font-medium">Click to select new photos</span>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleFileChange}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          />
-        </label>
-      </div>
+        {/* Description & Full Description */}
+        <div className="md:col-span-2 space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Short Card Description</label>
+          <textarea rows={2} value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white outline-none" />
+        </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {previewImages.map((img, index) => (
-          <div key={index} className="relative rounded-lg overflow-hidden border border-white/10 group aspect-video">
-            <img src={img} alt="preview" className="h-full w-full object-cover" />
-            <button
-              type="button"
-              onClick={() => handleRemoveImage(index)}
-              className="absolute top-2 right-2 p-1.5 rounded-full bg-rose-500 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow-lg"
-            >
-              <X size={14} />
-            </button>
+        <div className="md:col-span-2 space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Full Project Details</label>
+          <textarea rows={4} value={formData.fullDescription} onChange={e => setFormData({...formData, fullDescription: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white outline-none" placeholder="Explain the project in detail..." />
+        </div>
+
+        {/* Stats & Timeline */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Progress (%)</label>
+          <input type="number" max="100" min="0" value={formData.progress} onChange={e => setFormData({...formData, progress: parseInt(e.target.value) || 0})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white outline-none" />
+        </div>
+
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Timeline (e.g. 2024-2026)</label>
+          <input value={formData.timeline} onChange={e => setFormData({...formData, timeline: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white outline-none" />
+        </div>
+
+        <div className="md:col-span-2 space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Beneficiaries (e.g. 12,000+)</label>
+          <input value={formData.beneficiaries} onChange={e => setFormData({...formData, beneficiaries: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white outline-none" />
+        </div>
+
+        {/* Dynamic Lists (Objectives & Impact) */}
+        {(['objectives', 'impact'] as const).map((type) => (
+          <div key={type} className="space-y-3 bg-[#0f172a]/50 p-5 rounded-xl border border-slate-800">
+            <div className="flex justify-between items-center">
+              <label className="text-xs font-bold uppercase text-slate-500">{type}</label>
+              <button type="button" onClick={() => addArrayField(type)} className="text-emerald-400 text-xs font-bold flex items-center gap-1 hover:text-emerald-300"><Plus size={14} /> Add</button>
+            </div>
+            {formData[type].map((val, i) => (
+              <div key={i} className="flex gap-2">
+                <input value={val} onChange={e => handleArrayChange(i, e.target.value, type)} className="flex-1 bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-sm text-white focus:border-emerald-500 outline-none" />
+                <button type="button" onClick={() => removeArrayField(i, type)} className="text-rose-500 hover:bg-rose-500/10 p-2 rounded-lg"><Trash2 size={18}/></button>
+              </div>
+            ))}
           </div>
         ))}
-      </div>
 
-      <button
-        type="submit"
-        disabled={(!isDirty && !hasImageChanges) || isSubmitting}
-        className={`w-full font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 ${
-          (!isDirty && !hasImageChanges) || isSubmitting
-            ? "bg-slate-800 text-white/30 cursor-not-allowed"
-            : "bg-[#10B981] hover:bg-[#059669] text-white cursor-pointer shadow-lg shadow-[#10B981]/10"
-        }`}
-      >
-        {isSubmitting ? <Loader2 className="animate-spin" size={20} /> : null}
-        {isSubmitting ? "Saving..." : "Save Changes"}
-      </button>
-    </form>
+        <button disabled={isSubmitting} type="submit" className="md:col-span-2 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-4 rounded-xl transition-all mt-4 flex justify-center items-center shadow-lg shadow-emerald-900/20 cursor-pointer">
+          {isSubmitting ? <><Loader2 className="animate-spin mr-2" /> Saving...</> : (initialData ? "Update Project" : "Publish Project")}
+        </button>
+      </form>
+    </motion.div>
   );
-}
+};

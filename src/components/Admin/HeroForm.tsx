@@ -137,7 +137,7 @@ export default function HeroForm({ initialData }: HeroFormProps) {
           <input 
             {...register("donateLink")} 
             type="url"
-            placeholder="https://qrinux.com/" 
+            placeholder="https://example.com/" 
             className={inputStyle} 
           />
         </div>
