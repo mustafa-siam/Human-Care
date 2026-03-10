@@ -83,7 +83,7 @@ export default function AdminGalleryPage() {
         {!showForm && (
           <button
             onClick={() => { setEditingItem(null); setShowForm(true); }}
-            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20 mt-4 md:mt-0"
+            className="flex items-center cursor-pointer gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20 mt-4 md:mt-0"
           >
             <Plus size={20} /> New Photo
           </button>
