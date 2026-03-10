@@ -20,6 +20,7 @@ model HeroContent{
   livesImpacted String   @default("50K+")
   projectsCount String   @default("120+")
   yearsActive   String   @default("15+")
+  donateLink    String  @default("https://qrinux.com/")
   images        String[] 
   updatedAt     DateTime @updatedAt
 }

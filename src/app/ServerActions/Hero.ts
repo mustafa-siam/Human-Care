@@ -6,7 +6,7 @@ import { imagekit } from "@/lib/imagekit";
 
 /**
  * GET HERO CONTENT
- * Used in homepage
+ * Used in homepage to fetch the singleton record
  */
 export const getHeroContent = async () => {
   try {
@@ -23,9 +23,10 @@ export const getHeroContent = async () => {
 
 /**
  * UPDATE HERO CONTENT
- * Handles image uploads + upsert
+ * Handles image uploads via ImageKit + Database Upsert
  */
 export const updateHeroContent = async (formData: FormData) => {
+  // Ensure we use "singleton" to match the @default("singleton") in your Prisma schema
   const id = (formData.get("id") as string) || "singleton";
 
   const badgeText = (formData.get("badgeText") as string) || "";
@@ -34,14 +35,13 @@ export const updateHeroContent = async (formData: FormData) => {
   const livesImpacted = (formData.get("livesImpacted") as string) || "";
   const projectsCount = (formData.get("projectsCount") as string) || "";
   const yearsActive = (formData.get("yearsActive") as string) || "";
+  const donateLink = (formData.get("donateLink") as string) || "https://qrinux.com/";
 
   try {
     /**
-     * Parse existing images
+     * 1. Parse existing images (sent as a JSON string from the client)
      */
-    const existingImagesRaw =
-      (formData.get("existingImages") as string) || "[]";
-
+    const existingImagesRaw = (formData.get("existingImages") as string) || "[]";
     let existingImages: string[] = [];
 
     try {
@@ -53,14 +53,14 @@ export const updateHeroContent = async (formData: FormData) => {
     }
 
     /**
-     * Upload new images
+     * 2. Upload new images to ImageKit
      */
     const files = formData.getAll("images") as File[];
-
     const uploadedUrls: string[] = [];
 
     for (const file of files) {
-      if (!file || file.size === 0) continue;
+      // Skip empty file inputs
+      if (!file || file.size === 0 || typeof file === "string") continue;
 
       const buffer = Buffer.from(await file.arrayBuffer());
 
@@ -74,16 +74,16 @@ export const updateHeroContent = async (formData: FormData) => {
     }
 
     /**
-     * Combine images
+     * 3. Combine existing images with newly uploaded ones
      */
     const finalImages = [...existingImages, ...uploadedUrls];
 
     /**
-     * Upsert hero content
+     * 4. Upsert hero content
+     * Using the 'singleton' ID ensures we only ever have one hero record.
      */
     await db.heroContent.upsert({
       where: { id },
-
       update: {
         badgeText,
         headline,
@@ -91,9 +91,9 @@ export const updateHeroContent = async (formData: FormData) => {
         livesImpacted,
         projectsCount,
         yearsActive,
+        donateLink,
         images: finalImages,
       },
-
       create: {
         id,
         badgeText,
@@ -102,12 +102,13 @@ export const updateHeroContent = async (formData: FormData) => {
         livesImpacted,
         projectsCount,
         yearsActive,
+        donateLink,
         images: finalImages,
       },
     });
 
     /**
-     * Revalidate pages
+     * 5. Revalidate paths to clear Next.js cache
      */
     revalidatePath("/");
     revalidatePath("/admin");
@@ -115,6 +116,9 @@ export const updateHeroContent = async (formData: FormData) => {
     return { success: true };
   } catch (error: any) {
     console.error("Hero update error:", error);
-    throw new Error(error.message || "Hero update failed");
+    return { 
+      success: false, 
+      error: error.message || "An unexpected error occurred while updating hero content." 
+    };
   }
 };

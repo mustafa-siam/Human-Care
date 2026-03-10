@@ -4,88 +4,96 @@ import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { imagekit } from "@/lib/imagekit";
 
-/**
- * UPSERT GALLERY ITEM
- * Uses ImageKit and handles Int ID
- */
+/* -------------------------------- */
+/* UPSERT GALLERY ITEM (MULTI IMAGE) */
+/* -------------------------------- */
+
 export const upsertGalleryItem = async (formData: FormData) => {
   try {
-    const rawId = formData.get("id") as string;
-    const id = rawId && rawId !== "undefined" ? parseInt(rawId, 10) : null;
-    
     const title = (formData.get("title") as string) || "";
     const category = (formData.get("category") as string) || "";
     const description = (formData.get("description") as string) || "";
     const dateInput = (formData.get("date") as string) || "";
 
-    const existingImage = (formData.get("existingImage") as string) || "";
-    const newFile = formData.get("image") as File | null;
-    let imageUrl = existingImage;
+    const files = formData.getAll("images") as File[];
 
-    if (newFile && newFile.size > 0) {
-      const buffer = Buffer.from(await newFile.arrayBuffer());
-      const result = await imagekit.upload({
-        file: buffer,
-        fileName: `gallery_${Date.now()}_${newFile.name.replace(/\s+/g, "_")}`,
-        folder: "gallery",
-      });
-      imageUrl = result.url;
+    if (!files || files.length === 0) {
+      return { success: false, error: "No images uploaded" };
     }
 
-    const galleryData = {
-      title,
-      category,
-      description,
-      url: imageUrl,
-      date: new Date(dateInput),
-    };
+    const uploadedItems = [];
 
-    let item;
-    if (id) {
-      item = await db.galleryItem.update({
-        where: { id: id },
-        data: galleryData,
+    for (const file of files) {
+      if (!file || file.size === 0) continue;
+
+      const buffer = Buffer.from(await file.arrayBuffer());
+
+      const result = await imagekit.upload({
+        file: buffer,
+        fileName: `gallery_${Date.now()}_${file.name.replace(/\s+/g, "_")}`,
+        folder: "gallery",
       });
-    } else {
-      item = await db.galleryItem.create({
-        data: galleryData,
+
+      const item = await db.galleryItem.create({
+        data: {
+          title,
+          category,
+          description,
+          url: result.url,
+          date: new Date(dateInput),
+        },
       });
+
+      uploadedItems.push(item);
     }
 
     revalidatePath("/admin/gallery");
     revalidatePath("/gallery");
 
-    return { success: true, data: item };
+    return { success: true, data: uploadedItems };
   } catch (error: any) {
     console.error("Gallery Save Error:", error);
-    return { success: false, error: error.message || "Failed to save photo" };
+
+    return {
+      success: false,
+      error: error.message || "Failed to save gallery",
+    };
   }
 };
 
-/**
- * DELETE GALLERY ITEM
- */
+/* -------------------------------- */
+/* DELETE SINGLE IMAGE */
+/* -------------------------------- */
+
 export const deleteGalleryItem = async (id: number) => {
   try {
-    await db.galleryItem.delete({ where: { id: Number(id) } });
+    await db.galleryItem.delete({
+      where: { id: Number(id) },
+    });
+
     revalidatePath("/admin/gallery");
     revalidatePath("/gallery");
+
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     return { success: false, error: "Delete failed" };
   }
 };
 
-/**
- * GET ALL GALLERY ITEMS (Matches Project Pattern)
- */
+/* -------------------------------- */
+/* GET ALL ITEMS */
+/* -------------------------------- */
+
 export const getGalleryItems = async () => {
   try {
     const items = await db.galleryItem.findMany({
       orderBy: { id: "desc" },
     });
+
     return { success: true, data: items };
   } catch (error) {
+    console.error("Gallery Fetch Error:", error);
+
     return { success: false, error: "Failed to fetch gallery" };
   }
 };

@@ -11,19 +11,19 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   console.log("🌱 Seeding Human Care Global Hero data...");
-
-  // --- Seed Hero Content ---
- await prisma.heroContent.upsert({
-  where: { id: "hero-main" },
+// --- Seed Hero Content ---
+await prisma.heroContent.upsert({
+  where: { id: "singleton" }, // Change from "hero-main" to "singleton"
   update: {},
   create: {
-    id: "hero-main",
+    id: "singleton", // Change from "hero-main" to "singleton"
     badgeText: "Since 2010 • Making Impact in Bangladesh",
     headline: "Humanity is Better Than Responsibility",
     description: "We believe in compassion over obligation...",
     livesImpacted: "50K+",
     projectsCount: "120+",
     yearsActive: "15+",
+    donateLink: "https://qrinux.com/",
     images: [
       "https://ik.imagekit.io/0hkqv3jnd/hero/hero1_5ce-vIS7K.jpg",
       "https://ik.imagekit.io/0hkqv3jnd/hero/hero2_xrY7W13sn.jpg",

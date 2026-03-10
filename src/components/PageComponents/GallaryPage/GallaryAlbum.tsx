@@ -1,284 +1,158 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import {
-  ArrowLeft,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  Image as ImageIcon,
-  Calendar,
-  Loader2,
-} from "lucide-react";
-import Masonry from "react-responsive-masonry";
+import React, { useState, useMemo } from "react";
+import { Image as ImageIcon, Loader2, FolderOpen, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import { useGallery } from "@/components/Hooks/useGallery";
+import { motion } from 'motion/react';
+interface Album {
+  title: string;
+  category: string;
+  images: { url: string }[];
+}
 
-export function GalleryPage() {
+export default function GalleryPage() {
   const { items, loading } = useGallery();
-
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [lightboxImage, setLightboxImage] = useState<any | null>(null);
-  const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  const galleryAlbums = [
-    {
-      id: "all",
-      name: "All Photos",
-      count: items.length,
-    },
-    {
-      id: "education",
-      name: "Education",
-      count: items.filter((i) => i.category === "education").length,
-    },
-    {
-      id: "healthcare",
-      name: "Healthcare",
-      count: items.filter((i) => i.category === "healthcare").length,
-    },
-    {
-      id: "water",
-      name: "Clean Water",
-      count: items.filter((i) => i.category === "water").length,
-    },
-    {
-      id: "emergency",
-      name: "Emergency Relief",
-      count: items.filter((i) => i.category === "emergency").length,
-    },
-    {
-      id: "community",
-      name: "Community",
-      count: items.filter((i) => i.category === "community").length,
-    },
+  const galleryCategories = [
+    { id: "all", name: "All Projects" },
+    { id: "education", name: "Education" },
+    { id: "healthcare", name: "Healthcare" },
+    { id: "water", name: "Clean Water" },
+    { id: "emergency", name: "Emergency Relief" },
+    { id: "community", name: "Community" },
   ];
 
-  const filteredImages =
-    selectedCategory === "all"
-      ? items
-      : items.filter((img) => img.category === selectedCategory);
+  const groupedAlbums = useMemo(() => {
+    const groups = items.reduce((acc: Record<string, Album>, img: any) => {
+      const key = `${img.category}-${img.title}`;
+      if (!acc[key]) acc[key] = { title: img.title, category: img.category, images: [] };
+      acc[key].images.push(img);
+      return acc;
+    }, {});
+    return Object.values(groups) as Album[];
+  }, [items]);
 
-  const openLightbox = (image: any, index: number) => {
-    setLightboxImage(image);
-    setLightboxIndex(index);
-  };
-
-  const closeLightbox = () => {
-    setLightboxImage(null);
-  };
-
-  const nextImage = () => {
-    const nextIndex = (lightboxIndex + 1) % filteredImages.length;
-    setLightboxImage(filteredImages[nextIndex]);
-    setLightboxIndex(nextIndex);
-  };
-
-  const prevImage = () => {
-    const prevIndex =
-      (lightboxIndex - 1 + filteredImages.length) % filteredImages.length;
-    setLightboxImage(filteredImages[prevIndex]);
-    setLightboxIndex(prevIndex);
-  };
+  const filteredAlbums = useMemo(
+    () =>
+      selectedCategory === "all"
+        ? groupedAlbums
+        : groupedAlbums.filter((album) => album.category === selectedCategory),
+    [groupedAlbums, selectedCategory]
+  );
 
   if (loading) {
     return (
-       <div className="flex flex-col items-center justify-center h-96 gap-4">
-              <Loader2 className="animate-spin text-emerald-500" size={40} />
+       <div className="flex flex-col justify-center items-center h-screen gap-6">
+              <Loader2 className="animate-spin text-emerald-500" size={48} />
             </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="pt-32 pb-24">
-        <div className="container mx-auto px-6">
-          <Link href="/">
-            <motion.button
-              className="flex items-center gap-2 text-gray-600 hover:text-[#10B981] mb-8 transition-colors duration-300 cursor-pointer"
-              whileHover={{ x: -5 }}
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Back to Home
-            </motion.button>
-          </Link>
-
-          {/* Header */}
-          <motion.div
-            className="text-center mb-12"
+    // Background changed to pure white
+    <div className="min-h-screen bg-white pt-24 pb-24">
+      <div className="container mx-auto px-6 pt-14">
+        
+        {/* Simplified Header */}
+        <motion.div
+            className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
           >
-            <div className="inline-flex items-center gap-2 bg-[#10B981]/10 text-[#10B981] px-4 py-2 rounded-full text-sm mb-4">
-              <ImageIcon className="w-4 h-4" />
-              Photo Gallery
-            </div>
-
+            <motion.div
+              className="inline-block bg-[#10B981]/10 text-[#10B981] px-4 py-2 rounded-full text-sm mb-4"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
+             Our Albums
+            </motion.div>
             <h1 className="text-5xl text-[#0F172A] mb-4">
-              Our Impact in Pictures
+              Snapshots of Our Work
             </h1>
-
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Explore moments of transformation, hope, and community development
-              across Bangladesh
+             Explore the projects and initiatives that are shaping our community and creating real impact.
             </p>
           </motion.div>
 
-          {/* Album Filter */}
-          <div className="flex flex-wrap justify-center gap-3 mb-12">
-            {galleryAlbums.map((album) => (
-              <motion.button
-                key={album.id}
-                onClick={() => setSelectedCategory(album.id)}
-                className={`px-6 py-3 cursor-pointer rounded-full font-medium transition-all duration-300 ${
-                  selectedCategory === album.id
-                    ? "bg-[#10B981] text-white shadow-lg scale-105"
-                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+        {/* Minimalist Category Filter */}
+        <div className="flex flex-wrap justify-center gap-3 mb-16">
+          {galleryCategories.map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => setSelectedCategory(cat.id)}
+              className={`px-5 py-2 rounded-full font-medium cursor-pointer transition-all duration-300 text-sm ${
+                selectedCategory === cat.id
+                  ? "bg-emerald-600 text-white shadow-md"
+                  : "bg-white text-slate-600 hover:text-emerald-600 border border-slate-200"
+              }`}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        {/* Masonry Grid */}
+        <ResponsiveMasonry columnsCountBreakPoints={{ 350: 1, 750: 2, 1024: 3, 1280: 4 }}>
+          <Masonry gutter="24px">
+            {filteredAlbums.map((album, idx) => (
+              <Link
+                key={idx}
+                href={`/gallery/${album.category}/${encodeURIComponent(album.title)}`}
+                className="group"
               >
-                {album.name}
-                <span className="ml-2 text-sm opacity-75">
-                  ({album.count})
-                </span>
-              </motion.button>
-            ))}
-          </div>
+                {/* Folder/Card Design Maintained */}
+                <div className="relative bg-slate-900 rounded-2xl overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-500">
+                  
+                  {/* Image Container */}
+                  <div className="relative aspect-[4/5] overflow-hidden">
+                    <img
+                      src={album.images[0]?.url}
+                      alt={album.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    
+                    {/* Glass Badge */}
+                    <div className="absolute top-4 right-4 backdrop-blur-md bg-black/30 border border-white/20 text-white text-xs font-bold px-2.5 py-1 rounded-lg flex items-center gap-1.5">
+                      <ImageIcon size={14} className="text-emerald-400" />
+                      {album.images.length}
+                    </div>
 
-          {/* Gallery Grid */}
-          <Masonry columnsCount={3} gutter="20px">
-            {filteredImages.map((image, index) => (
-              <motion.div
-                key={image.id}
-                className="group relative overflow-hidden rounded-2xl cursor-pointer shadow-lg hover:shadow-2xl"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                whileHover={{ y: -5 }}
-                onClick={() => openLightbox(image, index)}
-              >
-                <img
-                  src={image.url}
-                  alt={image.title}
-                  className="w-full h-auto object-cover group-hover:scale-110 transition-transform duration-500"
-                />
+                    {/* Gradient for Text Contrast */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-80" />
+                  </div>
 
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                    <h3 className="text-lg">{image.title}</h3>
-
-                    <p className="text-sm text-white/80 mb-2">
-                      {image.description}
-                    </p>
-
-                    <div className="flex items-center gap-2 text-xs text-white/60">
-                      <Calendar className="w-3 h-3" />
-                      <span>
-                        {new Date(image.date).toLocaleDateString()}
-                      </span>
+                  {/* Album info inside the card */}
+                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                    <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-400">
+                      {album.category}
+                    </span>
+                    <h3 className="text-lg font-bold text-white mt-1 leading-tight group-hover:text-emerald-50">
+                      {album.title}
+                    </h3>
+                    <div className="flex items-center mt-3 text-white/60 text-xs font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                      Open Folder <ChevronRight size={14} className="ml-1" />
                     </div>
                   </div>
                 </div>
-
-                <div className="absolute top-4 right-4 bg-emerald-500 px-3 py-1 rounded-full text-xs capitalize">
-                  {image.category}
-                </div>
-              </motion.div>
+              </Link>
             ))}
           </Masonry>
+        </ResponsiveMasonry>
 
-          {filteredImages.length === 0 && (
-            <div className="text-center py-20">
-              <ImageIcon className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-              <p className="text-gray-500 text-lg">
-                No images found in this category
-              </p>
+        {/* Empty State on White */}
+        {filteredAlbums.length === 0 && (
+          <div className="text-center py-24">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 mb-4">
+               <FolderOpen className="w-8 h-8 text-slate-300" />
             </div>
-          )}
-        </div>
-      </div>
-
-      {/* Lightbox */}
-      <AnimatePresence>
-        {lightboxImage && (
-          <motion.div
-            className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={closeLightbox}
-          >
-            <button
-              className="absolute top-6 right-6 text-white"
-              onClick={closeLightbox}
-            >
-              <X size={32} />
-            </button>
-
-            <div
-              className="max-w-6xl max-h-[90vh]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <img
-                src={lightboxImage.url}
-                alt={lightboxImage.title}
-                className="max-h-[80vh] object-contain rounded-lg"
-              />
-
-              <div className="mt-6 text-center text-white">
-                <h3 className="text-2xl">{lightboxImage.title}</h3>
-
-                <p className="text-white/70">
-                  {lightboxImage.description}
-                </p>
-
-                <div className="flex items-center justify-center gap-2 text-sm text-white/50">
-                  <Calendar className="w-4 h-4" />
-                  <span>
-                    {new Date(lightboxImage.date).toLocaleDateString()}
-                  </span>
-                  <span className="mx-2">•</span>
-                  <span className="capitalize">
-                    {lightboxImage.category}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            {filteredImages.length > 1 && (
-              <>
-                <button
-                  className="absolute left-6 text-white"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    prevImage();
-                  }}
-                >
-                  <ChevronLeft size={40} />
-                </button>
-
-                <button
-                  className="absolute right-6 text-white"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    nextImage();
-                  }}
-                >
-                  <ChevronRight size={40} />
-                </button>
-              </>
-            )}
-
-            <div className="absolute bottom-6 text-white text-sm">
-              {lightboxIndex + 1} / {filteredImages.length}
-            </div>
-          </motion.div>
+            <h3 className="text-xl font-semibold text-slate-800">No albums found</h3>
+            <p className="text-slate-500">Try selecting a different project category.</p>
+          </div>
         )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 }

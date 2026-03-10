@@ -4,32 +4,33 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { updateHeroContent } from "@/app/ServerActions/Hero";
 import { toast } from "sonner";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 
 type HeroFormProps = {
   initialData: any;
 };
 
 export default function HeroForm({ initialData }: HeroFormProps) {
-  const { register, handleSubmit, reset, formState: { isDirty } } = useForm();
+  const { 
+    register, 
+    handleSubmit, 
+    reset, 
+    formState: { isDirty, isSubmitting } 
+  } = useForm();
 
-  // Real images from database only
   const [existingImages, setExistingImages] = useState<string[]>([]);
-
-  // Blob previews for UI only
   const [previewImages, setPreviewImages] = useState<string[]>([]);
-
-  // Real File objects
   const [newFiles, setNewFiles] = useState<File[]>([]);
-
   const [hasImageChanges, setHasImageChanges] = useState(false);
 
   // --- Sync initial data ---
   useEffect(() => {
     if (initialData) {
-      reset(initialData);
-      setExistingImages(initialData.images || []);
-      setPreviewImages(initialData.images || []);
+      // Force the form to use 'singleton' to match your DB cleanup
+      const normalizedData = { ...initialData, id: "singleton" };
+      reset(normalizedData);
+      setExistingImages(normalizedData.images || []);
+      setPreviewImages(normalizedData.images || []);
       setNewFiles([]);
       setHasImageChanges(false);
     }
@@ -38,89 +39,82 @@ export default function HeroForm({ initialData }: HeroFormProps) {
   // --- Handle file select ---
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
     setNewFiles((prev) => [...prev, ...files]);
-
     const blobPreviews = files.map((file) => URL.createObjectURL(file));
     setPreviewImages((prev) => [...prev, ...blobPreviews]);
-
     setHasImageChanges(true);
   }
 
   // --- Remove image ---
   function handleRemoveImage(index: number) {
     const imageToRemove = previewImages[index];
+    
+    // Revoke blob URL to save memory
+    if (imageToRemove.startsWith("blob:")) {
+      URL.revokeObjectURL(imageToRemove);
+    }
 
     setPreviewImages((prev) => prev.filter((_, i) => i !== index));
 
-    // If it's an existing (real) image
     if (existingImages.includes(imageToRemove)) {
-      setExistingImages((prev) =>
-        prev.filter((img) => img !== imageToRemove)
-      );
+      setExistingImages((prev) => prev.filter((img) => img !== imageToRemove));
     } else {
-      // It must be a new blob image
       const blobIndex = previewImages.length - newFiles.length;
       const newIndex = index - blobIndex;
-
       if (newIndex >= 0) {
-        setNewFiles((prev) =>
-          prev.filter((_, i) => i !== newIndex)
-        );
+        setNewFiles((prev) => prev.filter((_, i) => i !== newIndex));
       }
     }
-
     setHasImageChanges(true);
   }
 
   // --- Submit ---
   async function onSubmit(data: any) {
-    if (!isDirty && !hasImageChanges) return;
+    const toastId = toast.loading("Saving changes to Hero section...");
 
     try {
       const formData = new FormData();
+      
+      // Ensure we are sending 'singleton' as the ID
+      formData.append("id", "singleton");
+      formData.append("badgeText", data.badgeText || "");
+      formData.append("headline", data.headline || "");
+      formData.append("description", data.description || "");
+      formData.append("livesImpacted", data.livesImpacted || "");
+      formData.append("projectsCount", data.projectsCount || "");
+      formData.append("yearsActive", data.yearsActive || "");
+      formData.append("donateLink", data.donateLink || "https://qrinux.com/");
 
-      Object.keys(data).forEach((key) => {
-        formData.append(key, data[key] || "");
-      });
-
-      // Send ONLY real existing URLs
+      // Images logic
       formData.append("existingImages", JSON.stringify(existingImages));
-
-      // Send ONLY new files
-      newFiles.forEach((file) => {
-        formData.append("images", file);
-      });
+      newFiles.forEach((file) => formData.append("images", file));
 
       const response = await updateHeroContent(formData);
 
       if (response.success) {
-        toast.success("Hero content updated successfully");
-
+        toast.success("Hero content updated successfully!", { id: toastId });
         setNewFiles([]);
         setHasImageChanges(false);
-
-        // After save, preview = existing only
-        setPreviewImages(existingImages);
-
-        reset({ ...data, images: existingImages });
+        // This resets the 'isDirty' state so the button disables again
+        reset({ ...data, images: existingImages, id: "singleton" });
+      } else {
+        toast.error(response.error || "Failed to update", { id: toastId });
       }
     } catch (error) {
-      console.error(error);
-      toast.error("Something went wrong");
+      console.error("Submission Error:", error);
+      toast.error("An error occurred while saving", { id: toastId });
     }
   }
 
   const inputStyle =
     "w-full bg-[#0F172A] border border-white/10 rounded-lg p-3 text-white focus:border-[#10B981] outline-none transition-all";
-
   const labelStyle =
     "block text-sm font-medium text-white/60 mb-2";
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <input type="hidden" {...register("id")} />
-
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <label className={labelStyle}>Badge Text</label>
@@ -137,11 +131,23 @@ export default function HeroForm({ initialData }: HeroFormProps) {
         <textarea {...register("description")} rows={4} className={inputStyle} />
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-2 gap-6">
+        <div>
+          <label className={labelStyle}>Donate Link</label>
+          <input 
+            {...register("donateLink")} 
+            type="url"
+            placeholder="https://qrinux.com/" 
+            className={inputStyle} 
+          />
+        </div>
         <div>
           <label className={labelStyle}>Lives Impacted</label>
           <input {...register("livesImpacted")} className={inputStyle} />
         </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-6">
         <div>
           <label className={labelStyle}>Projects Count</label>
           <input {...register("projectsCount")} className={inputStyle} />
@@ -152,11 +158,11 @@ export default function HeroForm({ initialData }: HeroFormProps) {
         </div>
       </div>
 
-      {/* Upload */}
+      {/* Image Upload Area */}
       <div>
-        <label className={labelStyle}>Upload Images</label>
-        <label className="relative flex items-center justify-center h-32 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-[#10B981] transition-colors">
-          <span className="text-white/40">Click to select images</span>
+        <label className={labelStyle}>Hero Gallery Images</label>
+        <label className="relative flex items-center justify-center h-32 border-2 border-dashed border-white/20 rounded-xl cursor-pointer hover:border-[#10B981] transition-colors group">
+          <span className="text-white/40 group-hover:text-[#10B981]">Click to upload new images</span>
           <input
             type="file"
             multiple
@@ -167,17 +173,17 @@ export default function HeroForm({ initialData }: HeroFormProps) {
         </label>
       </div>
 
-      {/* Preview */}
-      <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
+      {/* Image Previews */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         {previewImages.map((img, index) => (
-          <div key={index} className="relative rounded-lg overflow-hidden border border-white/10 group">
-            <img src={img} alt="preview" className="h-32 w-full object-cover" />
+          <div key={index} className="relative rounded-lg overflow-hidden border border-white/10 group aspect-video">
+            <img src={img} alt="preview" className="h-full w-full object-cover" />
             <button
               type="button"
               onClick={() => handleRemoveImage(index)}
-              className="absolute top-2 right-2 p-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+              className="absolute top-2 right-2 p-1.5 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer shadow-lg"
             >
-              <X size={16} />
+              <X size={14} />
             </button>
           </div>
         ))}
@@ -185,14 +191,15 @@ export default function HeroForm({ initialData }: HeroFormProps) {
 
       <button
         type="submit"
-        disabled={!isDirty && !hasImageChanges}
-        className={`w-full font-bold py-4 rounded-xl transition-all ${
-          !isDirty && !hasImageChanges
-            ? "bg-slate-700 cursor-not-allowed"
-            : "bg-[#10B981] hover:bg-[#0b5a41] cursor-pointer"
-        } text-white`}
+        disabled={(!isDirty && !hasImageChanges) || isSubmitting}
+        className={`w-full font-bold py-4 rounded-xl transition-all flex items-center justify-center gap-2 ${
+          (!isDirty && !hasImageChanges) || isSubmitting
+            ? "bg-slate-800 text-white/30 cursor-not-allowed"
+            : "bg-[#10B981] hover:bg-[#059669] text-white cursor-pointer shadow-lg shadow-[#10B981]/20"
+        }`}
       >
-        Save Changes
+        {isSubmitting && <Loader2 className="animate-spin" size={20} />}
+        {isSubmitting ? "Saving..." : "Save Changes"}
       </button>
     </form>
   );

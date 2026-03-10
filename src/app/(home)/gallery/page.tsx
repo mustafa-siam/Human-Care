@@ -1,5 +1,5 @@
 
-import { GalleryPage } from '@/components/PageComponents/GallaryPage/GallaryAlbum'
+import GalleryPage from '@/components/PageComponents/GallaryPage/GallaryAlbum'
 import React from 'react'
 
 const page = () => {

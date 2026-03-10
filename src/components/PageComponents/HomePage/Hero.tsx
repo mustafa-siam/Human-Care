@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 import { ArrowRight, Heart, Loader2 } from "lucide-react";
 import { ImagePosition } from "@/components/Hooks/ImagePosition";
 import { useHero } from "@/components/Hooks/useHero";
+import Link from "next/link";
 
 export function Hero() {
   const { hero, loading } = useHero();
@@ -21,7 +22,7 @@ export function Hero() {
     );
   }
 
-  const { badgeText, headline, description, livesImpacted, projectsCount, yearsActive, images } = hero;
+  const { badgeText, headline, description, livesImpacted, projectsCount, yearsActive, images ,donateLink} = hero;
 
   return (
     <section
@@ -50,13 +51,13 @@ export function Hero() {
             </p>
 
             <div className="flex flex-wrap gap-4">
-              <button
-                onClick={() => scrollToSection("contact")}
+              <Link
+                 href={donateLink}
                 className="bg-[#F59E0B] hover:bg-[#D97706] text-white px-8 py-4 rounded-full font-semibold flex items-center gap-2"
               >
                 Donate Now
                 <Heart className="w-5 h-5" fill="white" />
-              </button>
+              </Link>
 
               <button
                 onClick={() => scrollToSection("projects")}

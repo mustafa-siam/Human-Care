@@ -32,6 +32,7 @@ export type HeroContentMinAggregateOutputType = {
   livesImpacted: string | null
   projectsCount: string | null
   yearsActive: string | null
+  donateLink: string | null
   updatedAt: Date | null
 }
 
@@ -43,6 +44,7 @@ export type HeroContentMaxAggregateOutputType = {
   livesImpacted: string | null
   projectsCount: string | null
   yearsActive: string | null
+  donateLink: string | null
   updatedAt: Date | null
 }
 
@@ -54,6 +56,7 @@ export type HeroContentCountAggregateOutputType = {
   livesImpacted: number
   projectsCount: number
   yearsActive: number
+  donateLink: number
   images: number
   updatedAt: number
   _all: number
@@ -68,6 +71,7 @@ export type HeroContentMinAggregateInputType = {
   livesImpacted?: true
   projectsCount?: true
   yearsActive?: true
+  donateLink?: true
   updatedAt?: true
 }
 
@@ -79,6 +83,7 @@ export type HeroContentMaxAggregateInputType = {
   livesImpacted?: true
   projectsCount?: true
   yearsActive?: true
+  donateLink?: true
   updatedAt?: true
 }
 
@@ -90,6 +95,7 @@ export type HeroContentCountAggregateInputType = {
   livesImpacted?: true
   projectsCount?: true
   yearsActive?: true
+  donateLink?: true
   images?: true
   updatedAt?: true
   _all?: true
@@ -175,6 +181,7 @@ export type HeroContentGroupByOutputType = {
   livesImpacted: string
   projectsCount: string
   yearsActive: string
+  donateLink: string
   images: string[]
   updatedAt: Date
   _count: HeroContentCountAggregateOutputType | null
@@ -208,6 +215,7 @@ export type HeroContentWhereInput = {
   livesImpacted?: Prisma.StringFilter<"HeroContent"> | string
   projectsCount?: Prisma.StringFilter<"HeroContent"> | string
   yearsActive?: Prisma.StringFilter<"HeroContent"> | string
+  donateLink?: Prisma.StringFilter<"HeroContent"> | string
   images?: Prisma.StringNullableListFilter<"HeroContent">
   updatedAt?: Prisma.DateTimeFilter<"HeroContent"> | Date | string
 }
@@ -220,6 +228,7 @@ export type HeroContentOrderByWithRelationInput = {
   livesImpacted?: Prisma.SortOrder
   projectsCount?: Prisma.SortOrder
   yearsActive?: Prisma.SortOrder
+  donateLink?: Prisma.SortOrder
   images?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -235,6 +244,7 @@ export type HeroContentWhereUniqueInput = Prisma.AtLeast<{
   livesImpacted?: Prisma.StringFilter<"HeroContent"> | string
   projectsCount?: Prisma.StringFilter<"HeroContent"> | string
   yearsActive?: Prisma.StringFilter<"HeroContent"> | string
+  donateLink?: Prisma.StringFilter<"HeroContent"> | string
   images?: Prisma.StringNullableListFilter<"HeroContent">
   updatedAt?: Prisma.DateTimeFilter<"HeroContent"> | Date | string
 }, "id">
@@ -247,6 +257,7 @@ export type HeroContentOrderByWithAggregationInput = {
   livesImpacted?: Prisma.SortOrder
   projectsCount?: Prisma.SortOrder
   yearsActive?: Prisma.SortOrder
+  donateLink?: Prisma.SortOrder
   images?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.HeroContentCountOrderByAggregateInput
@@ -265,6 +276,7 @@ export type HeroContentScalarWhereWithAggregatesInput = {
   livesImpacted?: Prisma.StringWithAggregatesFilter<"HeroContent"> | string
   projectsCount?: Prisma.StringWithAggregatesFilter<"HeroContent"> | string
   yearsActive?: Prisma.StringWithAggregatesFilter<"HeroContent"> | string
+  donateLink?: Prisma.StringWithAggregatesFilter<"HeroContent"> | string
   images?: Prisma.StringNullableListFilter<"HeroContent">
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"HeroContent"> | Date | string
 }
@@ -277,6 +289,7 @@ export type HeroContentCreateInput = {
   livesImpacted?: string
   projectsCount?: string
   yearsActive?: string
+  donateLink?: string
   images?: Prisma.HeroContentCreateimagesInput | string[]
   updatedAt?: Date | string
 }
@@ -289,6 +302,7 @@ export type HeroContentUncheckedCreateInput = {
   livesImpacted?: string
   projectsCount?: string
   yearsActive?: string
+  donateLink?: string
   images?: Prisma.HeroContentCreateimagesInput | string[]
   updatedAt?: Date | string
 }
@@ -301,6 +315,7 @@ export type HeroContentUpdateInput = {
   livesImpacted?: Prisma.StringFieldUpdateOperationsInput | string
   projectsCount?: Prisma.StringFieldUpdateOperationsInput | string
   yearsActive?: Prisma.StringFieldUpdateOperationsInput | string
+  donateLink?: Prisma.StringFieldUpdateOperationsInput | string
   images?: Prisma.HeroContentUpdateimagesInput | string[]
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -313,6 +328,7 @@ export type HeroContentUncheckedUpdateInput = {
   livesImpacted?: Prisma.StringFieldUpdateOperationsInput | string
   projectsCount?: Prisma.StringFieldUpdateOperationsInput | string
   yearsActive?: Prisma.StringFieldUpdateOperationsInput | string
+  donateLink?: Prisma.StringFieldUpdateOperationsInput | string
   images?: Prisma.HeroContentUpdateimagesInput | string[]
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -325,6 +341,7 @@ export type HeroContentCreateManyInput = {
   livesImpacted?: string
   projectsCount?: string
   yearsActive?: string
+  donateLink?: string
   images?: Prisma.HeroContentCreateimagesInput | string[]
   updatedAt?: Date | string
 }
@@ -337,6 +354,7 @@ export type HeroContentUpdateManyMutationInput = {
   livesImpacted?: Prisma.StringFieldUpdateOperationsInput | string
   projectsCount?: Prisma.StringFieldUpdateOperationsInput | string
   yearsActive?: Prisma.StringFieldUpdateOperationsInput | string
+  donateLink?: Prisma.StringFieldUpdateOperationsInput | string
   images?: Prisma.HeroContentUpdateimagesInput | string[]
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -349,6 +367,7 @@ export type HeroContentUncheckedUpdateManyInput = {
   livesImpacted?: Prisma.StringFieldUpdateOperationsInput | string
   projectsCount?: Prisma.StringFieldUpdateOperationsInput | string
   yearsActive?: Prisma.StringFieldUpdateOperationsInput | string
+  donateLink?: Prisma.StringFieldUpdateOperationsInput | string
   images?: Prisma.HeroContentUpdateimagesInput | string[]
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -369,6 +388,7 @@ export type HeroContentCountOrderByAggregateInput = {
   livesImpacted?: Prisma.SortOrder
   projectsCount?: Prisma.SortOrder
   yearsActive?: Prisma.SortOrder
+  donateLink?: Prisma.SortOrder
   images?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -381,6 +401,7 @@ export type HeroContentMaxOrderByAggregateInput = {
   livesImpacted?: Prisma.SortOrder
   projectsCount?: Prisma.SortOrder
   yearsActive?: Prisma.SortOrder
+  donateLink?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -392,6 +413,7 @@ export type HeroContentMinOrderByAggregateInput = {
   livesImpacted?: Prisma.SortOrder
   projectsCount?: Prisma.SortOrder
   yearsActive?: Prisma.SortOrder
+  donateLink?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
@@ -422,6 +444,7 @@ export type HeroContentSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   livesImpacted?: boolean
   projectsCount?: boolean
   yearsActive?: boolean
+  donateLink?: boolean
   images?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["heroContent"]>
@@ -434,6 +457,7 @@ export type HeroContentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   livesImpacted?: boolean
   projectsCount?: boolean
   yearsActive?: boolean
+  donateLink?: boolean
   images?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["heroContent"]>
@@ -446,6 +470,7 @@ export type HeroContentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   livesImpacted?: boolean
   projectsCount?: boolean
   yearsActive?: boolean
+  donateLink?: boolean
   images?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["heroContent"]>
@@ -458,11 +483,12 @@ export type HeroContentSelectScalar = {
   livesImpacted?: boolean
   projectsCount?: boolean
   yearsActive?: boolean
+  donateLink?: boolean
   images?: boolean
   updatedAt?: boolean
 }
 
-export type HeroContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "badgeText" | "headline" | "description" | "livesImpacted" | "projectsCount" | "yearsActive" | "images" | "updatedAt", ExtArgs["result"]["heroContent"]>
+export type HeroContentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "badgeText" | "headline" | "description" | "livesImpacted" | "projectsCount" | "yearsActive" | "donateLink" | "images" | "updatedAt", ExtArgs["result"]["heroContent"]>
 
 export type $HeroContentPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "HeroContent"
@@ -475,6 +501,7 @@ export type $HeroContentPayload<ExtArgs extends runtime.Types.Extensions.Interna
     livesImpacted: string
     projectsCount: string
     yearsActive: string
+    donateLink: string
     images: string[]
     updatedAt: Date
   }, ExtArgs["result"]["heroContent"]>
@@ -907,6 +934,7 @@ export interface HeroContentFieldRefs {
   readonly livesImpacted: Prisma.FieldRef<"HeroContent", 'String'>
   readonly projectsCount: Prisma.FieldRef<"HeroContent", 'String'>
   readonly yearsActive: Prisma.FieldRef<"HeroContent", 'String'>
+  readonly donateLink: Prisma.FieldRef<"HeroContent", 'String'>
   readonly images: Prisma.FieldRef<"HeroContent", 'String[]'>
   readonly updatedAt: Prisma.FieldRef<"HeroContent", 'DateTime'>
 }

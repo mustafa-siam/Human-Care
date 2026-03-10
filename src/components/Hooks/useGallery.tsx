@@ -9,10 +9,14 @@ export function useGallery() {
 
   const fetchData = useCallback(async () => {
     setLoading(true);
+
     try {
       const res = await getGalleryItems();
-      if (res.success) {
-        setItems(res.data ?? []);
+
+      if (res?.success) {
+        setItems(res.data || []);
+      } else {
+        console.error(res?.error);
       }
     } catch (error) {
       console.error("Gallery Hook Error:", error);
@@ -25,5 +29,9 @@ export function useGallery() {
     fetchData();
   }, [fetchData]);
 
-  return { items, loading, refresh: fetchData };
+  return {
+    items,
+    loading,
+    refresh: fetchData,
+  };
 }

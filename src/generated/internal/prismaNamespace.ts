@@ -900,6 +900,7 @@ export const HeroContentScalarFieldEnum = {
   livesImpacted: 'livesImpacted',
   projectsCount: 'projectsCount',
   yearsActive: 'yearsActive',
+  donateLink: 'donateLink',
   images: 'images',
   updatedAt: 'updatedAt'
 } as const

@@ -1,181 +1,253 @@
 "use client";
 
 import React, { useState } from "react";
-import { Plus, Pencil, Trash2, Loader2, ImageIcon, Tag } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react"; 
-import { useGallery } from "@/components/Hooks/useGallery"; 
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Loader2,
+  ImageIcon,
+  Tag,
+  Images,
+  LayoutGrid,
+} from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { useGallery } from "@/components/Hooks/useGallery";
 import { toast } from "sonner";
 import { deleteGalleryItem, upsertGalleryItem } from "@/app/ServerActions/galleryItem";
 import GalleryForm from "./GalleryForm";
 import Swal from "sweetalert2";
+import Link from "next/link";
+
+type Album = {
+  title: string;
+  category: string;
+  cover: string;
+  description?: string;
+  date?: string;
+  items: any[];
+};
 
 export default function AdminGalleryPage() {
   const { items, loading, refresh } = useGallery();
-  
   const [showForm, setShowForm] = useState(false);
+  const [editingAlbum, setEditingAlbum] = useState<Album | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [editingItem, setEditingItem] = useState<any>(null);
 
-  const handleEdit = (item: any) => {
-    setEditingItem(item);
+  /* ---------------- GROUPING LOGIC ---------------- */
+  // We group by title + category to treat them as a single "Album" entity
+  const groupedAlbums: Album[] = Object.values(
+    items.reduce((acc: Record<string, Album>, item: any) => {
+      const key = `${item.category}-${item.title}`;
+      if (!acc[key]) {
+        acc[key] = {
+          title: item.title,
+          category: item.category,
+          cover: item.url,
+          description: item.description,
+          date: item.date,
+          items: [],
+        };
+      }
+      acc[key].items.push(item);
+      return acc;
+    }, {})
+  );
+
+  const categoryGroups: Record<string, Album[]> = groupedAlbums.reduce(
+    (acc: Record<string, Album[]>, album: Album) => {
+      if (!acc[album.category]) acc[album.category] = [];
+      acc[album.category].push(album);
+      return acc;
+    },
+    {}
+  );
+
+  /* ---------------- HANDLERS ---------------- */
+  const handleEdit = (album: Album) => {
+    // Constructing a shape the form expects: id of the first item + all images
+    const albumData = {
+      id: album.items[0]?.id, 
+      title: album.title,
+      category: album.category,
+      description: album.description,
+      date: album.date,
+      images: album.items, // Pass the full array of images here!
+    };
+    setEditingAlbum(albumData as any);
     setShowForm(true);
   };
 
-  const handleDeleteRequest = async (id: number, title: string) => {
-  const result = await Swal.fire({
-    title: "Delete gallery item?",
-    text: `"${title}" will be permanently deleted.`,
-    showCancelButton: true,
-    confirmButtonColor: "#e11d48",
-    cancelButtonColor: "#64748b",
-    confirmButtonText: "Yes, delete it",
-  });
+  const handleDeleteAlbum = async (album: Album) => {
+    const result = await Swal.fire({
+      title: "Delete entire album?",
+      text: `This will permanently remove "${album.title}" and its ${album.items.length} images.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#334155",
+      confirmButtonText: "Yes, delete everything",
+      background: "#1e293b",
+      color: "#fff"
+    });
 
-  if (result.isConfirmed) {
-    executeDelete(id);
-  }
-};
+    if (!result.isConfirmed) return;
 
-  const executeDelete = async (id: number) => {
-    const res = await deleteGalleryItem(id);
-    if (res.success) {
-      toast.success("Item deleted successfully");
+    try {
+      for (const img of album.items) {
+        await deleteGalleryItem(img.id);
+      }
+      toast.success("Album deleted successfully");
       refresh();
-    } else {
-      toast.error("Failed to delete item");
+    } catch (error) {
+      toast.error("Failed to delete some images");
     }
   };
 
   const handleFormSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
     try {
-      if (editingItem?.id) formData.append("id", editingItem.id.toString());
       const res = await upsertGalleryItem(formData);
       if (res.success) {
-        toast.success(editingItem ? "Gallery updated" : "Photo published");
+        toast.success(editingAlbum ? "Album updated" : "Album published");
         setShowForm(false);
-        setEditingItem(null);
+        setEditingAlbum(null);
         refresh();
       } else {
-        toast.error(res.error || "Error saving gallery item");
+        toast.error(res.error || "Failed to save");
       }
     } catch (err) {
-      console.error(err);
       toast.error("Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (loading && items.length === 0) return (
-    <div className="flex flex-col items-center justify-center h-96 gap-4">
-      <Loader2 className="animate-spin text-emerald-500" size={40} />
-    </div>
-  );
+  if (loading && items.length === 0)
+    return (
+      <div className="flex flex-col justify-center items-center h-96 gap-4">
+        <Loader2 className="animate-spin text-emerald-500" size={48} />
+        <p className="text-slate-400 animate-pulse">Loading gallery...</p>
+      </div>
+    );
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center flex-wrap">
+    <div className="max-w-7xl mx-auto px-4 py-6 space-y-10">
+      {/* HEADER SECTION */}
+      <div className="flex justify-between items-end border-b border-slate-800 pb-6">
         <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight">Gallery Management</h1>
-          <p className="text-slate-400 text-sm mt-1">Manage your visual impact stories.</p>
+          <h1 className="text-4xl font-extrabold text-white tracking-tight flex items-center gap-3">
+            <LayoutGrid className="text-emerald-500" />
+            Gallery Manager
+          </h1>
+          <p className="text-slate-400 mt-2">Organize, edit, and manage your visual stories.</p>
         </div>
+
         {!showForm && (
           <button
-            onClick={() => { setEditingItem(null); setShowForm(true); }}
-            className="flex items-center cursor-pointer gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20 mt-4 md:mt-0"
+            onClick={() => { setEditingAlbum(null); setShowForm(true); }}
+            className="group flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
           >
-            <Plus size={20} /> New Photo
+            <Plus size={20} className="group-hover:rotate-90 transition-transform" /> 
+            Create New Album
           </button>
         )}
       </div>
 
       <AnimatePresence mode="wait">
         {showForm ? (
-          <motion.div key="form" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+          <motion.div 
+            key="form" 
+            initial={{ opacity: 0, scale: 0.98 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            exit={{ opacity: 0, scale: 0.98 }}
+          >
             <GalleryForm
-              initialData={editingItem}
+              initialData={editingAlbum}
               isSubmitting={isSubmitting}
-              onClose={() => setShowForm(false)}
+              onClose={() => { setShowForm(false); setEditingAlbum(null); }}
               onSubmit={handleFormSubmit}
             />
           </motion.div>
         ) : (
-          <motion.div key="table" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            {/* Desktop Table */}
-            <div className="hidden md:block bg-[#1e293b] rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
-              <table className="w-full text-left border-separate border-spacing-0">
-                <thead className="bg-slate-800/50 text-slate-400 text-[10px] uppercase font-bold tracking-[0.15em] border-b border-slate-800">
-                  <tr>
-                    <th className="px-8 py-5">Media</th>
-                    <th className="px-8 py-5">Category</th>
-                    <th className="px-8 py-5 text-right">Manage</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800">
-                  {items.map(item => (
-                    <tr key={item.id} className="group hover:bg-slate-800/30 transition-all">
-                      <td className="px-8 py-5">
-                        <div className="flex items-center gap-4">
-                          <div className="h-10 w-16 rounded-lg bg-slate-900 overflow-hidden relative border border-slate-700 shadow-inner">
-                            <img src={item.url} alt="" className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" />
-                          </div>
-                          <span className="font-bold text-slate-200">{item.title}</span>
-                        </div>
-                      </td>
-                      <td className="px-8 py-5 text-slate-400 text-sm">
-                        <div className="flex items-center gap-2">
-                          <Tag size={14} className="text-emerald-500" />
-                          <span className="capitalize">{item.category}</span>
-                        </div>
-                      </td>
-                      <td className="px-8 py-5 text-right space-x-2">
-                        <button onClick={() => handleEdit(item)} className="p-2.5 text-cyan-400 hover:bg-cyan-400/10 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center border border-transparent hover:border-cyan-400/20">
-                          <Pencil size={18} />
-                        </button>
-                        <button onClick={() => handleDeleteRequest(item.id, item.title)} className="p-2.5 text-rose-400 hover:bg-rose-400/10 rounded-xl transition-all cursor-pointer inline-flex items-center justify-center border border-transparent hover:border-rose-400/20">
-                          <Trash2 size={18} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              {items.length === 0 && !loading && (
-                <div className="p-24 text-center">
-                  <ImageIcon className="mx-auto text-slate-700 mb-4" size={48} />
-                  <p className="text-slate-500 text-sm">Database is empty.</p>
+          <motion.div key="albums" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-12">
+            {Object.entries(categoryGroups).map(([category, albums]) => (
+              <section key={category} className="space-y-6">
+                <div className="flex items-center gap-3">
+                  <div className="h-px flex-1 bg-slate-800"></div>
+                  <h2 className="flex items-center gap-2 text-slate-400 font-bold text-sm uppercase tracking-widest bg-slate-900 px-4 py-1 rounded-full border border-slate-800">
+                    <Tag className="text-emerald-500" size={14} />
+                    {category}
+                  </h2>
+                  <div className="h-px flex-1 bg-slate-800"></div>
                 </div>
-              )}
-            </div>
 
-            {/* Mobile Cards */}
-            <div className="flex flex-col gap-4 md:hidden">
-              {items.map(item => (
-                <div key={item.id} className="bg-[#1e293b] border border-slate-800 rounded-2xl p-4 shadow hover:shadow-lg transition-all">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="h-16 w-20 rounded-lg overflow-hidden border border-slate-700">
-                      <img src={item.url} alt="" className="object-cover w-full h-full" />
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-bold text-white text-sm mb-1 truncate">{item.title}</div>
-                      <div className="flex items-center gap-2 text-slate-400 text-xs">
-                        <Tag size={12} className="text-emerald-500" /> {item.category}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {albums.map((album, index) => (
+                    <div key={index} className="group relative bg-[#1e293b] border border-slate-800 rounded-3xl overflow-hidden hover:border-emerald-500/50 transition-all duration-300 shadow-xl">
+                      {/* IMAGE CONTAINER */}
+                      <div className="relative h-48 overflow-hidden">
+                        <img 
+                          src={album.cover} 
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                          alt={album.title} 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent opacity-60" />
+                        
+                        {/* BADGE: IMAGE COUNT */}
+                        <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-2">
+                          <Images size={14} className="text-emerald-400" />
+                          {album.items.length} Photos
+                        </div>
+
+                        {/* HOVER ACTIONS */}
+                        <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => handleEdit(album)}
+                            className="p-2.5 bg-white/10 hover:bg-emerald-500 backdrop-blur-md text-white rounded-xl transition-colors"
+                            title="Edit Album"
+                          >
+                            <Pencil size={16} />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAlbum(album)}
+                            className="p-2.5 bg-white/10 hover:bg-rose-500 backdrop-blur-md text-white rounded-xl transition-colors"
+                            title="Delete Album"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* INFO SECTION */}
+                      <div className="p-5">
+                        <h3 className="text-white font-bold truncate text-lg mb-1">{album.title}</h3>
+                        <p className="text-slate-500 text-xs line-clamp-1">{album.description || "No description provided."}</p>
+                        
+                        <Link 
+                          href={`/admin/gallery/${album.category}/${encodeURIComponent(album.title)}`}
+                          className="mt-4 flex items-center justify-center w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold rounded-xl transition-colors"
+                        >
+                          View Gallery Items
+                        </Link>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <button onClick={() => handleEdit(item)} className="p-2.5 text-cyan-400 hover:bg-cyan-400/10 rounded-xl transition-all">
-                      <Pencil size={16} />
-                    </button>
-                    <button onClick={() => handleDeleteRequest(item.id, item.title)} className="p-2.5 text-rose-400 hover:bg-rose-400/10 rounded-xl transition-all">
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </section>
+            ))}
+
+            {groupedAlbums.length === 0 && (
+              <div className="py-32 flex flex-col items-center justify-center border-2 border-dashed border-slate-800 rounded-3xl">
+                <div className="bg-slate-800/50 p-6 rounded-full mb-4">
+                  <ImageIcon className="text-slate-600" size={48} />
+                </div>
+                <h3 className="text-white font-bold text-xl">No albums found</h3>
+                <p className="text-slate-500 max-w-xs text-center mt-2">
+                  Start by creating your first gallery album to showcase your work.
+                </p>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

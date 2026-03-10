@@ -11,6 +11,7 @@ interface HeroData {
   projectsCount: string;
   yearsActive: string;
   images: string[];
+  donateLink: string; // ✅ Added dynamic donate link
 }
 
 export function useHero() {
@@ -21,7 +22,7 @@ export function useHero() {
     const fetchHero = async () => {
       try {
         const data = await getHeroContent();
-        setHero(data);
+        setHero(data); 
       } catch (error) {
         console.error("Failed to fetch hero:", error);
       } finally {

@@ -1,8 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { X, Trash2, Loader2, Upload, ImageIcon, Tag, Calendar, AlignLeft, ChevronDown } from "lucide-react";
+import {
+  X,
+  Trash2,
+  Loader2,
+  Upload,
+  ImageIcon,
+  Tag,
+  Calendar,
+  AlignLeft,
+  ChevronDown,
+} from "lucide-react";
 import { motion } from "motion/react";
 
 interface GalleryFormData {
@@ -14,13 +24,13 @@ interface GalleryFormData {
 }
 
 interface GalleryFormProps {
-  initialData?: any;
+  initialData?: any; // the gallery album being edited
   onSubmit: (data: FormData) => Promise<void>;
   onClose: () => void;
   isSubmitting: boolean;
 }
 
-const CATEGORIES = ['education', 'healthcare', 'water', 'emergency', 'community'];
+const CATEGORIES = ["education", "healthcare", "water", "emergency", "community"];
 
 export default function GalleryForm({
   initialData,
@@ -28,61 +38,64 @@ export default function GalleryForm({
   onClose,
   isSubmitting,
 }: GalleryFormProps) {
-  
-  const formatDateForInput = (dateInput: any) => {
-    if (!dateInput) return "";
-    const d = new Date(dateInput);
-    return d.toISOString().split("T")[0];
-  };
-
-  const { register, handleSubmit, formState: { errors } } = useForm<GalleryFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+  } = useForm<GalleryFormData>({
     defaultValues: {
       id: initialData?.id?.toString() || "",
       title: initialData?.title || "",
       category: initialData?.category || "education",
       description: initialData?.description || "",
-      date: formatDateForInput(initialData?.date),
+      date: initialData?.date ? new Date(initialData.date).toISOString().split("T")[0] : "",
     },
   });
 
-  /* ---------- IMAGE STATE ---------- */
-  const [previewImage, setPreviewImage] = useState<string>(initialData?.url || "");
-  const [newFile, setNewFile] = useState<File | null>(null);
+  // Track existing images (already uploaded) separately from new files
+  const [existingImages, setExistingImages] = useState<any[]>([]);
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+
+  useEffect(() => {
+    if (initialData?.images) {
+      setExistingImages(initialData.images);
+    }
+  }, [initialData]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setNewFile(file);
-      setPreviewImage(URL.createObjectURL(file));
-    }
+    const files = Array.from(e.target.files || []);
+    setNewFiles((prev) => [...prev, ...files]);
   };
 
-  const handleRemoveImage = () => {
-    setNewFile(null);
-    setPreviewImage("");
+  const removeExistingImage = (id: string) => {
+    setExistingImages((prev) => prev.filter((img) => img.id !== id));
   };
 
-  /* ---------- SUBMIT ---------- */
+  const removeNewFile = (index: number) => {
+    const updated = [...newFiles];
+    updated.splice(index, 1);
+    setNewFiles(updated);
+  };
+
   const handleFormSubmit = async (values: GalleryFormData) => {
-    // If no image is selected and no existing image exists, stop submission
-    if (!previewImage) {
-      alert("Please upload an image first");
+    if (existingImages.length === 0 && newFiles.length === 0) {
+      alert("Please upload at least one image");
       return;
     }
 
     const data = new FormData();
     if (initialData?.id) data.append("id", initialData.id.toString());
-    
+
     data.append("title", values.title);
     data.append("category", values.category);
     data.append("description", values.description);
     data.append("date", values.date);
 
-    if (newFile) {
-      data.append("image", newFile);
-    } else {
-      data.append("existingImage", initialData?.url || "");
-    }
+    newFiles.forEach((file) => data.append("images", file));
+    // Pass removed images as array of ids
+    const removedIds = initialData?.images?.map((img: any) => img.id).filter((id: any) => !existingImages.find((img) => img.id === id));
+    removedIds?.forEach((id: any) => data.append("removedImages[]", id));
 
     await onSubmit(data);
   };
@@ -99,30 +112,35 @@ export default function GalleryForm({
           <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500">
             <ImageIcon size={20} />
           </div>
-          {initialData ? "Update Gallery Item" : "Add to Gallery"}
+          {initialData ? "Edit Gallery Album" : "Add Gallery Album"}
         </h2>
-        <button onClick={onClose} className="text-slate-400 hover:text-white transition cursor-pointer p-2 hover:bg-slate-800 rounded-full">
+
+        <button
+          onClick={onClose}
+          className="text-slate-400 hover:text-white transition cursor-pointer p-2 hover:bg-slate-800 rounded-full"
+        >
           <X size={22} />
         </button>
       </div>
 
       <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+        {/* TITLE, CATEGORY, DATE */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* TITLE */}
           <div className="md:col-span-2 space-y-2">
             <label className="text-xs font-bold uppercase text-slate-500 flex items-center gap-2">
-              <ImageIcon size={14} className="text-emerald-500" /> Image Title
+              <ImageIcon size={14} className="text-emerald-500" />
+              Album Title
             </label>
             <input
               {...register("title", { required: "Title is required" })}
-              placeholder="e.g. Distribution in Sylhet"
-              className={`w-full bg-[#0f172a] border ${errors.title ? 'border-rose-500' : 'border-slate-700'} rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all`}
+              placeholder="e.g. Food Distribution Sylhet"
+              className={`w-full bg-[#0f172a] border ${
+                errors.title ? "border-rose-500" : "border-slate-700"
+              } rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-emerald-500/50`}
             />
-            {errors.title && <p className="text-rose-500 text-[10px] font-bold uppercase tracking-wider">{errors.title.message}</p>}
+            {errors.title && <p className="text-rose-500 text-[10px] font-bold">{errors.title.message}</p>}
           </div>
 
-          {/* CATEGORY */}
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase text-slate-500 flex items-center gap-2">
               <Tag size={14} className="text-emerald-500" /> Album Category
@@ -132,73 +150,90 @@ export default function GalleryForm({
                 {...register("category")}
                 className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 pr-10 text-white outline-none appearance-none cursor-pointer capitalize"
               >
-                {CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                {CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
               </select>
-              <ChevronDown size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none" />
+              <ChevronDown size={18} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
             </div>
           </div>
 
-          {/* DATE with Internal Icon */}
           <div className="space-y-2">
-<label className="text-xs font-bold uppercase text-slate-500 flex items-center gap-2">
-<Calendar size={14} /> Event Date
-</label>
- <input type="date"{...register("date", { required: true })} className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all" />
- </div>
+            <label className="text-xs font-bold uppercase text-slate-500 flex items-center gap-2">
+              <Calendar size={14} /> Event Date
+            </label>
+            <input
+              type="date"
+              {...register("date", { required: true })}
+              className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-emerald-500/50"
+            />
+          </div>
         </div>
 
-        {/* IMAGE UPLOAD */}
-        <div className="space-y-2">
-          <label className="text-xs font-bold uppercase text-slate-500 flex items-center gap-2">
-             Photo Attachment
-          </label>
-          {previewImage ? (
-            <div className="relative h-64 rounded-xl overflow-hidden border border-slate-700 group shadow-inner">
-              <img src={previewImage} className="w-full h-full object-cover" alt="Preview" />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <button type="button" onClick={handleRemoveImage} className="bg-rose-500 text-white p-3 rounded-full hover:scale-110 transition-transform cursor-pointer shadow-lg">
-                  <Trash2 size={20} />
+        {/* EXISTING IMAGES */}
+        {existingImages.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {existingImages.map((img) => (
+              <div key={img.id} className="relative group h-32 rounded-lg overflow-hidden">
+                <img src={img.url} className="w-full h-full object-cover" alt="" />
+                <button
+                  type="button"
+                  onClick={() => removeExistingImage(img.id)}
+                  className="absolute top-2 right-2 bg-rose-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100"
+                >
+                  <Trash2 size={16} />
                 </button>
               </div>
-            </div>
-          ) : (
-            <label className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500 transition bg-[#0f172a] group">
-              <Upload className="text-slate-500 mb-2 group-hover:text-emerald-500 transition-colors" />
-              <span className="text-slate-400 font-medium">Click to upload photo</span>
-              <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-            </label>
-          )}
-        </div>
+            ))}
+          </div>
+        )}
+
+        {/* NEW IMAGE UPLOAD */}
+        {newFiles.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {newFiles.map((file, index) => (
+              <div key={index} className="relative group h-32 rounded-lg overflow-hidden">
+                <img src={URL.createObjectURL(file)} className="w-full h-full object-cover" alt="" />
+                <button
+                  type="button"
+                  onClick={() => removeNewFile(index)}
+                  className="absolute top-2 right-2 bg-rose-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <label className="flex flex-col items-center justify-center h-40 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer hover:border-emerald-500 transition bg-[#0f172a]">
+          <Upload className="text-slate-500 mb-2" />
+          <span className="text-slate-400 font-medium">Upload  Photos</span>
+          <input type="file" multiple accept="image/*" onChange={handleFileChange} className="hidden" />
+        </label>
 
         {/* DESCRIPTION */}
         <div className="space-y-2">
           <label className="text-xs font-bold uppercase text-slate-500 flex items-center gap-2">
-            <AlignLeft size={14} className="text-emerald-500" /> Short Caption
+            <AlignLeft size={14} className="text-emerald-500" /> Caption
           </label>
           <textarea
             rows={3}
             {...register("description")}
-            placeholder="Briefly describe this moment..."
-            className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+            placeholder="Describe this event..."
+            className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-white outline-none focus:ring-2 focus:ring-emerald-500/50"
           />
         </div>
 
-        {/* SUBMIT BUTTON */}
+        {/* SUBMIT */}
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 rounded-xl flex justify-center items-center transition shadow-lg shadow-emerald-900/20 cursor-pointer"
+          className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 text-white font-bold py-4 rounded-xl flex justify-center items-center transition cursor-pointer"
         >
-          {isSubmitting ? (
-            <>
-              <Loader2 className="animate-spin mr-2" />
-              Processing...
-            </>
-          ) : initialData ? (
-            "Update Gallery Entry"
-          ) : (
-            "Publish to Gallery"
-          )}
+          {isSubmitting ? <><Loader2 className="animate-spin mr-2" /> Uploading...</> : initialData ? "Update Gallery Album" : "Publish Gallery Album"}
         </button>
       </form>
     </motion.div>
