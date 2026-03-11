@@ -127,16 +127,14 @@ export default function AdminGalleryPage() {
     return (
       <div className="flex flex-col justify-center items-center h-96 gap-4">
         <Loader2 className="animate-spin text-emerald-500" size={48} />
-        <p className="text-slate-400 animate-pulse">Loading gallery...</p>
       </div>
     );
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-10">
-      {/* HEADER SECTION */}
-      <div className="flex justify-between items-end border-b border-slate-800 pb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-end border-b border-slate-800 pb-6">
         <div>
-          <h1 className="text-4xl font-extrabold text-white tracking-tight flex items-center gap-3">
+          <h1 className="md:text-4xl text-2xl font-extrabold text-white tracking-tight flex items-center gap-3">
             <LayoutGrid className="text-emerald-500" />
             Gallery Manager
           </h1>
@@ -185,7 +183,7 @@ export default function AdminGalleryPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                   {albums.map((album, index) => (
                     <div key={index} className="group relative bg-[#1e293b] border border-slate-800 rounded-3xl overflow-hidden hover:border-emerald-500/50 transition-all duration-300 shadow-xl">
-                      {/* IMAGE CONTAINER */}
+                    
                       <div className="relative h-48 overflow-hidden">
                         <img 
                           src={album.cover} 
@@ -194,13 +192,13 @@ export default function AdminGalleryPage() {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent opacity-60" />
                         
-                        {/* BADGE: IMAGE COUNT */}
+                    
                         <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-2">
                           <Images size={14} className="text-emerald-400" />
                           {album.items.length} Photos
                         </div>
 
-                        {/* HOVER ACTIONS */}
+                
                         <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <button
                             onClick={() => handleEdit(album)}
@@ -219,7 +217,7 @@ export default function AdminGalleryPage() {
                         </div>
                       </div>
 
-                      {/* INFO SECTION */}
+            
                       <div className="p-5">
                         <h3 className="text-white font-bold truncate text-lg mb-1">{album.title}</h3>
                         <p className="text-slate-500 text-xs line-clamp-1">{album.description || "No description provided."}</p>
