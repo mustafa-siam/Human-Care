@@ -1,12 +1,5 @@
-import DashboardPage from '@/components/Admin/Dashboard/DashboarPage'
-import React from 'react'
+import { redirect } from "next/navigation";
 
-const page = () => {
-  return (
-    <div>
-      <DashboardPage></DashboardPage>
-    </div>
-  )
+export default function AdminPage() {
+  redirect("/admin/dashboard");
 }
-
-export default page

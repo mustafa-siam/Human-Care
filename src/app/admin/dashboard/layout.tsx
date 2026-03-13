@@ -3,20 +3,21 @@ import React, { useState } from "react";
 import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Briefcase, BellRing, Globe, Users, Images, Contact, Menu, X } from "lucide-react";
+import { LayoutDashboard, FileText, Briefcase, BellRing, Globe, Users, Images, Contact, Menu, X, UserCog } from "lucide-react";
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const menuItems = [
-    { name: "Overview", icon: <LayoutDashboard size={20} />, href: "/admin" },
-    { name: "Hero Section", icon: <Globe size={20} />, href: "/admin/hero" },
-    { name: "Projects", icon: <Briefcase size={20} />, href: "/admin/projects" },
-    { name: "News & Notices", icon: <BellRing size={20} />, href: "/admin/notices" },
-    { name: "Our Team", icon: <Users size={20} />, href: "/admin/team" },
-    { name: "Gallery Allbum", icon: <Images size={20} />, href: "/admin/gallery" },
-    { name: "Contacts", icon: <Contact size={20} />, href: "/admin/contacts" },
+    { name: "Overview", icon: <LayoutDashboard size={20} />, href: "/admin/dashboard" },
+    { name: "Hero Section", icon: <Globe size={20} />, href: "/admin/dashboard/hero" },
+    { name: "Projects", icon: <Briefcase size={20} />, href: "/admin/dashboard/projects" },
+    { name: "News & Notices", icon: <BellRing size={20} />, href: "/admin/dashboard/notices" },
+    { name: "Our Team", icon: <Users size={20} />, href: "/admin/dashboard/team" },
+    { name: "Gallery Allbum", icon: <Images size={20} />, href: "/admin/dashboard/gallery" },
+    { name: "Contacts", icon: <Contact size={20} />, href: "/admin/dashboard/contacts" },
+    { name: "Users", icon: <UserCog size={20} />, href: "/admin/dashboard/users" },
     { name:"View Public Site",icon: <FileText size={20} />,href:"/"},
   ];
 

@@ -1,21 +1,44 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-// Define which routes are protected
-const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
+// 1. Define which routes require Admin privileges
+const isAdminRoute = createRouteMatcher([
+  "/admin", 
+  "/admin/dashboard(.*)"
+]);
 
 export default clerkMiddleware(async (auth, req) => {
-  // If the user tries to access /admin and isn't logged in, 
-  // this will redirect them to the Clerk Login page automatically.
+  const { userId, sessionClaims } = await auth();
+
+  // 2. If the user is trying to access any admin route
   if (isAdminRoute(req)) {
-    await auth.protect();
+    
+    // If not logged in at all, redirect to your custom sign-in page
+    if (!userId) {
+      const { redirectToSignIn } = await auth();
+      return redirectToSignIn({ returnBackUrl: req.url });
+    }
+
+    // 3. Extract the role from the Session Token (JWT)
+    // Ensure you added publicMetadata to your Session Token in Clerk Dashboard!
+    const role = (sessionClaims?.publicMetadata as { role?: string })?.role;
+
+    // 4. If they are logged in but NOT an admin, kick them back to the home page
+    if (role !== "admin") {
+      const homeUrl = new URL("/", req.url);
+      return NextResponse.redirect(homeUrl);
+    }
   }
+  
+  // For all other routes, let them pass through
+  return NextResponse.next();
 });
 
 export const config = {
   matcher: [
-    // Skip Next.js internals and all static files
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Standard Clerk matcher: Skip Next.js internals and static files
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     // Always run for API routes
-    '/(api|trpc)(.*)',
+    "/(api|trpc)(.*)",
   ],
 };

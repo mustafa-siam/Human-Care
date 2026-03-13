@@ -96,7 +96,7 @@ export function NavBar() {
                       <UserButton.Action 
                         label="Dashboard" 
                         labelIcon={<LayoutDashboard size={16} />} 
-                        onClick={() => router.push('/admin')} 
+                        onClick={() => router.push('/admin/dashboard')} 
                       />
                     </UserButton.MenuItems>
                   </UserButton>
@@ -139,7 +139,7 @@ export function NavBar() {
             {isSignedIn && isAdmin && (
               <div className="flex flex-col gap-4 pt-4 mt-2">
                 <button 
-                  onClick={() => { router.push('/admin'); setIsMobileMenuOpen(false); }}
+                  onClick={() => { router.push('/admin/dashboard'); setIsMobileMenuOpen(false); }}
                   className="flex items-center gap-3  font-bold py-2"
                 >
                   <LayoutDashboard size={20} /> Dashboard
