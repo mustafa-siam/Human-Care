@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Trash2, X, Loader2, Users, RefreshCcw } from "lucide-react";
+import { Trash2, Users, Loader2, RotateCcw, ShieldAlert } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
@@ -10,11 +10,11 @@ import { useTeam } from "@/components/Hooks/useTeam";
 import { restoreTeamMember, deleteTeamPermanent } from "@/app/ServerActions/team";
 
 export default function AdminTeamTrash() {
-  const { team, loading, refresh } = useTeam(undefined,true); // pass true to fetch trashed members
+  const { team, loading, refresh } = useTeam(undefined, true);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [deletingAll, setDeletingAll] = useState(false);
 
-  const deletedMembers = team.filter(member => member.isDeleted);
+  const deletedMembers = team.filter((member) => member.isDeleted);
 
   const handleRestore = async (id: string) => {
     setProcessingId(id);
@@ -27,7 +27,6 @@ export default function AdminTeamTrash() {
         toast.error(res.error || "Restore failed");
       }
     } catch (err) {
-      console.error(err);
       toast.error("Unexpected error occurred");
     } finally {
       setProcessingId(null);
@@ -37,11 +36,14 @@ export default function AdminTeamTrash() {
   const handlePermanentDelete = async (id: string) => {
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "This team member will be permanently deleted!",
+      text: "This action cannot be undone!",
+      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#e11d48",
       cancelButtonColor: "#64748b",
-      confirmButtonText: "Yes, delete!",
+      confirmButtonText: "Yes, delete permanently",
+      background: "#1e293b",
+      color: "#fff",
     });
 
     if (result.isConfirmed) {
@@ -49,13 +51,12 @@ export default function AdminTeamTrash() {
       try {
         const res = await deleteTeamPermanent(id);
         if (res.success) {
-          toast.success("Team member permanently deleted");
+          toast.success("Member removed from database");
           refresh();
         } else {
           toast.error(res.error || "Delete failed");
         }
       } catch (err) {
-        console.error(err);
         toast.error("Unexpected error occurred");
       } finally {
         setProcessingId(null);
@@ -67,25 +68,25 @@ export default function AdminTeamTrash() {
     if (!deletedMembers.length) return toast("Trash is already empty");
 
     const result = await Swal.fire({
-      title: "Delete all trashed members?",
-      text: "This will permanently delete all trashed team members!",
+      title: "Purge Trash?",
+      text: `You are about to permanently delete ${deletedMembers.length} members.`,
+      icon: "error",
       showCancelButton: true,
       confirmButtonColor: "#e11d48",
-      cancelButtonColor: "#64748b",
-      confirmButtonText: "Yes, delete all!",
+      confirmButtonText: "Yes, Purge All",
+      background: "#1e293b",
+      color: "#fff",
     });
 
     if (result.isConfirmed) {
       try {
         setDeletingAll(true);
-        for (const member of deletedMembers) {
-          await deleteTeamPermanent(member.id);
-        }
-        toast.success("All trashed members deleted");
+        // Using Promise.all for faster concurrent deletion
+        await Promise.all(deletedMembers.map((m) => deleteTeamPermanent(m.id)));
+        toast.success("Trash purged successfully");
         refresh();
       } catch (err) {
-        console.error(err);
-        toast.error("Failed to delete all members");
+        toast.error("Failed to clear trash");
       } finally {
         setDeletingAll(false);
       }
@@ -93,38 +94,57 @@ export default function AdminTeamTrash() {
   };
 
   if (loading) return (
-    <div className="flex flex-col items-center justify-center h-96 gap-4">
+    <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
       <Loader2 className="animate-spin text-emerald-500" size={40} />
+      <p className="text-slate-400 animate-pulse">Loading deleted members...</p>
     </div>
   );
 
   if (deletedMembers.length === 0) return (
-    <div className="flex flex-col items-center justify-center h-96 gap-4">
-      <Users className="text-slate-600" size={48} />
-      <p className="text-slate-400 text-sm">Trash is empty.</p>
+    <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 px-4 text-center">
+      <div className="bg-slate-800/50 p-6 rounded-full">
+        <Users className="text-slate-600" size={48} />
+      </div>
+      <div>
+        <h3 className="text-white font-medium text-lg">Trash is empty</h3>
+        <p className="text-slate-500 text-sm max-w-xs">There are no deleted team members to display or restore.</p>
+      </div>
     </div>
   );
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto px-4 py-8">
-      <div className="flex justify-between items-center bg-[#1e293b] p-6 rounded-2xl border border-slate-800">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-          <Trash2 className="text-rose-500" /> Team Trash
-        </h1>
-        <div className="flex gap-2">
-          <button
-            onClick={handleDeleteAll}
-            disabled={deletingAll}
-            className="flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Trash2 size={18} /> {deletingAll ? "Deleting..." : "Delete All"}
-          </button>
+    <div className="space-y-6 max-w-7xl mx-auto px-4 py-6 md:py-10">
+      {/* Header Section */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#1e293b] p-5 md:p-6 rounded-2xl border border-slate-800 gap-4 shadow-lg">
+        <div className="flex items-center gap-3">
+          <div className="bg-rose-500/10 p-2 rounded-lg">
+            <Trash2 className="text-rose-500" size={24} />
+          </div>
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold text-white">Team Trash</h1>
+            <p className="text-xs text-slate-400">{deletedMembers.length} members found</p>
+          </div>
         </div>
+        
+        <button
+          onClick={handleDeleteAll}
+          disabled={deletingAll}
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm"
+        >
+          {deletingAll ? <Loader2 className="animate-spin" size={18} /> : <ShieldAlert size={18} />}
+          {deletingAll ? "Purging..." : "Empty Trash"}
+        </button>
       </div>
 
       <AnimatePresence mode="wait">
-        <motion.div key="trash-table" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-          <div className="overflow-x-auto bg-[#1e293b] rounded-2xl border border-slate-800 shadow-xl">
+        <motion.div 
+          key="trash-content" 
+          initial={{ opacity: 0, y: 10 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          exit={{ opacity: 0 }}
+        >
+          {/* Desktop Table View (Hidden on Mobile) */}
+          <div className="hidden md:block overflow-hidden bg-[#1e293b] rounded-2xl border border-slate-800 shadow-xl">
             <table className="w-full text-left">
               <thead className="bg-slate-800/50 text-slate-400 text-xs uppercase tracking-wider">
                 <tr>
@@ -136,39 +156,80 @@ export default function AdminTeamTrash() {
               <tbody className="divide-y divide-slate-800">
                 {deletedMembers.map(member => (
                   <tr key={member.id} className="group hover:bg-slate-800/30 transition-all">
-                    <td className="px-8 py-5 flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-lg overflow-hidden border border-slate-700">
-                        <img src={member.image || "/placeholder-user.png"} alt={member.name} className="object-cover w-full h-full" />
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="font-bold text-slate-200 truncate max-w-xs">{member.name}</span>
-                        <span className="text-[10px] uppercase text-slate-500 truncate max-w-xs">{member.email || "No email"}</span>
+                    <td className="px-8 py-5">
+                      <div className="flex items-center gap-4">
+                        <div className="h-11 w-11 rounded-lg overflow-hidden border border-slate-700 shrink-0">
+                          <img src={member.image || "/placeholder-user.png"} alt="" className="object-cover w-full h-full" />
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-bold text-slate-200 truncate">{member.name}</span>
+                          <span className="text-[11px] text-slate-500 truncate">{member.email || "No email"}</span>
+                        </div>
                       </div>
                     </td>
                     <td className="px-8 py-5">
-                      <div className="text-slate-300 font-medium truncate max-w-xs">{member.role}</div>
-                      <div className="text-xs text-slate-500 mt-1 truncate max-w-xs">{member.expertise}</div>
+                      <div className="text-slate-300 font-medium">{member.role}</div>
+                      <div className="text-xs text-slate-500 mt-0.5">{member.expertise}</div>
                     </td>
-                    <td className="px-8 py-5 text-right space-x-2">
-                      <button
-                        onClick={() => handleRestore(member.id)}
-                        disabled={processingId === member.id}
-                        className="p-2 cursor-pointer text-emerald-400 hover:bg-emerald-400/10 rounded-lg transition-all"
-                      >
-                        Restore
-                      </button>
-                      <button
-                        onClick={() => handlePermanentDelete(member.id)}
-                        disabled={processingId === member.id}
-                        className="p-2 cursor-pointer text-rose-400 hover:bg-rose-400/10 rounded-lg transition-all"
-                      >
-                        Delete
-                      </button>
+                    <td className="px-8 py-5 text-right">
+                      <div className="flex justify-end gap-2">
+                        <button
+                          onClick={() => handleRestore(member.id)}
+                          disabled={processingId === member.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-emerald-400 hover:bg-emerald-400/10 rounded-lg transition-all disabled:opacity-50"
+                        >
+                          <RotateCcw size={14} /> Restore
+                        </button>
+                        <button
+                          onClick={() => handlePermanentDelete(member.id)}
+                          disabled={processingId === member.id}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-rose-400 hover:bg-rose-400/10 rounded-lg transition-all disabled:opacity-50"
+                        >
+                          <Trash2 size={14} /> Delete
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile Card View (Hidden on Desktop) */}
+          <div className="grid grid-cols-1 gap-4 md:hidden">
+            {deletedMembers.map(member => (
+              <div key={member.id} className="bg-[#1e293b] p-5 rounded-2xl border border-slate-800 space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="h-14 w-14 rounded-xl overflow-hidden border border-slate-700 shrink-0">
+                    <img src={member.image || "/placeholder-user.png"} alt="" className="object-cover w-full h-full" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-bold text-slate-200 truncate">{member.name}</h3>
+                    <p className="text-xs text-slate-500 truncate">{member.email}</p>
+                    <div className="mt-1 inline-block px-2 py-0.5 rounded bg-slate-800 text-[10px] text-slate-400 font-medium">
+                      {member.role}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="pt-4 border-t border-slate-800 grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleRestore(member.id)}
+                    disabled={processingId === member.id}
+                    className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 text-sm font-semibold active:scale-95 transition-transform"
+                  >
+                    <RotateCcw size={16} /> Restore
+                  </button>
+                  <button
+                    onClick={() => handlePermanentDelete(member.id)}
+                    disabled={processingId === member.id}
+                    className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-rose-500/10 text-rose-400 text-sm font-semibold active:scale-95 transition-transform"
+                  >
+                    <Trash2 size={16} /> Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </motion.div>
       </AnimatePresence>
