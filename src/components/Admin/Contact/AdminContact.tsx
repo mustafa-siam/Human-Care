@@ -61,11 +61,11 @@ export default function AdminContacts() {
   </div>
 
  <Link
-  href="/admin/contacts/trash"
-  className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+  href="/admin/dashboard/contacts/trash"
+  className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-semibold shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
 >
   <Trash2 size={18} className="text-white" />
-  Trash Bin
+  Trash
 </Link>
 </div>
 

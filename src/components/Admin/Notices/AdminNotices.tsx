@@ -88,10 +88,10 @@ export default function AdminNotices() {
         <div className="flex gap-2">
            {/* Trash Link */}
           <Link
-            href="/admin/notices/trash"
-            className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg transition"
+            href="/admin/dashboard/notices/trash"
+            className="flex items-center gap-2 bg-rose-500 hover:bg-rose-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg transition cursor-pointer"
           >
-            <Trash2 size={20} /> Trash Bin
+            <Trash2 size={20} /> Trash 
           </Link>
           {/* New Notice */}
           {!showForm && (

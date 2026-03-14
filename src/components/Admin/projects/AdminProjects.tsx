@@ -92,9 +92,9 @@ export default function AdminProjectsPage() {
           {/* Trash Bin Button */}
           <button
             onClick={() => router.push("/admin/projects/trash")}
-            className="flex items-center gap-2 cursor-pointer bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-lg shadow-rose-500/20"
+            className="flex items-center gap-2  bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-xl font-bold transition-all shadow-lg shadow-rose-500/20 cursor-pointer"
           >
-            <Trash2 size={18} /> Trash Bin
+            <Trash2 size={18} /> Trash
           </button>
 
           {/* New Project Button */}

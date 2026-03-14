@@ -119,11 +119,11 @@ export default function AdminTeamPage() {
         <div className="flex gap-3 mt-4 md:mt-0">
           {/* Trash Button */}
           <Link
-            href="/admin/team/trash"
-            className="flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl font-semibold transition-all"
+            href="/admin/dashboard/team/trash"
+            className="flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl font-semibold transition-all cursor-pointer"
           >
             <Trash2 size={18} />
-            Trash Bin
+            Trash
           </Link>
 
           {!showForm && (
