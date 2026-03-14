@@ -89,7 +89,7 @@ export default function AdminAlbumPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-8">
         <div className="flex items-center gap-5">
           <Link 
-            href="/admin/gallery" 
+            href="/admin/dashboard/gallery" 
             className="group p-3 bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-2xl transition-all"
           >
             <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />

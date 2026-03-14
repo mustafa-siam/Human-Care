@@ -223,7 +223,7 @@ export default function AdminGalleryPage() {
                         <p className="text-slate-500 text-xs line-clamp-1">{album.description || "No description provided."}</p>
                         
                         <Link 
-                          href={`/admin/gallery/${album.category}/${encodeURIComponent(album.title)}`}
+                          href={`/admin/dashboard/gallery/${album.category}/${encodeURIComponent(album.title)}`}
                           className="mt-4 flex items-center justify-center w-full py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold rounded-xl transition-colors"
                         >
                           View Gallery Items

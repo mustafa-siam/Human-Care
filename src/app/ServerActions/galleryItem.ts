@@ -10,50 +10,78 @@ import { imagekit } from "@/lib/imagekit";
 
 export const upsertGalleryItem = async (formData: FormData) => {
   try {
+    const id = formData.get("id") as string | null;
     const title = (formData.get("title") as string) || "";
     const category = (formData.get("category") as string) || "";
     const description = (formData.get("description") as string) || "";
     const dateInput = (formData.get("date") as string) || "";
-
     const files = formData.getAll("images") as File[];
+    
+    // Get IDs of images to remove (for the 'Edit' functionality)
+    const removedImageIds = formData.getAll("removedImages[]") as string[];
 
-    if (!files || files.length === 0) {
-      return { success: false, error: "No images uploaded" };
+    // 1. Handle Deletions first if updating
+    if (removedImageIds.length > 0) {
+      await db.galleryItem.deleteMany({
+        where: {
+          id: { in: removedImageIds.map((id) => Number(id)) },
+        },
+      });
     }
 
-    const uploadedItems = [];
+    // 2. Prepare Parallel Uploads to ImageKit
+    // Using Promise.all is much faster for mobile connections
+    const uploadPromises = files
+      .filter((file) => file.size > 0)
+      .map(async (file) => {
+        const buffer = Buffer.from(await file.arrayBuffer());
+        
+        const uploadResponse = await imagekit.upload({
+          file: buffer,
+          fileName: `gallery_${Date.now()}_${file.name.replace(/\s+/g, "_")}`,
+          folder: "gallery",
+        });
 
-    for (const file of files) {
-      if (!file || file.size === 0) continue;
-
-      const buffer = Buffer.from(await file.arrayBuffer());
-
-      const result = await imagekit.upload({
-        file: buffer,
-        fileName: `gallery_${Date.now()}_${file.name.replace(/\s+/g, "_")}`,
-        folder: "gallery",
-      });
-
-      const item = await db.galleryItem.create({
-        data: {
+        // Return the data object for Prisma
+        return {
           title,
           category,
           description,
-          url: result.url,
+          url: uploadResponse.url,
           date: new Date(dateInput),
-        },
+        };
       });
 
-      uploadedItems.push(item);
+    const newImageData = await Promise.all(uploadPromises);
+
+    // 3. Database Operation
+    if (id) {
+      // UPDATE existing records metadata
+      // Since your schema stores title/desc in every row, we update all items in this "album"
+      // Note: This logic assumes all images with the same title/date are part of one group
+      await db.galleryItem.updateMany({
+        where: { 
+          // You might need a more specific 'albumId' in your schema later, 
+          // but for now we use the title/date context or specific ID
+          title: title 
+        },
+        data: { title, category, description, date: new Date(dateInput) },
+      });
+    }
+
+    // 4. Create the new image entries
+    if (newImageData.length > 0) {
+      await db.galleryItem.createMany({
+        data: newImageData,
+      });
     }
 
     revalidatePath("/admin/gallery");
     revalidatePath("/gallery");
 
-    return { success: true, data: uploadedItems };
+    return { success: true };
   } catch (error: any) {
     console.error("Gallery Save Error:", error);
-
     return {
       success: false,
       error: error.message || "Failed to save gallery",
