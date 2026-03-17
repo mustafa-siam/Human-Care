@@ -20,13 +20,13 @@ interface ProjectFormData {
 
 interface ProjectFormProps {
   initialData?: any;
-  onSubmit: (data: FormData) => Promise<void>; // Sending FormData for Image Upload
+  onSubmit: (data: FormData) => Promise<void>; 
   onClose: () => void;
   isSubmitting: boolean;
 }
 
 export const ProjectForm = ({ initialData, onSubmit, onClose, isSubmitting }: ProjectFormProps) => {
-  // 1. Initialize all properties including timeline, impact, and fullDescription
+  
   const [formData, setFormData] = useState<ProjectFormData>({
     title: initialData?.title || "",
     location: initialData?.location || "",
@@ -40,11 +40,11 @@ export const ProjectForm = ({ initialData, onSubmit, onClose, isSubmitting }: Pr
     impact: initialData?.impact?.length > 0 ? [...initialData.impact] : [""]
   });
 
-  // 2. Image Upload States
+  
   const [previewImage, setPreviewImage] = useState<string>(initialData?.image || "");
   const [newFile, setNewFile] = useState<File | null>(null);
 
-  // 3. Helper Functions
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -80,7 +80,7 @@ export const ProjectForm = ({ initialData, onSubmit, onClose, isSubmitting }: Pr
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Convert to FormData to handle the physical image file
+    
     const data = new FormData();
     data.append("title", formData.title);
     data.append("location", formData.location);
@@ -114,11 +114,11 @@ export const ProjectForm = ({ initialData, onSubmit, onClose, isSubmitting }: Pr
           <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500"><Target size={24} /></div>
           <h2 className="text-xl font-bold text-white">{initialData ? "Update Project" : "New Initiative"}</h2>
         </div>
-        <button onClick={onClose} className="text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-full transition-all"><X size={24} /></button>
+        <button onClick={onClose} className="text-white p-2 hover:bg-red-500/20 bg-red-500 rounded-full transition-all cursor-pointer"><X size={24} /></button>
       </div>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Title & Location */}
+        
         <div className="space-y-2">
           <label className="text-xs font-bold uppercase text-slate-500">Project Title</label>
           <input required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none" />

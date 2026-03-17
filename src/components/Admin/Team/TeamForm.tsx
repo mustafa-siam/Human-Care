@@ -25,7 +25,6 @@ interface TeamFormProps {
 }
 
 export const TeamForm = ({ initialData, onSubmit, onClose, isSubmitting }: TeamFormProps) => {
-  // 1. State initialization following the ProjectForm pattern
   const [formData, setFormData] = useState<TeamFormData>({
     name: initialData?.name || "",
     role: initialData?.role || "",
@@ -43,7 +42,7 @@ export const TeamForm = ({ initialData, onSubmit, onClose, isSubmitting }: TeamF
   const [previewImage, setPreviewImage] = useState<string>(initialData?.image || "");
   const [newFile, setNewFile] = useState<File | null>(null);
 
-  // 3. Helper Functions
+  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -87,7 +86,6 @@ export const TeamForm = ({ initialData, onSubmit, onClose, isSubmitting }: TeamF
     data.append("email", formData.email);
     data.append("linkedin", formData.linkedin);
     
-    // Send arrays as JSON strings (Matches your Project logic)
     data.append("education", JSON.stringify(formData.education.filter(s => s.trim() !== "")));
     data.append("experience", JSON.stringify(formData.experience.filter(s => s.trim() !== "")));
     data.append("achievements", JSON.stringify(formData.achievements.filter(s => s.trim() !== "")));
@@ -116,11 +114,11 @@ export const TeamForm = ({ initialData, onSubmit, onClose, isSubmitting }: TeamF
           <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-500"><Users size={24} /></div>
           <h2 className="text-xl font-bold text-white">{initialData ? "Update Member" : "New Team Member"}</h2>
         </div>
-        <button onClick={onClose} className="text-slate-400 hover:text-white p-2 hover:bg-slate-800 rounded-full transition-all cursor-pointer"><X size={24} /></button>
+        <button onClick={onClose} className="text-white p-2 hover:bg-red-500/20 bg-red-500 rounded-full transition-all cursor-pointer"><X size={24} /></button>
       </div>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Name & Role */}
+        
         <div className="space-y-2">
           <label className="text-xs font-bold uppercase text-slate-500">Full Name</label>
           <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white focus:ring-2 focus:ring-emerald-500/50 outline-none transition-all" />

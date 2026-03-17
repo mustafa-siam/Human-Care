@@ -77,7 +77,6 @@ export default function AdminProjectsPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex justify-between items-center flex-wrap gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white tracking-tight">
@@ -97,8 +96,6 @@ export default function AdminProjectsPage() {
             <Trash2 size={18} /> Trash
           </button>
 
-          {/* New Project Button */}
-          {!showForm && (
             <button
               onClick={() => {
                 setEditingProject(null);
@@ -108,7 +105,7 @@ export default function AdminProjectsPage() {
             >
               <Plus size={20} /> New Project
             </button>
-          )}
+        
         </div>
       </div>
 

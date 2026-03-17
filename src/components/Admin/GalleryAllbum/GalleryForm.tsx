@@ -120,7 +120,7 @@ export default function GalleryForm({
 
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white transition cursor-pointer p-2 hover:bg-slate-800 rounded-full"
+          className="text-white p-2 hover:bg-red-500/20 bg-red-500 rounded-full transition-all cursor-pointer"
         >
           <X size={22} />
         </button>

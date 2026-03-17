@@ -23,9 +23,6 @@ export default function AdminTeamPage() {
     setShowForm(true);
   };
 
-  /**
-   * MOVE TO TRASH CONFIRMATION
-   */
   const handleDelete = async (member: any) => {
     const result = await Swal.fire({
       title: "Move to Trash?",
@@ -41,9 +38,6 @@ export default function AdminTeamPage() {
     }
   };
 
-  /**
-   * EXECUTE MOVE TO TRASH
-   */
   const executeMoveToTrash = async (id: string) => {
     try {
       const res = await moveTeamToTrash(id);
@@ -59,10 +53,6 @@ export default function AdminTeamPage() {
       toast.error("Unexpected error occurred");
     }
   };
-
-  /**
-   * FORM SUBMIT
-   */
   const handleFormSubmit = async (formData: FormData) => {
     setIsSubmitting(true);
 
@@ -99,7 +89,6 @@ export default function AdminTeamPage() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 py-8">
-      {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-[#1e293b] p-6 rounded-2xl border border-slate-800 gap-4">
         <div className="flex items-center gap-4">
           <div className="p-3 bg-emerald-500/10 rounded-xl">
@@ -117,7 +106,7 @@ export default function AdminTeamPage() {
         </div>
 
         <div className="flex gap-3 mt-4 md:mt-0">
-          {/* Trash Button */}
+        
           <Link
             href="/admin/dashboard/team/trash"
             className="flex items-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-4 py-2 rounded-xl font-semibold transition-all cursor-pointer"
@@ -125,8 +114,6 @@ export default function AdminTeamPage() {
             <Trash2 size={18} />
             Trash
           </Link>
-
-          {!showForm && (
             <button
               onClick={() => {
                 setEditingMember(null);
@@ -136,7 +123,6 @@ export default function AdminTeamPage() {
             >
               <Plus size={20} /> Add Member
             </button>
-          )}
         </div>
       </div>
 
@@ -161,7 +147,6 @@ export default function AdminTeamPage() {
           </motion.div>
         ) : (
           <motion.div key="team-table" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            {/* Desktop Table */}
             <div className="hidden md:block bg-[#1e293b] rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
@@ -239,8 +224,6 @@ export default function AdminTeamPage() {
                 </div>
               )}
             </div>
-
-            {/* Mobile Cards */}
             <div className="flex flex-col gap-4 md:hidden">
               {team.map((member) => (
                 <div

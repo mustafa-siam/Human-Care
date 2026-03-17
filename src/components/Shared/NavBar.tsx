@@ -121,7 +121,7 @@ export function NavBar() {
                <button 
                 key={link.href} 
                 onClick={() => link.isRoute ? router.push(link.href) : scrollToSection(link.href)} 
-                className="text-white/80 text-left py-3 border-b border-white/5 hover:text-[#10B981] transition-colors"
+                className="text-white/80 cursor-pointer text-left py-3 border-b border-white/5 hover:text-[#10B981] transition-colors"
                >
                 {link.label}
                </button>
@@ -131,7 +131,7 @@ export function NavBar() {
               <div className="flex flex-col gap-4 pt-4 mt-2">
                 <button 
                   onClick={() => { router.push('/admin/dashboard'); setIsMobileMenuOpen(false); }}
-                  className="flex items-center gap-3  font-bold py-2"
+                  className="flex items-center gap-3  font-bold py-2 cursor-pointer"
                 >
                   <LayoutDashboard size={20} /> Dashboard
                 </button>

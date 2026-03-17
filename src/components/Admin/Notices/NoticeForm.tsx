@@ -50,7 +50,6 @@ export default function NoticeForm({
     },
   });
 
-  /* ---------- IMAGE STATE (same pattern as project form) ---------- */
 
   const [previewImage, setPreviewImage] = useState<string>(initialData?.image || "");
   const [newFile, setNewFile] = useState<File | null>(null);
@@ -110,7 +109,7 @@ export default function NoticeForm({
 
         <button
           onClick={onClose}
-          className="text-slate-400 hover:text-white transition"
+          className="text-white p-2 hover:bg-red-500/20 bg-red-500 rounded-full transition-all cursor-pointer"
         >
           <X size={22} />
         </button>
@@ -120,7 +119,6 @@ export default function NoticeForm({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          {/* SLUG */}
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase text-slate-500">
               Slug
@@ -132,7 +130,7 @@ export default function NoticeForm({
             />
           </div>
 
-          {/* TITLE */}
+          
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase text-slate-500">
               Title

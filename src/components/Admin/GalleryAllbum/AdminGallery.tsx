@@ -140,8 +140,6 @@ export default function AdminGalleryPage() {
           </h1>
           <p className="text-slate-400 mt-2">Organize, edit, and manage your visual stories.</p>
         </div>
-
-        {!showForm && (
           <button
             onClick={() => { setEditingAlbum(null); setShowForm(true); }}
             className="group flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-emerald-900/20 active:scale-95"
@@ -149,7 +147,7 @@ export default function AdminGalleryPage() {
             <Plus size={20} className="group-hover:rotate-90 transition-transform" /> 
             Create New Album
           </button>
-        )}
+      
       </div>
 
       <AnimatePresence mode="wait">
