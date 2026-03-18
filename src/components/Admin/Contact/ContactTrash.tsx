@@ -100,7 +100,7 @@ export default function AdminContactTrash() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#1e293b] p-5 md:p-6 rounded-2xl border border-slate-800 gap-4 shadow-lg">
         <div className="flex items-center gap-3">
           <Link
-            href="/admin/dashboard/projects" 
+            href="/admin/dashboard/contacts" 
             className="group p-3 bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-2xl transition-all"
           >
             <ArrowLeft
