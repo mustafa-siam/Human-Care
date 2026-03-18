@@ -140,7 +140,7 @@ export default function AdminUserPage() {
                       key={user.id}
                       className="group hover:bg-slate-800/30 transition-all"
                     >
-                      {/* USER */}
+                      
                       <td className="px-8 py-5 flex items-center gap-4">
                         <div className="h-12 w-12 rounded-lg overflow-hidden border border-slate-700">
                           <img

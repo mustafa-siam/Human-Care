@@ -122,8 +122,6 @@ export default function AdminUserTrashPage() {
       </div>
     );
   }
-
-  // ✅ Empty state
   if (users.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center">
@@ -265,7 +263,7 @@ export default function AdminUserTrashPage() {
                     onClick={() => handlePermanentDelete(user.id)}
                     className="flex items-center justify-center gap-2 py-2 bg-rose-500/10 text-rose-400 rounded-xl"
                   >
-                    <Trash2 size={16} /> 
+                    <Trash2 size={16} />  delete
                   </button>
                 </div>
               </div>

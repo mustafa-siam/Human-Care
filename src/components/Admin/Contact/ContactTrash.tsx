@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Trash2, X, Calendar, User, Loader2 } from "lucide-react";
+import { Trash2, X, Calendar, User, Loader2, ArrowLeft, ShieldAlert, Mail } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import { restoreContact, deleteContactPermanent } from "@/app/ServerActions/contact";
 import { useContacts } from "@/components/Hooks/useContact";
 import Swal from "sweetalert2";
+import Link from "next/link";
 
 export default function AdminContactTrash() {
   const { contacts: trashedContacts, loading, refresh } = useContacts(undefined, true); // fetch trashed
@@ -16,60 +17,61 @@ export default function AdminContactTrash() {
   const handleRestore = async (id: string) => {
     const res = await restoreContact(id);
     if (res.success) {
-      toast.success("Message restored");
+      toast.success("Contact restored");
       refresh();
     }
   };
 
- const handlePermanentDelete = async (id: string) => {
-  const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "This message will be permanently deleted!",
-    showCancelButton: true,
-    confirmButtonColor: "#e11d48",
-    cancelButtonColor: "#64748b",
-    confirmButtonText: "Yes, delete it!",
-  });
+  const handlePermanentDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This Contact will be permanently deleted!",
+      showCancelButton: true,
+      confirmButtonColor: "#e11d48",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Yes, delete it!",
+      background: "#1e293b",
+      color: "#fff",
+    });
 
-  if (result.isConfirmed) {
-    const res = await deleteContactPermanent(id);
-
-    if (res.success) {
-      toast.success("Message permanently deleted");
-      refresh();
+    if (result.isConfirmed) {
+      const res = await deleteContactPermanent(id);
+      if (res.success) {
+        toast.success("Contact permanently deleted");
+        refresh();
+      }
     }
-  }
-};
+  };
 
   const handleDeleteAll = async () => {
-  if (!trashedContacts.length) return toast("Trash is already empty");
+    if (!trashedContacts.length) return toast("Trash is already empty");
 
-  const result = await Swal.fire({
-    title: "Delete all messages?",
-    text: "This will permanently delete all trashed messages!",
-    showCancelButton: true,
-    confirmButtonColor: "#e11d48",
-    cancelButtonColor: "#64748b",
-    confirmButtonText: "Yes, delete all!",
-  });
+    const result = await Swal.fire({
+      title: "Delete all Contacts?",
+      text: "This will permanently delete all trashed contacts!",
+      showCancelButton: true,
+      confirmButtonColor: "#e11d48",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "Yes, delete all!",
+      background: "#1e293b",
+      color: "#fff",
+    });
 
-  if (result.isConfirmed) {
-    try {
-      setDeletingAll(true);
-
-      for (const msg of trashedContacts) {
-        await deleteContactPermanent(msg.id);
+    if (result.isConfirmed) {
+      try {
+        setDeletingAll(true);
+        for (const msg of trashedContacts) {
+          await deleteContactPermanent(msg.id);
+        }
+        toast.success("All trashed contacts deleted");
+        refresh();
+      } catch (error) {
+        toast.error("Failed to delete all contact");
+      } finally {
+        setDeletingAll(false);
       }
-
-      toast.success("All trashed messages deleted");
-      refresh();
-    } catch (error) {
-      toast.error("Failed to delete all messages");
-    } finally {
-      setDeletingAll(false);
     }
-  }
-};
+  };
 
   if (loading) return (
     <div className="flex flex-col items-center justify-center h-96 gap-4">
@@ -77,32 +79,56 @@ export default function AdminContactTrash() {
     </div>
   );
 
+  if (trashedContacts.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center">
+        <div className="bg-slate-800/50 p-6 rounded-full">
+          <Mail className="text-slate-600" size={48} />
+        </div>
+        <h3 className="text-white font-medium text-lg">
+          Trash is empty
+        </h3>
+        <p className="text-slate-500 text-sm">
+          No deleted contact found
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
-            <Trash2 className="text-rose-500" /> Trash
-          </h1>
-          <p className="text-slate-400 text-sm mt-1">Manage all deleted messages</p>
-        </div>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#1e293b] p-5 md:p-6 rounded-2xl border border-slate-800 gap-4 shadow-lg">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/dashboard/projects" 
+            className="group p-3 bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-2xl transition-all"
+          >
+            <ArrowLeft
+              size={20} 
+              className="group-hover:-translate-x-1 transition-transform" 
+            />
+          </Link>
 
+          <div>
+            <h1 className="text-xl md:text-2xl font-bold text-red-500">Contacts Trash</h1>
+            <p className="text-xs text-slate-400"> {trashedContacts.length} messages found </p>
+          </div>
+        </div>
         <button
           onClick={handleDeleteAll}
           disabled={deletingAll}
-          className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-semibold transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm"
         >
-          <Trash2 size={18} /> {deletingAll ? "Deleting..." : "Delete All"}
+          {deletingAll ? (
+            <Loader2 className="animate-spin" size={18} />
+          ) : (
+            <ShieldAlert size={18} />
+          )}
+          {deletingAll ? "Purging..." : "Empty Trash"}
         </button>
       </div>
 
-      {/* Trashed Messages */}
       <div className="flex flex-col gap-4">
-        {trashedContacts.length === 0 && (
-          <div className="text-slate-400 text-center py-10">Trash is empty</div>
-        )}
-
         {trashedContacts.map((c: any) => (
           <div
             key={c.id}
@@ -126,7 +152,9 @@ export default function AdminContactTrash() {
                 </button>
               </div>
             </div>
-            <div className="text-slate-400 text-xs mb-1">{c.email}</div>
+            <div className="text-slate-400 text-xs mb-1 flex items-center gap-1">
+              <Mail size={12} /> {c.email}
+            </div>
             <div className="text-emerald-400 text-xs font-semibold mb-1">{c.subject}</div>
             <div className="text-slate-500 text-[10px] flex items-center gap-1">
               <Calendar size={12} /> {new Date(c.createdAt).toLocaleDateString()}
@@ -134,8 +162,6 @@ export default function AdminContactTrash() {
           </div>
         ))}
       </div>
-
-      {/* Modal */}
       <AnimatePresence>
         {selectedMessage && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -152,7 +178,6 @@ export default function AdminContactTrash() {
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               className="relative w-full max-w-2xl md:max-w-2xl bg-[#1e293b] border border-slate-700 rounded-3xl shadow-2xl overflow-hidden"
             >
-              {/* Modal Content */}
               <div className="p-6 border-b border-slate-800 flex justify-between items-start bg-slate-800/30">
                 <div>
                   <h2 className="text-2xl font-bold text-white leading-tight">{selectedMessage.subject}</h2>
@@ -167,7 +192,7 @@ export default function AdminContactTrash() {
                 </div>
                 <button
                   onClick={() => setSelectedMessage(null)}
-                  className="p-2 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors cursor-pointer"
+                  className="p-2 hover:bg-slate-700 rounded-full text-slate-400 hover:text-white transition-colors"
                 >
                   <X size={24} />
                 </button>
@@ -198,7 +223,7 @@ export default function AdminContactTrash() {
               <div className="p-6 bg-slate-800/20 border-t border-slate-800 flex justify-end gap-2">
                 <button
                   onClick={() => handleRestore(selectedMessage.id)}
-                  className="px-6 py-2.5 cup bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition-all cursor-pointer"
+                  className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold transition-all cursor-pointer"
                 >
                   Restore
                 </button>
@@ -206,7 +231,7 @@ export default function AdminContactTrash() {
                   onClick={() => handlePermanentDelete(selectedMessage.id)}
                   className="px-6 py-2.5 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-bold transition-all cursor-pointer"
                 >
-                  Delete Permanently
+                  Delete permanently
                 </button>
                 <button
                   onClick={() => setSelectedMessage(null)}

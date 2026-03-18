@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Trash2, Loader2, RotateCcw, MapPin, AlertTriangle } from "lucide-react";
+import { Trash2, Loader2, RotateCcw, MapPin, AlertTriangle, ArrowLeft, ShieldAlert } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 
 import { useProjects } from "@/components/Hooks/useProjects";
 import { restoreProject, deleteProjectPermanent } from "@/app/ServerActions/project";
+import Link from "next/link";
 
 export default function AdminProjectTrash() {
   const { projects: trashedProjects, loading, refresh } = useProjects(undefined, true);
@@ -94,7 +95,6 @@ export default function AdminProjectTrash() {
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
       <Loader2 className="animate-spin text-emerald-500" size={40} />
-      <p className="text-slate-400">Loading trash...</p>
     </div>
   );
 
@@ -109,21 +109,34 @@ export default function AdminProjectTrash() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 py-6 md:py-10">
-      {/* Header */}
-      <div className="flex flex-col sm:row justify-between items-start sm:items-center bg-[#1e293b] p-5 md:p-6 rounded-2xl border border-slate-800 gap-4 shadow-xl">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#1e293b] p-5 md:p-6 rounded-2xl border border-slate-800 gap-4 shadow-lg">
         <div className="flex items-center gap-3">
-          <div className="bg-rose-500/10 p-2 rounded-lg">
-            <Trash2 className="text-rose-500" size={24} />
-          </div>
-          <h1 className="text-xl md:text-2xl font-bold text-white">Project Trash</h1>
-        </div>
-        <button
+  <Link
+    href="/admin/dashboard/projects" 
+    className="group p-3 bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-2xl transition-all"
+  >
+    <ArrowLeft
+      size={20} 
+      className="group-hover:-translate-x-1 transition-transform" 
+    />
+  </Link>
+
+  <div>
+    <h1 className="text-xl md:text-2xl font-bold text-red-500">Projects Trash </h1>
+  <p className="text-xs text-slate-400"> {trashedProjects.length} Project found </p>
+  </div>
+</div>
+<button
           onClick={handleDeleteAll}
           disabled={deletingAll}
-          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl font-bold transition-all disabled:opacity-50 text-sm"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm"
         >
-          {deletingAll ? <Loader2 className="animate-spin" size={18} /> : <AlertTriangle size={18} />}
-          {deletingAll ? "Purging..." : "Empty All Projects"}
+          {deletingAll ? (
+            <Loader2 className="animate-spin" size={18} />
+          ) : (
+            <ShieldAlert size={18} />
+          )}
+          {deletingAll ? "Purging..." : "Empty Trash"}
         </button>
       </div>
 

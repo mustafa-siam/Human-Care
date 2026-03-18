@@ -94,7 +94,7 @@ export default function AdminNoticeTrash() {
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
       <Loader2 className="animate-spin text-emerald-500" size={40} />
-      <p className="text-slate-400 animate-pulse">Scanning trash...</p>
+      
     </div>
   );
 
@@ -122,8 +122,8 @@ export default function AdminNoticeTrash() {
   </Link>
 
   <div>
-    <h1 className="text-xl md:text-2xl font-bold text-red-500"> User Trash </h1>
-  <p className="text-xs text-slate-400"> {trashedNotices.length} users found </p>
+    <h1 className="text-xl md:text-2xl font-bold text-red-500">Notice Trash </h1>
+  <p className="text-xs text-slate-400"> {trashedNotices.length} notice found </p>
   </div>
 </div>
 <button

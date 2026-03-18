@@ -26,7 +26,6 @@ export default function AdminAlbumPage() {
     (item: any) => item.category === category && item.title === title
   );
 
-  /* ---------------- HANDLERS ---------------- */
   const handleDeleteImage = async (id: number) => {
     const result = await Swal.fire({
       title: "Remove this photo?",
@@ -48,7 +47,7 @@ export default function AdminAlbumPage() {
   };
 
   const handleEditImage = (item: any) => {
-    // We wrap the single image in an array so GalleryForm's 'existingImages' logic works
+    // We wrap the single image in an array so GalleryForm's 'existingImages' l
     const formattedData = {
       ...item,
       images: [item] 
@@ -85,7 +84,7 @@ export default function AdminAlbumPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6 space-y-8">
-      {/* BREADCRUMB & HEADER */}
+      
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-8">
         <div className="flex items-center gap-5">
           <Link 
@@ -141,7 +140,7 @@ export default function AdminAlbumPage() {
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
                   
-                  {/* OVERLAY ACTIONS */}
+                
                   <div className="absolute top-3 right-3 flex gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                     <button
                       onClick={() => handleEditImage(img)}
@@ -158,7 +157,7 @@ export default function AdminAlbumPage() {
                   </div>
                 </div>
 
-                {/* IMAGE META (Optional - shows if caption exists) */}
+              
                 {img.description && (
                   <div className="p-4 border-t border-slate-800/50 bg-slate-900/30">
                     <p className="text-xs text-slate-400 italic line-clamp-2">

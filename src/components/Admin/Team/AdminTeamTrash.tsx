@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Trash2, Users, Loader2, RotateCcw, ShieldAlert } from "lucide-react";
+import { Trash2, Users, Loader2, RotateCcw, ShieldAlert, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 
 import { useTeam } from "@/components/Hooks/useTeam";
 import { restoreTeamMember, deleteTeamPermanent } from "@/app/ServerActions/team";
+import Link from "next/link";
 
 export default function AdminTeamTrash() {
   const { team, loading, refresh } = useTeam(undefined, true);
@@ -114,24 +115,33 @@ export default function AdminTeamTrash() {
 
   return (
     <div className="space-y-6 max-w-7xl mx-auto px-4 py-6 md:py-10">
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#1e293b] p-5 md:p-6 rounded-2xl border border-slate-800 gap-4 shadow-lg">
+       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#1e293b] p-5 md:p-6 rounded-2xl border border-slate-800 gap-4 shadow-lg">
         <div className="flex items-center gap-3">
-          <div className="bg-rose-500/10 p-2 rounded-lg">
-            <Trash2 className="text-rose-500" size={24} />
-          </div>
-          <div>
-            <h1 className="text-xl md:text-2xl font-bold text-white">Team Trash</h1>
-            <p className="text-xs text-slate-400">{deletedMembers.length} members found</p>
-          </div>
-        </div>
-        
-        <button
+  <Link
+    href="/admin/dashboard/team" 
+    className="group p-3 bg-slate-800 hover:bg-emerald-600 text-slate-300 hover:text-white rounded-2xl transition-all"
+  >
+    <ArrowLeft
+      size={20} 
+      className="group-hover:-translate-x-1 transition-transform" 
+    />
+  </Link>
+
+  <div>
+    <h1 className="text-xl md:text-2xl font-bold text-red-500">Team Trash </h1>
+  <p className="text-xs text-slate-400"> {deletedMembers.length} member found </p>
+  </div>
+</div>
+<button
           onClick={handleDeleteAll}
           disabled={deletingAll}
           className="w-full sm:w-auto flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-500 text-white px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 font-medium text-sm"
         >
-          {deletingAll ? <Loader2 className="animate-spin" size={18} /> : <ShieldAlert size={18} />}
+          {deletingAll ? (
+            <Loader2 className="animate-spin" size={18} />
+          ) : (
+            <ShieldAlert size={18} />
+          )}
           {deletingAll ? "Purging..." : "Empty Trash"}
         </button>
       </div>
