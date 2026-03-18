@@ -82,7 +82,6 @@ export default function AdminTeamTrash() {
     if (result.isConfirmed) {
       try {
         setDeletingAll(true);
-        // Using Promise.all for faster concurrent deletion
         await Promise.all(deletedMembers.map((m) => deleteTeamPermanent(m.id)));
         toast.success("Trash purged successfully");
         refresh();
@@ -97,7 +96,7 @@ export default function AdminTeamTrash() {
   if (loading) return (
     <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
       <Loader2 className="animate-spin text-emerald-500" size={40} />
-      <p className="text-slate-400 animate-pulse">Loading deleted members...</p>
+      
     </div>
   );
 
@@ -153,7 +152,7 @@ export default function AdminTeamTrash() {
           animate={{ opacity: 1, y: 0 }} 
           exit={{ opacity: 0 }}
         >
-          {/* Desktop Table View (Hidden on Mobile) */}
+          
           <div className="hidden md:block overflow-hidden bg-[#1e293b] rounded-2xl border border-slate-800 shadow-xl">
             <table className="w-full text-left">
               <thead className="bg-slate-800/50 text-slate-400 text-xs uppercase tracking-wider">
@@ -205,7 +204,6 @@ export default function AdminTeamTrash() {
             </table>
           </div>
 
-          {/* Mobile Card View (Hidden on Desktop) */}
           <div className="grid grid-cols-1 gap-4 md:hidden">
             {deletedMembers.map(member => (
               <div key={member.id} className="bg-[#1e293b] p-5 rounded-2xl border border-slate-800 space-y-4">

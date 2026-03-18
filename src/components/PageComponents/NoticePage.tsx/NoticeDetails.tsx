@@ -137,15 +137,16 @@ export function NoticeDetails() {
                         Donate Now
                     </motion.button>
                 </Link>
-                <button 
-                  onClick={() => {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert("Link copied to clipboard!");
-                  }}
-                  className="bg-white/10 hover:bg-white/20 text-white px-8 py-4 rounded-full font-bold backdrop-blur-sm transition-all flex items-center justify-center gap-2"
-                >
-                    <Share2 className="w-5 h-5" /> Share Story
-                </button>
+                <button
+  onClick={() => {
+    const url = encodeURIComponent(window.location.href);
+    const fbShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+    window.open(fbShareUrl, "_blank", "width=600,height=400");
+  }}
+  className="bg-white/10 cursor-pointer hover:bg-white/20 text-white px-8 py-4 rounded-full font-bold backdrop-blur-sm transition-all flex items-center justify-center gap-2"
+>
+  <Share2 className="w-5 h-5" /> Share News
+</button>
             </div>
           </motion.div>
         </div>

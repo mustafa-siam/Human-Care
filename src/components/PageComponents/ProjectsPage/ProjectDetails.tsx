@@ -1,7 +1,7 @@
 "use client"
 import { useParams } from 'next/navigation';
 import { motion } from 'motion/react';
-import { ArrowLeft, MapPin, Users, Calendar, CheckCircle, Loader2 } from 'lucide-react';
+import { ArrowLeft, MapPin, Users, Calendar, CheckCircle, Loader2, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { ImagePosition } from '@/components/Hooks/ImagePosition';
 import { useProjects } from '@/components/Hooks/useProjects';
@@ -165,9 +165,16 @@ export function ProjectDetails() {
                   <p className="text-white/70 text-sm mb-6">
                     Help us reach more supporters by sharing this project
                   </p>
-                  <button className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white py-3 rounded-full font-semibold border border-white/30 transition-all duration-300">
-                    Share Project
-                  </button>
+                  <button
+  onClick={() => {
+    const url = encodeURIComponent(window.location.href);
+    const fbShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+    window.open(fbShareUrl, "_blank", "width=600,height=400");
+  }}
+  className="bg-white/10 cursor-pointer hover:bg-white/20 text-white px-8 py-4 rounded-full font-bold backdrop-blur-sm transition-all flex items-center justify-center gap-2"
+>
+  <Share2 className="w-5 h-5" /> Share Project
+</button>
                 </div>
               </motion.div>
             </div>
