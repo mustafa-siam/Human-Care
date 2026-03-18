@@ -218,8 +218,6 @@ export default function NoticeForm({
             className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-white outline-none"
           />
         </div>
-
-        {/* LATEST */}
         <div className="flex items-center gap-3 bg-[#0f172a] p-4 rounded-xl border border-slate-700">
           <input
             type="checkbox"
@@ -227,7 +225,7 @@ export default function NoticeForm({
             className="w-5 h-5 accent-emerald-500"
           />
           <span className="text-sm text-slate-400">
-            Mark as Latest
+            Mark as Featured
           </span>
         </div>
 

@@ -11,6 +11,9 @@ interface TeamFormData {
   expertise: string;
   email: string;
   linkedin: string;
+  facebook: string;
+  twitter: string;
+  instagram: string;
   image: string;
   education: string[];
   experience: string[];
@@ -32,17 +35,18 @@ export const TeamForm = ({ initialData, onSubmit, onClose, isSubmitting }: TeamF
     expertise: initialData?.expertise || "",
     email: initialData?.email || "",
     linkedin: initialData?.linkedin || "",
+    facebook: initialData?.facebook || "",
+    twitter: initialData?.twitter || "",
+    instagram: initialData?.instagram || "",
     image: initialData?.image || "",
     education: initialData?.education?.length > 0 ? [...initialData.education] : [""],
     experience: initialData?.experience?.length > 0 ? [...initialData.experience] : [""],
     achievements: initialData?.achievements?.length > 0 ? [...initialData.achievements] : [""],
   });
 
-  // 2. Image Handling States
   const [previewImage, setPreviewImage] = useState<string>(initialData?.image || "");
   const [newFile, setNewFile] = useState<File | null>(null);
 
-  
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -85,6 +89,9 @@ export const TeamForm = ({ initialData, onSubmit, onClose, isSubmitting }: TeamF
     data.append("expertise", formData.expertise);
     data.append("email", formData.email);
     data.append("linkedin", formData.linkedin);
+    data.append("facebook", formData.facebook);
+    data.append("twitter", formData.twitter);
+    data.append("instagram", formData.instagram);
     
     data.append("education", JSON.stringify(formData.education.filter(s => s.trim() !== "")));
     data.append("experience", JSON.stringify(formData.experience.filter(s => s.trim() !== "")));
@@ -166,16 +173,34 @@ export const TeamForm = ({ initialData, onSubmit, onClose, isSubmitting }: TeamF
         </div>
 
         {/* LinkedIn */}
-        <div className=" space-y-2">
+        <div className="space-y-2">
           <label className="text-xs font-bold uppercase text-slate-500 flex items-center gap-2">
             <LinkIcon size={14} /> LinkedIn Profile URL
           </label>
           <input value={formData.linkedin} onChange={e => setFormData({...formData, linkedin: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white outline-none focus:ring-2 focus:ring-emerald-500/50" placeholder="https://linkedin.com/in/..." />
         </div>
 
+        {/* Facebook */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Facebook Profile URL</label>
+          <input value={formData.facebook} onChange={e => setFormData({...formData, facebook: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white outline-none focus:ring-2 focus:ring-emerald-500/50" placeholder="https://facebook.com/..." />
+        </div>
+
+        {/* Twitter */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Twitter Profile URL</label>
+          <input value={formData.twitter} onChange={e => setFormData({...formData, twitter: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white outline-none focus:ring-2 focus:ring-emerald-500/50" placeholder="https://twitter.com/..." />
+        </div>
+
+        {/* Instagram */}
+        <div className="space-y-2">
+          <label className="text-xs font-bold uppercase text-slate-500">Instagram Profile URL</label>
+          <input value={formData.instagram} onChange={e => setFormData({...formData, instagram: e.target.value})} className="w-full bg-[#0f172a] border border-slate-700 rounded-lg p-3 text-white outline-none focus:ring-2 focus:ring-emerald-500/50" placeholder="https://instagram.com/..." />
+        </div>
+
         {/* Dynamic Lists (Education, Experience, Achievements) */}
         {(['education', 'experience', 'achievements'] as const).map((type) => (
-          <div key={type} className=" space-y-3 bg-[#0f172a]/50 p-5 rounded-xl border border-slate-800">
+          <div key={type} className=" space-y-3 bg-[#0f172a]/50 p-5 rounded-xl border border-slate-800 md:col-span-2">
             <div className="flex justify-between items-center">
               <label className="text-xs font-bold uppercase text-slate-500">{type}</label>
               <button type="button" onClick={() => addArrayField(type)} className="text-emerald-400 text-xs font-bold flex items-center gap-1 hover:text-emerald-300 transition-colors cursor-pointer"><Plus size={14} /> Add {type}</button>

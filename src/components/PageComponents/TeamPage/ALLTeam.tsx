@@ -65,20 +65,16 @@ export function AllTeam() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <motion.button
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#10B981] hover:bg-[#10B981] hover:text-white transition-colors duration-300"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Mail className="w-5 h-5" />
-                    </motion.button>
-                    <motion.button
-                      className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-[#10B981] hover:bg-[#10B981] hover:text-white transition-colors duration-300"
-                      whileHover={{ scale: 1.1 }}
-                      whileTap={{ scale: 0.9 }}
-                    >
-                      <Linkedin className="w-5 h-5" />
-                    </motion.button>
+                    {member.email && (
+  <motion.a
+    href={`mailto:${member.email}`}
+    className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-[#0F172A] hover:bg-[#10B981] hover:text-white transition-colors duration-300"
+    whileHover={{ scale: 1.1 }}
+    whileTap={{ scale: 0.9 }}
+  >
+    <Mail className="w-5 h-5" />
+  </motion.a>
+)}                   
                   </div>
                 </div>
                 <div className="p-6 flex-1 flex flex-col">

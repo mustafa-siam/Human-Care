@@ -14,6 +14,7 @@ import {
   Twitter,
   MessageCircle,
   X,
+  Instagram,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -200,8 +201,6 @@ export function NoticeDetails() {
           </motion.div>
         </div>
       </div>
-
-      {/* ✅ SHARE MODAL */}
 {showShare && (
   <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
     <div className="bg-slate-900 rounded-2xl p-6 w-[90%] max-w-sm relative flex flex-col items-center gap-6">
@@ -214,10 +213,10 @@ export function NoticeDetails() {
       </button>
 
       <h2 className="text-xl flex items-center justify-center gap-2 font-bold mb-2 text-center">
-        <Share2 className="w-5 h-5" />  Share
+        <Share2 className="w-5 h-5" /> Share
       </h2>
 
-      <div className="flex items-center justify-center gap-6">
+      <div className="flex items-center justify-center gap-4">
         <FacebookShareButton url={shareUrl}>
           <div className="p-4 bg-blue-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
             <Facebook size={24} color="white" />
@@ -231,19 +230,33 @@ export function NoticeDetails() {
         </TwitterShareButton>
 
         <LinkedinShareButton url={shareUrl} title={update.title}>
-          <div className="p-4 bg-blue-700 rounded-full flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
+          <div className="p-4 bg-[#10B981] rounded-full flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
             <Linkedin size={24} color="white" />
           </div>
         </LinkedinShareButton>
 
-        <WhatsappShareButton url={shareUrl} title="Check this notice:-">
+        <WhatsappShareButton url={shareUrl} title={update.title}>
           <div className="p-4 bg-green-600 rounded-full flex items-center justify-center hover:scale-110 transition-transform cursor-pointer">
             <MessageCircle size={24} color="white" />
           </div>
         </WhatsappShareButton>
+
+        <button
+          onClick={() => {
+            if (typeof window !== "undefined") {
+              navigator.clipboard.writeText(window.location.href);
+              setCopied(true);
+              window.open("https://www.instagram.com/", "_blank");
+              setTimeout(() => setCopied(false), 4000);
+            }
+          }}
+          className="p-4 bg-pink-500 rounded-full flex items-center justify-center hover:scale-110 transition-transform cursor-pointer"
+        >
+          <Instagram size={24} color="white"/>
+        </button>
       </div>
 
-       <button
+      <button
         onClick={() => {
           if (typeof window !== "undefined") {
             navigator.clipboard.writeText(window.location.href);

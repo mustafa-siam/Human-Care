@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 import { ArrowLeft, Mail, Linkedin, Award, GraduationCap, Briefcase, Loader2 } from 'lucide-react';
+import { Facebook, Twitter, Instagram } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTeam } from '@/components/Hooks/useTeam';
@@ -15,8 +16,8 @@ export function TeamDetails() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center h-96 gap-4">
-              <Loader2 className="animate-spin text-emerald-500" size={40} />
-            </div>
+        <Loader2 className="animate-spin text-emerald-500" size={40} />
+      </div>
     );
   }
 
@@ -32,6 +33,13 @@ export function TeamDetails() {
       </div>
     );
   }
+  const socials = [
+    { icon: Mail, label: "Email", url: `mailto:${member.email}`, visible: !!member.email, bg: "bg-[#10B981]", hover: "hover:bg-[#059669]", text: "text-white" },
+    { icon: Linkedin, label: "LinkedIn", url: member.linkedin, visible: !!member.linkedin, bg: "bg-gray-100", hover: "hover:bg-gray-200", text: "text-[#0F172A]" },
+    { icon: Facebook, label: "Facebook", url: member.facebook, visible: !!member.facebook, bg: "bg-blue-600", hover: "hover:bg-blue-700", text: "text-white" },
+    { icon: Twitter, label: "Twitter", url: member.twitter, visible: !!member.twitter, bg: "bg-blue-400", hover: "hover:bg-blue-500", text: "text-white" },
+    { icon: Instagram, label: "Instagram", url: member.instagram, visible: !!member.instagram, bg: "bg-pink-500", hover: "hover:bg-pink-600", text: "text-white" },
+  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -48,6 +56,7 @@ export function TeamDetails() {
           </Link>
 
           <div className="grid lg:grid-cols-3 gap-12 max-w-6xl mx-auto">
+            {/* Profile Card */}
             <div className="lg:col-span-1">
               <motion.div
                 className="sticky top-32"
@@ -64,29 +73,28 @@ export function TeamDetails() {
                     <h1 className="text-2xl text-[#0F172A] mb-2">{member.name}</h1>
                     <p className="text-[#10B981] mb-6">{member.role}</p>
 
-                    <div className="space-y-3">
-                      <motion.button
-                        className="w-full flex items-center justify-center gap-2 bg-[#10B981] hover:bg-[#059669] text-white py-3 rounded-xl transition-colors duration-300"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <Mail className="w-5 h-5" />
-                        Send Email
-                      </motion.button>
-                      <motion.button
-                        className="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-[#0F172A] py-3 rounded-xl transition-colors duration-300"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                      >
-                        <Linkedin className="w-5 h-5" />
-                        LinkedIn Profile
-                      </motion.button>
+                    <div className="space-y-3 flex flex-col">
+                      {socials.filter(s => s.visible).map((s, i) => (
+                        <motion.a
+                          key={i}
+                          href={s.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`w-full flex items-center justify-center gap-2 ${s.bg} ${s.text} py-3 rounded-xl transition-colors duration-300 ${s.hover}`}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          {s.icon && <s.icon className="w-5 h-5" />}
+                          {s.label}
+                        </motion.a>
+                      ))}
                     </div>
                   </div>
                 </div>
               </motion.div>
             </div>
 
+            {/* Details Section */}
             <div className="lg:col-span-2">
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
                 

@@ -34,6 +34,9 @@ export type TeamMinAggregateOutputType = {
   image: string | null
   email: string | null
   linkedin: string | null
+  facebook: string | null
+  twitter: string | null
+  instagram: string | null
   isDeleted: boolean | null
   deletedAt: Date | null
   createdAt: Date | null
@@ -50,6 +53,9 @@ export type TeamMaxAggregateOutputType = {
   image: string | null
   email: string | null
   linkedin: string | null
+  facebook: string | null
+  twitter: string | null
+  instagram: string | null
   isDeleted: boolean | null
   deletedAt: Date | null
   createdAt: Date | null
@@ -66,6 +72,9 @@ export type TeamCountAggregateOutputType = {
   image: number
   email: number
   linkedin: number
+  facebook: number
+  twitter: number
+  instagram: number
   education: number
   achievements: number
   experience: number
@@ -87,6 +96,9 @@ export type TeamMinAggregateInputType = {
   image?: true
   email?: true
   linkedin?: true
+  facebook?: true
+  twitter?: true
+  instagram?: true
   isDeleted?: true
   deletedAt?: true
   createdAt?: true
@@ -103,6 +115,9 @@ export type TeamMaxAggregateInputType = {
   image?: true
   email?: true
   linkedin?: true
+  facebook?: true
+  twitter?: true
+  instagram?: true
   isDeleted?: true
   deletedAt?: true
   createdAt?: true
@@ -119,6 +134,9 @@ export type TeamCountAggregateInputType = {
   image?: true
   email?: true
   linkedin?: true
+  facebook?: true
+  twitter?: true
+  instagram?: true
   education?: true
   achievements?: true
   experience?: true
@@ -211,6 +229,9 @@ export type TeamGroupByOutputType = {
   image: string
   email: string | null
   linkedin: string | null
+  facebook: string | null
+  twitter: string | null
+  instagram: string | null
   education: string[]
   achievements: string[]
   experience: string[]
@@ -251,6 +272,9 @@ export type TeamWhereInput = {
   image?: Prisma.StringFilter<"Team"> | string
   email?: Prisma.StringNullableFilter<"Team"> | string | null
   linkedin?: Prisma.StringNullableFilter<"Team"> | string | null
+  facebook?: Prisma.StringNullableFilter<"Team"> | string | null
+  twitter?: Prisma.StringNullableFilter<"Team"> | string | null
+  instagram?: Prisma.StringNullableFilter<"Team"> | string | null
   education?: Prisma.StringNullableListFilter<"Team">
   achievements?: Prisma.StringNullableListFilter<"Team">
   experience?: Prisma.StringNullableListFilter<"Team">
@@ -270,6 +294,9 @@ export type TeamOrderByWithRelationInput = {
   image?: Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   linkedin?: Prisma.SortOrderInput | Prisma.SortOrder
+  facebook?: Prisma.SortOrderInput | Prisma.SortOrder
+  twitter?: Prisma.SortOrderInput | Prisma.SortOrder
+  instagram?: Prisma.SortOrderInput | Prisma.SortOrder
   education?: Prisma.SortOrder
   achievements?: Prisma.SortOrder
   experience?: Prisma.SortOrder
@@ -292,6 +319,9 @@ export type TeamWhereUniqueInput = Prisma.AtLeast<{
   image?: Prisma.StringFilter<"Team"> | string
   email?: Prisma.StringNullableFilter<"Team"> | string | null
   linkedin?: Prisma.StringNullableFilter<"Team"> | string | null
+  facebook?: Prisma.StringNullableFilter<"Team"> | string | null
+  twitter?: Prisma.StringNullableFilter<"Team"> | string | null
+  instagram?: Prisma.StringNullableFilter<"Team"> | string | null
   education?: Prisma.StringNullableListFilter<"Team">
   achievements?: Prisma.StringNullableListFilter<"Team">
   experience?: Prisma.StringNullableListFilter<"Team">
@@ -311,6 +341,9 @@ export type TeamOrderByWithAggregationInput = {
   image?: Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   linkedin?: Prisma.SortOrderInput | Prisma.SortOrder
+  facebook?: Prisma.SortOrderInput | Prisma.SortOrder
+  twitter?: Prisma.SortOrderInput | Prisma.SortOrder
+  instagram?: Prisma.SortOrderInput | Prisma.SortOrder
   education?: Prisma.SortOrder
   achievements?: Prisma.SortOrder
   experience?: Prisma.SortOrder
@@ -336,6 +369,9 @@ export type TeamScalarWhereWithAggregatesInput = {
   image?: Prisma.StringWithAggregatesFilter<"Team"> | string
   email?: Prisma.StringNullableWithAggregatesFilter<"Team"> | string | null
   linkedin?: Prisma.StringNullableWithAggregatesFilter<"Team"> | string | null
+  facebook?: Prisma.StringNullableWithAggregatesFilter<"Team"> | string | null
+  twitter?: Prisma.StringNullableWithAggregatesFilter<"Team"> | string | null
+  instagram?: Prisma.StringNullableWithAggregatesFilter<"Team"> | string | null
   education?: Prisma.StringNullableListFilter<"Team">
   achievements?: Prisma.StringNullableListFilter<"Team">
   experience?: Prisma.StringNullableListFilter<"Team">
@@ -355,6 +391,9 @@ export type TeamCreateInput = {
   image: string
   email?: string | null
   linkedin?: string | null
+  facebook?: string | null
+  twitter?: string | null
+  instagram?: string | null
   education?: Prisma.TeamCreateeducationInput | string[]
   achievements?: Prisma.TeamCreateachievementsInput | string[]
   experience?: Prisma.TeamCreateexperienceInput | string[]
@@ -374,6 +413,9 @@ export type TeamUncheckedCreateInput = {
   image: string
   email?: string | null
   linkedin?: string | null
+  facebook?: string | null
+  twitter?: string | null
+  instagram?: string | null
   education?: Prisma.TeamCreateeducationInput | string[]
   achievements?: Prisma.TeamCreateachievementsInput | string[]
   experience?: Prisma.TeamCreateexperienceInput | string[]
@@ -393,6 +435,9 @@ export type TeamUpdateInput = {
   image?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  facebook?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   education?: Prisma.TeamUpdateeducationInput | string[]
   achievements?: Prisma.TeamUpdateachievementsInput | string[]
   experience?: Prisma.TeamUpdateexperienceInput | string[]
@@ -412,6 +457,9 @@ export type TeamUncheckedUpdateInput = {
   image?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  facebook?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   education?: Prisma.TeamUpdateeducationInput | string[]
   achievements?: Prisma.TeamUpdateachievementsInput | string[]
   experience?: Prisma.TeamUpdateexperienceInput | string[]
@@ -431,6 +479,9 @@ export type TeamCreateManyInput = {
   image: string
   email?: string | null
   linkedin?: string | null
+  facebook?: string | null
+  twitter?: string | null
+  instagram?: string | null
   education?: Prisma.TeamCreateeducationInput | string[]
   achievements?: Prisma.TeamCreateachievementsInput | string[]
   experience?: Prisma.TeamCreateexperienceInput | string[]
@@ -450,6 +501,9 @@ export type TeamUpdateManyMutationInput = {
   image?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  facebook?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   education?: Prisma.TeamUpdateeducationInput | string[]
   achievements?: Prisma.TeamUpdateachievementsInput | string[]
   experience?: Prisma.TeamUpdateexperienceInput | string[]
@@ -469,6 +523,9 @@ export type TeamUncheckedUpdateManyInput = {
   image?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   linkedin?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  facebook?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  twitter?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  instagram?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   education?: Prisma.TeamUpdateeducationInput | string[]
   achievements?: Prisma.TeamUpdateachievementsInput | string[]
   experience?: Prisma.TeamUpdateexperienceInput | string[]
@@ -488,6 +545,9 @@ export type TeamCountOrderByAggregateInput = {
   image?: Prisma.SortOrder
   email?: Prisma.SortOrder
   linkedin?: Prisma.SortOrder
+  facebook?: Prisma.SortOrder
+  twitter?: Prisma.SortOrder
+  instagram?: Prisma.SortOrder
   education?: Prisma.SortOrder
   achievements?: Prisma.SortOrder
   experience?: Prisma.SortOrder
@@ -507,6 +567,9 @@ export type TeamMaxOrderByAggregateInput = {
   image?: Prisma.SortOrder
   email?: Prisma.SortOrder
   linkedin?: Prisma.SortOrder
+  facebook?: Prisma.SortOrder
+  twitter?: Prisma.SortOrder
+  instagram?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -523,6 +586,9 @@ export type TeamMinOrderByAggregateInput = {
   image?: Prisma.SortOrder
   email?: Prisma.SortOrder
   linkedin?: Prisma.SortOrder
+  facebook?: Prisma.SortOrder
+  twitter?: Prisma.SortOrder
+  instagram?: Prisma.SortOrder
   isDeleted?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -572,6 +638,9 @@ export type TeamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   image?: boolean
   email?: boolean
   linkedin?: boolean
+  facebook?: boolean
+  twitter?: boolean
+  instagram?: boolean
   education?: boolean
   achievements?: boolean
   experience?: boolean
@@ -591,6 +660,9 @@ export type TeamSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   image?: boolean
   email?: boolean
   linkedin?: boolean
+  facebook?: boolean
+  twitter?: boolean
+  instagram?: boolean
   education?: boolean
   achievements?: boolean
   experience?: boolean
@@ -610,6 +682,9 @@ export type TeamSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   image?: boolean
   email?: boolean
   linkedin?: boolean
+  facebook?: boolean
+  twitter?: boolean
+  instagram?: boolean
   education?: boolean
   achievements?: boolean
   experience?: boolean
@@ -629,6 +704,9 @@ export type TeamSelectScalar = {
   image?: boolean
   email?: boolean
   linkedin?: boolean
+  facebook?: boolean
+  twitter?: boolean
+  instagram?: boolean
   education?: boolean
   achievements?: boolean
   experience?: boolean
@@ -638,7 +716,7 @@ export type TeamSelectScalar = {
   updatedAt?: boolean
 }
 
-export type TeamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "role" | "bio" | "expertise" | "image" | "email" | "linkedin" | "education" | "achievements" | "experience" | "isDeleted" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["team"]>
+export type TeamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "name" | "role" | "bio" | "expertise" | "image" | "email" | "linkedin" | "facebook" | "twitter" | "instagram" | "education" | "achievements" | "experience" | "isDeleted" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["team"]>
 
 export type $TeamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Team"
@@ -653,6 +731,9 @@ export type $TeamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     image: string
     email: string | null
     linkedin: string | null
+    facebook: string | null
+    twitter: string | null
+    instagram: string | null
     education: string[]
     achievements: string[]
     experience: string[]
@@ -1092,6 +1173,9 @@ export interface TeamFieldRefs {
   readonly image: Prisma.FieldRef<"Team", 'String'>
   readonly email: Prisma.FieldRef<"Team", 'String'>
   readonly linkedin: Prisma.FieldRef<"Team", 'String'>
+  readonly facebook: Prisma.FieldRef<"Team", 'String'>
+  readonly twitter: Prisma.FieldRef<"Team", 'String'>
+  readonly instagram: Prisma.FieldRef<"Team", 'String'>
   readonly education: Prisma.FieldRef<"Team", 'String[]'>
   readonly achievements: Prisma.FieldRef<"Team", 'String[]'>
   readonly experience: Prisma.FieldRef<"Team", 'String[]'>

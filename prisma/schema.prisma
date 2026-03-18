@@ -66,6 +66,9 @@ model Team {
   image        String
   email        String?
   linkedin     String?
+  facebook     String?   
+  twitter      String?   
+  instagram    String? 
   education    String[]
   achievements String[]
   experience   String[]

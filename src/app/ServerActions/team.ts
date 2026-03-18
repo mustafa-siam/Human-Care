@@ -7,16 +7,19 @@ import { imagekit } from "@/lib/imagekit";
 /* ---------------- UPSERT TEAM MEMBER ---------------- */
 export const upsertTeam = async (formData: FormData) => {
   try {
-  const id = (formData.get("id") as string) || "";
-  const name = (formData.get("name") as string) || "";
+    const id = (formData.get("id") as string) || "";
+    const name = (formData.get("name") as string) || "";
     const role = (formData.get("role") as string) || "";
     const bio = (formData.get("bio") as string) || "";
     const expertise = (formData.get("expertise") as string) || "";
     const email = (formData.get("email") as string) || "";
     const linkedin = (formData.get("linkedin") as string) || "";
+    const facebook = (formData.get("facebook") as string) || "";
+    const twitter = (formData.get("twitter") as string) || "";
+    const instagram = (formData.get("instagram") as string) || "";
 
-  const parseArray = (key: string) => {
-     try {
+    const parseArray = (key: string) => {
+      try {
         const raw = formData.get(key) as string;
         const parsed = JSON.parse(raw || "[]");
         return Array.isArray(parsed) ? parsed : [];
@@ -28,7 +31,8 @@ export const upsertTeam = async (formData: FormData) => {
     const education = parseArray("education");
     const achievements = parseArray("achievements");
     const experience = parseArray("experience");
-   const existingImage = (formData.get("existingImage") as string) || "";
+
+    const existingImage = (formData.get("existingImage") as string) || "";
     const newFile = formData.get("image") as File | null;
     let imageUrl = existingImage;
 
@@ -41,16 +45,32 @@ export const upsertTeam = async (formData: FormData) => {
       });
       imageUrl = result.url;
     }
-  const slug = name
+
+    const slug = name
       .toLowerCase()
       .trim()
       .replace(/[^\w\s-]/g, "")
       .replace(/[\s_-]+/g, "-")
       .replace(/^-+|-+$/g, "");
 
-    const teamData = { name, slug, role, bio, expertise, email, linkedin, image: imageUrl, education, achievements, experience };
+    const teamData = { 
+      name, 
+      slug, 
+      role, 
+      bio, 
+      expertise, 
+      email, 
+      linkedin,
+      facebook,
+      twitter,
+      instagram,
+      image: imageUrl, 
+      education, 
+      achievements, 
+      experience 
+    };
 
-   let member;
+    let member;
     if (id && id.trim() !== "" && id !== "undefined") {
       member = await db.team.update({
         where: { id },
@@ -61,7 +81,8 @@ export const upsertTeam = async (formData: FormData) => {
         data: teamData,
       });
     }
-  revalidatePath("/admin/team");
+
+    revalidatePath("/admin/team");
     revalidatePath("/team");
     revalidatePath(`/team/${slug}`);
 
@@ -135,7 +156,7 @@ export const deleteTeamPermanent = async (id: string) => {
     await db.team.delete({
       where: { id },
     });
-        revalidatePath("/admin/team");
+    revalidatePath("/admin/team");
     return { success: true };
   } catch (error: any) {
     console.error("Permanent Delete Team Member Error:", error);
