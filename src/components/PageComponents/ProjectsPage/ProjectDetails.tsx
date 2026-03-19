@@ -160,7 +160,7 @@ export function ProjectDetails() {
               </motion.div>
             </div>
 
-            {/* Sidebar */}
+            
             <div className="lg:col-span-1">
               <motion.div
                 className="sticky top-32"
@@ -168,7 +168,7 @@ export function ProjectDetails() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                {/* Project Progress */}
+                
                 <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-[#10B981]/20 mb-6">
                   <h3 className="text-xl text-[#0F172A] mb-4">Project Progress</h3>
                   <div className="mb-6">
@@ -212,7 +212,7 @@ export function ProjectDetails() {
           </div>
         </div>
       </div>
-      {/* SHARE MODAL */}
+    
 {showShare && (
   <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
     <div className="bg-slate-900 rounded-2xl p-6 w-[90%] max-w-sm relative flex flex-col items-center gap-6">
@@ -223,8 +223,8 @@ export function ProjectDetails() {
         <X />
       </button>
 
-      <h2 className="text-xl flex items-center justify-center gap-2 font-bold mb-2 text-center">
-        <Share2 className="w-5 h-5" />  Share
+      <h2 className="text-xl  text-white/80 flex items-center justify-center gap-2 font-bold mb-2 text-center">
+        <Share2 className="w-5 h-5"/>  Share
       </h2>
       <div className="flex items-center justify-center gap-4">
         <FacebookShareButton url={shareUrl}>

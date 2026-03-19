@@ -21,8 +21,6 @@ export function Contact() {
     e.preventDefault();
     try {
       setLoading(true);
-
-      // Prepare FormData for server action
       const form = new FormData();
       Object.entries(formData).forEach(([key, value]) => form.append(key, value));
 
@@ -98,7 +96,6 @@ export function Contact() {
               <h3 className="text-2xl text-[#0F172A] mb-6">Send us a Message</h3>
               
               <form onSubmit={handleSubmit} className="space-y-6">
-  {/** Full Name */}
   <div className="relative">
     <input
       type="text"
@@ -121,8 +118,6 @@ export function Contact() {
       Full Name
     </label>
   </div>
-
-  {/** Email */}
   <div className="relative">
     <input
       type="email"
@@ -168,8 +163,6 @@ export function Contact() {
       Phone Number (Optional)
     </label>
   </div>
-
-  {/** Subject */}
   <div className="relative">
     <select
       name="subject"
@@ -196,8 +189,6 @@ export function Contact() {
       Subject
     </label>
   </div>
-
-  {/** Message */}
   <div className="relative">
     <textarea
       name="message"
@@ -313,22 +304,34 @@ export function Contact() {
                 </div>
               </motion.div>
             </div>
-            <div className="bg-white rounded-2xl overflow-hidden shadow-xl">
-              <div className="h-64 bg-gradient-to-br from-[#10B981]/20 to-[#059669]/20 flex items-center justify-center relative overflow-hidden">
-                <div className="absolute inset-0" style={{
-                  backgroundImage: 'radial-gradient(circle, #10B981 1px, transparent 1px)',
-                  backgroundSize: '20px 20px',
-                  opacity: 0.3
-                }}></div>
-                <div className="text-center z-10">
-                  <MapPin className="w-16 h-16 text-[#10B981] mx-auto mb-3" />
-                  <p className="text-[#0F172A]">Uttara, Dhaka, Bangladesh</p>
-                  <button className="mt-3 text-[#10B981] hover:text-[#059669] text-sm underline">
-                    Open in Google Maps
-                  </button>
-                </div>
-              </div>
-            </div>
+           <div className="bg-white rounded-2xl overflow-hidden shadow-xl">
+  <div className="h-64 bg-gradient-to-br from-[#10B981]/20 to-[#059669]/20 flex items-center justify-center relative overflow-hidden">
+    
+    <div
+      className="absolute inset-0"
+      style={{
+        backgroundImage: 'radial-gradient(circle, #10B981 1px, transparent 1px)',
+        backgroundSize: '20px 20px',
+        opacity: 0.3
+      }}
+    />
+
+    <div className="text-center z-10">
+      <MapPin className="w-16 h-16 text-[#10B981] mx-auto mb-3" />
+      <p className="text-[#0F172A]">Shahjalal Uposhar, Sylhet, Bangladesh</p>
+
+      <a
+        href="https://www.google.com/maps/search/?api=1&query=Shahjalal+Uposhar+Sylhet+Bangladesh"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 inline-block text-[#10B981] hover:text-[#059669] text-sm underline"
+      >
+        Open in Google Maps
+      </a>
+    </div>
+
+  </div>
+</div>
             <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl p-8 text-white">
               <h4 className="text-xl mb-4">Follow Our Journey</h4>
               <p className="text-white/70 mb-6 text-sm">

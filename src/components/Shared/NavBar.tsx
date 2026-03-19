@@ -65,8 +65,6 @@ export function NavBar() {
               </div>
             </div>
           </Link>
-
-          {/* DESKTOP NAV */}
           <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) =>
               link.isRoute ? (
@@ -82,10 +80,10 @@ export function NavBar() {
               )
             )}
 
-            <div className="flex items-center gap-6 border-l border-white/20 pl-6">
+            <div className="flex items-center gap-6 border-l text-white/80 border-white/20 pl-6">
             
               {isSignedIn && isAdmin && (
-                <div className="cursor-pointer">
+                <div className="cursor-pointer text-white/80">
                   <UserButton afterSignOutUrl="/">
                     <UserButton.MenuItems>
                       <UserButton.Action 
@@ -112,7 +110,7 @@ export function NavBar() {
           </button>
         </div>
 
-        {/* MOBILE NAV */}
+      
         {isMobileMenuOpen && (
           <nav 
             className="lg:hidden mt-4 pb-4 flex flex-col gap-2 bg-[#0F172A] p-6 rounded-2xl border border-white/10 shadow-2xl" 
@@ -131,13 +129,13 @@ export function NavBar() {
               <div className="flex flex-col gap-4 pt-4 mt-2">
                 <button 
                   onClick={() => { router.push('/admin/dashboard'); setIsMobileMenuOpen(false); }}
-                  className="flex items-center gap-3  font-bold py-2 cursor-pointer"
+                  className="flex items-center gap-3 text-white/80  font-bold py-2 cursor-pointer"
                 >
                   <LayoutDashboard size={20} /> Dashboard
                 </button>
                 <div className="flex items-center gap-3 py-2">
                   <UserButton afterSignOutUrl="/" />
-                  <span className="text-white/70 text-sm">Account Settings</span>
+                  <span className="text-white/70 text-base">Account Settings</span>
                 </div>
               </div>
             )}
